@@ -308,40 +308,8 @@ async function handleRequest(request) {
             </div>
             
             
-			
 			<div class="col-lg-6 col-md-6 col-sm-6">
-              <a href="https://jq.qq.com/?_wv=1027&k=rAcnhzqK" target="_blank">
-              <div class="card card-stats">
-                <div class="card-header card-header-success card-header-icon">
-                  <div class="card-icon">
-                    <i class="fa fa-qq"></i>
-                  </div>
-                  <h3 class="card-title">QQ群聊天去？</h3>
-                </div>
-                <div class="card-footer">
-				诚聘小白鼠(bushi
-                </div>
-              </div>
-            </a>
-            </div>
-			
-			<div class="col-lg-6 col-md-6 col-sm-6">
-              <a href="https://hexoplusplus.js.org" target="_blank">
-              <div class="card card-stats">
-                <div class="card-header card-header-normal card-header-icon">
-                  <div class="card-icon">
-                    <i class="fa fa-book"></i>
-                  </div>
-                  <h3 class="card-title">文档地址</h3>
-                </div>
-                <div class="card-footer">有多少人没看文档来提issues？
-                </div>
-              </div>
-            </a>
-            </div>
-			
-			<div class="col-lg-6 col-md-6 col-sm-6">
-              <a href="https://github.com/HexoPlusPlus/HexoPlusPlus" target="_blank">
+              <a href="https://github.com/Zarijaden/blog" target="_blank">
               <div class="card card-stats">
                 <div class="card-header card-header-primary card-header-icon">
                   <div class="card-icon">
@@ -350,12 +318,12 @@ async function handleRequest(request) {
                   <h3 class="card-title">Github</h3>
                 </div>
                 <div class="card-footer">
-				欢迎PR
+				博客仓库
                 </div>
               </div>
             </a>
             </div>
-			
+
           </div>
         </div>
       </div>`
@@ -381,13 +349,13 @@ async function handleRequest(request) {
 							  <button type="submit" class="btn btn-normal" onclick="javascript:hpp_get_draft()">获取艹稿</button>
 							  <button type="submit" class="btn btn-danger" onclick="javascript:hpp_del_index()">徒手清索引</button>
                           </div>
-                        
+
                         <div class="row">
                           <div class="col-md-12">
                             <div class="form-group">
                               <label>内容</label>
                               <div class="form-group" id="hpp_doc_editor">
-								
+
                               </div>
                             </div>
                           </div>
@@ -408,10 +376,10 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' /> 
+              hpp_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' />
 <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><script src="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.js"></script><script src='https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/edit.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/OwO.min.css">
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/highlight.min.js"></script>
-<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/styles/${hpp_highlight_style}.min.css' /> 
+<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/styles/${hpp_highlight_style}.min.css' />
 
 `
             }
@@ -428,8 +396,8 @@ async function handleRequest(request) {
                 </div>
               </br>
                 <div class="card-body">
-                          
-                        
+
+
                         <div class="row">
                           <div class="col-md-12">
                             <div class="form-group">
@@ -482,7 +450,7 @@ async function handleRequest(request) {
                         <th></th><th></th><th></th>
                       </thead>
                       <tbody id="tbody_doc">
-						
+
                       </tbody>
                     </table>
                   </div>
@@ -521,7 +489,7 @@ async function handleRequest(request) {
                         <th></th><th></th><th></th><th></th>
                       </thead>
                       <tbody id="tbody_img">
-						
+
                       </tbody>
                     </table>
                   </div>
@@ -538,10 +506,25 @@ async function handleRequest(request) {
 			if (path == "/hpp/admin/dash/tool") {
               hpp_tool_act = " active"
               hpp_init = `<div class="content">
+              <script>
+          async function triggerPagesDeploy(){
+              const btn = document.getElementById('deployTriggerBtn');
+              const resultDiv = document.getElementById('deployResult') || document.creatElement('div');
+              const originalBtnHTML = btn.innerHTML;
+
+              btn.diasbled = true;
+              btn.innerHTML = '<i class="material-icons">hourglass_empty</i> 发送中...';
+              const response = await fetch('/hpp/admin/api/trigger-deploy', {
+                  method:'POST',
+                  headers:{
+                  'Content-Type': 'application/json',
+                  },
+              });
+          }
+              </script>
         <div class="container-fluid">
           <div class="row">
-        
-			
+
 			<div class="col-lg-6 col-md-6 col-sm-6">
               <a href="javascript:hpp_artitalk_into_hpptalk()">
               <div class="card card-stats">
@@ -556,7 +539,7 @@ async function handleRequest(request) {
               </div>
             </a>
             </div>
-			
+
 			<div class="col-lg-6 col-md-6 col-sm-6">
               <a href="javascript:hpp_del_all()">
               <div class="card card-stats">
@@ -574,8 +557,21 @@ async function handleRequest(request) {
               </div>
             </a>
             </div>
-			
-			
+
+      <div class="card">
+          <div class="card-header card-header-info">
+              <h4 class="card-title">博客站点部署</h4>
+              <p class="card-category">触发 Cloudflare Pages 重新构建与部署</p>
+          </div>
+          <div class="card-body">
+              <p>此操作将触发与 HexoPlusPlus 关联的 Cloudflare Pages 项目 (<strong>zari-blog</strong>) 重新构建。系统将从 Git 仓库拉取最新代码并执行部署流程。</p>
+              <button type="button" class="btn btn-info" onclick="triggerPagesDeploy()" id="deployTriggerBtn">
+                  <i class="material-icons">cloud_upload</i> 立即触发重新部署
+              </button>
+              <div id="deployResult" style="margin-top: 15px;"></div>
+          </div>
+      </div>
+
           </div>
         </div>
       </div>`
@@ -605,7 +601,7 @@ async function handleRequest(request) {
                         </th><th>操作</th>
                       </thead>
                       <tbody id="tbody_config">
-						
+
                       </tbody>
                     </table>
                   </div>
@@ -702,6 +698,12 @@ async function handleRequest(request) {
               <p>设置</p>
             </a>
           </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/">
+          <i class="material-icons">logout</i>
+            <p>退出</p>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -728,8 +730,6 @@ async function handleRequest(request) {
                   </p>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                  <a class="dropdown-item" href="javascript:kick()">签到</a>
-                  <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="javascript:hpp_logout()">退出</a>
                 </div>
               </li>
@@ -737,7 +737,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </nav>
-      <!-- End Navbar --> 
+      <!-- End Navbar -->
 
 <!--innerHTMLSTART-->`
             let hpp_dash_foot = `
@@ -978,6 +978,52 @@ ${hpp_js}
               }
             })
           }
+    if (path == "/hpp/admin/api/trigger-deploy") {
+    if (hpp_logstatus != 1) {
+        return new Response('{"status": "error", "message": "Unauthorized"}', { status: 401, headers: { "content-type": "application/json" } });
+    }
+    const DEPLOY_HOOK_URL = 'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/8b8a39f4-95f7-442a-b32d-6f46f9b59251';
+    try {
+        const deployResponse = await fetch(DEPLOY_HOOK_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({})
+        });
+        if (deployResponse.ok) {
+            const result = {
+                status: 'success',
+                message: '已成功触发重新部署。Cloudflare Pages 构建任务已开始，请稍后查看部署状态。'
+            };
+            return new Response(JSON.stringify(result), {
+                status: 200,
+                headers: { "content-type": "application/json;charset=UTF-8" }
+            });
+        } else {
+            const errorText = await deployResponse.text();
+            console.error('Deploy hook failed:', deployResponse.status, errorText);
+            const result = {
+                status: 'error',
+                message: `触发部署失败 (状态码: ${deployResponse.status})`
+            };
+            return new Response(JSON.stringify(result), {
+                status: 502, // Bad Gateway
+                headers: { "content-type": "application/json;charset=UTF-8" }
+            });
+        }
+    } catch (error) {
+        console.error('Error triggering deploy:', error);
+        const result = {
+            status: 'error',
+            message: '请求发生错误: ${error.message}'
+        };
+        return new Response(JSON.stringify(result),{
+          status: 500,
+          headers: {"content-type": "application/json;charset=UTF-8"}
+        });
+      }
+    }
           if (path.startsWith("/hpp/admin/api/getdraft")) {
             const filename = path.substr(("/hpp/admin/api/getdraft/").length)
             return (fetch(`https://raw.githubusercontent.com/${hpp_githubdocusername}/${hpp_githubdocrepo}/${hpp_githubdocbranch}${githubdocdraftpath}${filename}?ref=${hpp_githubdocbranch}`, hpp_githubgetdocinit))
@@ -1139,12 +1185,6 @@ ${hpp_js}
             await KVNAME.put("hpp_config", await JSON.stringify(await JSON.stringify(k)))
             return new Response('OK')
           }
-          if (path == '/hpp/admin/api/kick') {
-            const now = Date.now(new Date())
-            await KVNAME.put("hpp_activetime", now)
-            const hpp_kvwait = Date.now(new Date()) - now
-            return new Response("OK")
-          }
           if (path == "/hpp/admin/api/gethpptalk") {
             const req_r = await request.text()
             if (req_r != "") {
@@ -1192,10 +1232,10 @@ ${hpp_js}
   }
   a:link { text-decoration: none;color: white}
 　　 a:active { text-decoration:blink}
-　　 a:hover { text-decoration:underline;color: white} 
+　　 a:hover { text-decoration:underline;color: white}
 　　 a:visited { text-decoration: none;color: white}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/login.css" /> 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/login.css" />
  </head>
  <body>
   <div id="all">
@@ -1422,12 +1462,12 @@ login();
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HexoPlusPlus_Talk预览页面</title>
 </head>
 <body>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/talk.css" /> 
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/talk.css" />
 <script src="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/talk_user.js"></script>
 <div id="hpp_talk"></div>
 <script>
@@ -1435,7 +1475,7 @@ new hpp_talk({
 id:"hpp_talk",
 domain: window.location.host,
 limit: 10,
-start: 0 
+start: 0
 });
 </script>
 </body>
@@ -1449,8 +1489,8 @@ start: 0
 <html lang="en" class="no-js">
 	<head>
         <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" /> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
         <title>HexoPlusPlusError</title>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/error.css" />
 	</head>
@@ -1484,8 +1524,8 @@ start: 0
 <html lang="en" class="no-js">
 	<head>
         <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
-        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" /> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
         <title>HexoPlusPlusError</title>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/error.css" />
 	</head>

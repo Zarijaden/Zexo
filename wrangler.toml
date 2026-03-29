@@ -1,4 +1,4 @@
-name = "hexopp"
+name = "zexo"
 type = "webpack"
 workers_dev = true
 account_id = "6ef5ebe823f216ddea9235af103a41ad"

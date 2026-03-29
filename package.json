@@ -1,25 +1,25 @@
 {
-  "name": "hexoplusplus",
+  "name": "zexo",
   "version": "0.1.0",
   "description": "A Serverless Hexo Back DashBoard",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "ChenYFan",
+  "author": "Zarijaden",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HexoPlusPlus/HexoPlusPlus.git"
+    "url": "git+https://github.com/Zarijaden/Zexo.git"
   },
   "keywords": [
     "Hexo",
     "BackDashboard"
   ],
   "bugs": {
-    "url": "https://github.com/HexoPlusPlus/HexoPlusPlus/issues"
+    "url": "https://github.com/Zarijaden/Zexo/issues"
   },
-  "homepage": "https://github.com/HexoPlusPlus/HexoPlusPlus#readme",
+  "homepage": "https://github.com/Zarijaden/Zexo#readme",
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-minify-css": "^1.2.4",

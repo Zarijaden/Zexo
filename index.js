@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const hpp_ver = "HexoPlusPlus@1.2.0"
+const hpp_ver = "Zexo@0.1.1"
 const dev_mode_branch = "dist"
 let hpp_logstatus = 0
 
@@ -712,7 +712,7 @@ async function handleRequest(request) {
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
         <div class="container-fluid">
           <div class="navbar-wrapper">
-            <a class="navbar-brand" href="javascript:;">HexoPlusPlus后台</a>
+            <a class="navbar-brand" href="javascript:;">Zexo后台</a>
           </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
             <span class="sr-only">Toggle navigation</span>

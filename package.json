@@ -1,6 +1,6 @@
 {
   "name": "zexo",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "A Serverless Hexo Back DashBoard",
   "main": "index.js",
   "scripts": {

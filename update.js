@@ -34,7 +34,7 @@ title: "成功",
     icon: "success",
 });
 }else{
-swal("存在0.1.0更新，是否更新？", {
+swal("存在2.0更新，是否更新？", {
   icon: "warning",
   buttons: {
     cancel: "否",

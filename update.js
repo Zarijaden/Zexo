@@ -27,7 +27,7 @@ var ajax = ajaxObject();
     ajax.send();
 }
 
-if(zexo_ver == 'Zexo@0.1.3'){
+if(zexo_ver == 'Zexo@2.0'){
   swal({
 title: "成功",
     text: "无需更新，当前已是最新版本",

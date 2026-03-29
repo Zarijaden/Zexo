@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@0.1.3"
+const zexo_ver = "Zexo@2.0"
 const dev_mode_branch = "dist"
 let hpp_logstatus = 0
 
@@ -506,22 +506,57 @@ async function handleRequest(request) {
 			if (path == "/hpp/admin/dash/tool") {
               hpp_tool_act = " active"
               hpp_init = `<div class="content">
+              hpp_init += `
               <script>
-          async function triggerPagesDeploy(){
-              const btn = document.getElementById('deployTriggerBtn');
-              const resultDiv = document.getElementById('deployResult') || document.creatElement('div');
-              const originalBtnHTML = btn.innerHTML;
+              async function triggerPagesDeploy() {
+                  const btn = document.getElementById('deployTriggerBtn');
+                  const resultDiv = document.getElementById('deployResult') || document.createElement('div'); // 结果展示区域
+                  const originalBtnHTML = btn.innerHTML;
 
-              btn.diasbled = true;
-              btn.innerHTML = '<i class="material-icons">hourglass_empty</i> 发送中...';
-              const response = await fetch('/hpp/admin/api/trigger-deploy', {
-                  method:'POST',
-                  headers:{
-                  'Content-Type': 'application/json',
-                  },
-              });
-          }
-              </script>
+                  // 防止重复点击，更新按钮状态
+                  btn.disabled = true;
+                  btn.innerHTML = '<i class="material-icons">hourglass_empty</i> 发送中...';
+
+                  // 显示加载状态
+                  resultDiv.innerHTML = '<div class="alert alert-info">正在向服务器发送部署指令...</div>';
+
+                  try {
+                      // 关键：调用您已实现的后端 API
+                      const response = await fetch('/hpp/admin/api/trigger-deploy', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                          },
+                      });
+
+                      const data = await response.json();
+
+                      if (response.ok && data.status === 'success') {
+                          resultDiv.innerHTML = `<div class="alert alert-success">
+                                                      <i class="material-icons">check_circle</i>
+                                                      <strong>成功！</strong> ${data.message}
+                                                 </div>`;
+                      } else {
+                          resultDiv.innerHTML = `<div class="alert alert-danger">
+                                                      <i class="material-icons">error</i>
+                                                      <strong>操作失败。</strong> ${data.message || '服务器返回错误'}
+                                                 </div>`;
+                      }
+                  } catch (error) {
+                      console.error('部署触发失败:', error);
+                      resultDiv.innerHTML = `<div class="alert alert-danger">
+                                                  <i class="material-icons">error</i>
+                                                  <strong>网络请求失败。</strong> 请检查控制台或网络连接。
+                                             </div>`;
+                  } finally {
+                      // 3秒后恢复按钮状态
+                      setTimeout(() => {
+                          btn.disabled = false;
+                          btn.innerHTML = originalBtnHTML;
+                      }, 3000);
+                  }
+              }
+              </script>`;
         <div class="container-fluid">
           <div class="row">
 

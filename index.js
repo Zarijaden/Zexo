@@ -1,9 +1,9 @@
 //const md5=require ('md5')
-
+//0.1.3更新功能测试
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const hpp_ver = "Zexo@0.1.1"
+const zexo_ver = "Zexo@0.1.3"
 const dev_mode_branch = "dist"
 let hpp_logstatus = 0
 
@@ -73,7 +73,7 @@ async function handleRequest(request) {
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
-	<title>${hpp_ver}安装</title>
+	<title>${zexo_ver}安装</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/install.css">
 </head>
 <body>
@@ -224,7 +224,7 @@ async function handleRequest(request) {
             method: "GET",
             headers: {
               "content-type": "application/json;charset=UTF-8",
-              "user-agent": hpp_ver,
+              "user-agent": zexo_ver,
               "Authorization": "token " + hpp_githubimagetoken
             },
           }
@@ -232,7 +232,7 @@ async function handleRequest(request) {
             method: "GET",
             headers: {
               "content-type": "application/json;charset=UTF-8",
-              "user-agent": hpp_ver,
+              "user-agent": zexo_ver,
               "Authorization": "token " + hpp_githubdoctoken
             },
           }
@@ -296,7 +296,7 @@ async function handleRequest(request) {
                     <i class="fa fa-upload"></i>
                   </div>
                   <p class="card-category">当前版本</p>
-                  <h3 class="card-title">${hpp_ver}</h3>
+                  <h3 class="card-title">${zexo_ver}</h3>
                 </div>
                 <div class="card-footer">
                   <div class="stats">
@@ -632,7 +632,7 @@ async function handleRequest(request) {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
   <script>
   //这个脚本的用途是前端变量传递
-  const hpp_ver="${hpp_ver}";
+  const zexo_ver="${zexo_ver}";
   const hpp_OwO="${hpp_OwO}";
   const avatar="${hpp_userimage}";
   const username="${username[0]}";
@@ -778,14 +778,14 @@ ${hpp_js}
             const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${githubdocpath}${filename}?ref=${hpp_githubdocbranch}`
             const hpp_sha = (JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())).sha
             const hpp_body = {
-              branch: hpp_githubdocbranch, message: `Upload from ${hpp_ver} By ${hpp_githubdocusername}`, content: file, sha: hpp_sha
+              branch: hpp_githubdocbranch, message: `Upload from ${zexo_ver} By ${hpp_githubdocusername}`, content: file, sha: hpp_sha
             }
             const hpp_docputinit = {
               body: JSON.stringify(hpp_body),
               method: "PUT",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "user-agent": hpp_ver,
+                "user-agent": zexo_ver,
                 "Authorization": "token " + hpp_githubdoctoken
               }
             }
@@ -806,14 +806,14 @@ ${hpp_js}
             const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${githubdocdraftpath}${filename}?ref=${hpp_githubdocbranch}`
             const hpp_sha = (JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())).sha
             const hpp_body = {
-              branch: hpp_githubdocbranch, message: `Upload draft from ${hpp_ver} By ${hpp_githubdocusername}`, content: file, sha: hpp_sha
+              branch: hpp_githubdocbranch, message: `Upload draft from ${zexo_ver} By ${hpp_githubdocusername}`, content: file, sha: hpp_sha
             }
             const hpp_docputinit = {
               body: JSON.stringify(hpp_body),
               method: "PUT",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "user-agent": hpp_ver,
+                "user-agent": zexo_ver,
                 "Authorization": "token " + hpp_githubdoctoken
               }
             }
@@ -834,14 +834,14 @@ ${hpp_js}
 
             const url = `https://api.github.com/repos/${hpp_githubimageusername}/${hpp_githubimagerepo}/contents${githubimagepath}${hpp_time}.${filename}`
             const hpp_body = {
-              branch: hpp_githubimagebranch, message: `Upload from ${hpp_ver} By ${hpp_githubimageusername}`, content: file
+              branch: hpp_githubimagebranch, message: `Upload from ${zexo_ver} By ${hpp_githubimageusername}`, content: file
             }
             const hpp_imageputinit = {
               body: JSON.stringify(hpp_body),
               method: "PUT",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "user-agent": hpp_ver,
+                "user-agent": zexo_ver,
                 "Authorization": "token " + hpp_githubimagetoken
               }
             }
@@ -859,14 +859,14 @@ ${hpp_js}
             const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${githubdocpath}${filename}?ref=${hpp_githubdocbranch}`
             const hpp_sha = (JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())).sha
             const hpp_body = {
-              branch: hpp_githubdocbranch, message: `Delete from ${hpp_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
+              branch: hpp_githubdocbranch, message: `Delete from ${zexo_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
             }
             const hpp_docputinit = {
               body: JSON.stringify(hpp_body),
               method: "DELETE",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "user-agent": hpp_ver,
+                "user-agent": zexo_ver,
                 "Authorization": "token " + hpp_githubdoctoken
               }
             }
@@ -886,14 +886,14 @@ ${hpp_js}
             const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${githubdocdraftpath}${filename}?ref=${hpp_githubdocbranch}`
             const hpp_sha = (JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())).sha
             const hpp_body = {
-              branch: hpp_githubdocbranch, message: `Delete draft from ${hpp_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
+              branch: hpp_githubdocbranch, message: `Delete draft from ${zexo_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
             }
             const hpp_docputinit = {
               body: JSON.stringify(hpp_body),
               method: "DELETE",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "user-agent": hpp_ver,
+                "user-agent": zexo_ver,
                 "Authorization": "token " + hpp_githubdoctoken
               }
             }
@@ -923,14 +923,14 @@ ${hpp_js}
             }
             //console.log(hpp_sha)
             const hpp_body = {
-              branch: hpp_githubimagebranch, message: `Delete from ${hpp_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
+              branch: hpp_githubimagebranch, message: `Delete from ${zexo_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
             }
             const hpp_imageputinit = {
               body: JSON.stringify(hpp_body),
               method: "DELETE",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "user-agent": hpp_ver,
+                "user-agent": zexo_ver,
                 "Authorization": "token " + hpp_githubimagetoken
               }
             }

@@ -506,7 +506,6 @@ async function handleRequest(request) {
 			if (path == "/hpp/admin/dash/tool") {
               hpp_tool_act = " active"
               hpp_init = `<div class="content">
-              hpp_init += `
               <script>
               async function triggerPagesDeploy() {
                   const btn = document.getElementById('deployTriggerBtn');
@@ -556,7 +555,7 @@ async function handleRequest(request) {
                       }, 3000);
                   }
               }
-              </script>`;
+              </script>
         <div class="container-fluid">
           <div class="row">
 

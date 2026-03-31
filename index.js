@@ -152,6 +152,8 @@ async function handleRequest(request) {
 		      <input type="text" class="input_text" id="hpp_account_identifier" placeholder="***" />
               <p>账户登录邮箱:</p>    
 		      <input type="text" class="input_text" id="hpp_Auth_Email" placeholder="ABC@DEF.com" />
+              <p>Pages 部署钩子 (Deploy Hook) URL:</p> 
+        <input type="text" class="input_text" id="hpp_deploy_hook_url" placeholder="https://api.cloudflare.com/.../deploy_hooks/..."/>
               <h3 style="color:#fff">Twikoo加强</h3>
               <p>Twikoo环境ID:</p>    
               <input type="text" class="input_text" id="hpp_twikoo_envId" placeholder="xxx" />
@@ -199,6 +201,7 @@ async function handleRequest(request) {
           const hpp_script_name = config["hpp_script_name"]
           const hpp_CF_Auth_Key = config["hpp_CF_Auth_Key"]
           const hpp_Auth_Email = config["hpp_Auth_Email"]
+          const hpp_deploy_hook_url = config["hpp_deploy_hook_url"]
           const hpp_twikoo_envId = config["hpp_twikoo-envId"]
           const hpp_OwO = config["hpp_OwO"]
           const hpp_back = config["hpp_back"]
@@ -1016,7 +1019,7 @@ ${hpp_js}
     if (hpp_logstatus != 1) {
         return new Response('{"status": "error", "message": "Unauthorized"}', { status: 401, headers: { "content-type": "application/json" } });
     }
-    const DEPLOY_HOOK_URL = 'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/8b8a39f4-95f7-442a-b32d-6f46f9b59251';
+    const DEPLOY_HOOK_URL = hpp_deploy_hook_url;
     try {
         const deployResponse = await fetch(DEPLOY_HOOK_URL, {
             method: 'POST',

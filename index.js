@@ -952,52 +952,26 @@ ${hpp_js}
               }
             })
           }
-    if (path == "/hpp/admin/api/trigger-deploy") {
+if (path == "/hpp/admin/api/trigger-deploy") {
     if (hpp_logstatus != 1) {
-        return new Response('{"status": "error", "message": "Unauthorized"}', { status: 401, headers: { "content-type": "application/json" } });
+        return new Response('Unauthorized', { status: 401 });
     }
-    const DEPLOY_HOOK_URL = hpp_deploy_hook_url;
-    try {
-        const deployResponse = await fetch(DEPLOY_HOOK_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({})
-        });
-        if (deployResponse.ok) {
-            const result = {
-                status: 'success',
-                message: '已成功触发重新部署。Cloudflare Pages 构建任务已开始，请稍后查看部署状态。'
-            };
-            return new Response(JSON.stringify(result), {
-                status: 200,
-                headers: { "content-type": "application/json;charset=UTF-8" }
-            });
-        } else {
-            const errorText = await deployResponse.text();
-            console.error('Deploy hook failed:', deployResponse.status, errorText);
-            const result = {
-                status: 'error',
-                message: `触发部署失败 (状态码: ${deployResponse.status})`
-            };
-            return new Response(JSON.stringify(result), {
-                status: 502, // Bad Gateway
-                headers: { "content-type": "application/json;charset=UTF-8" }
-            });
-        }
-    } catch (error) {
-        console.error('Error triggering deploy:', error);
-        const result = {
-            status: 'error',
-            message: '请求发生错误: ${error.message}'
-        };
-        return new Response(JSON.stringify(result),{
-          status: 500,
-          headers: {"content-type": "application/json;charset=UTF-8"}
-        });
-      }
+  
+    const hookUrl = hpp_deploy_hook_url;
+
+    const deployRes = await fetch(hookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    
+    const deployStatus = await deployRes.status;
+    
+    if (deployStatus == 200 || deployStatus == 201) {
+        return new Response('Deploy Triggered', { status: deployStatus });
+    } else {
+        return new Response('Fail To Trigger Deploy', { status: deployStatus });
     }
+}
           if (path.startsWith("/hpp/admin/api/getdraft")) {
             const filename = path.substr(("/hpp/admin/api/getdraft/").length)
             return (fetch(`https://raw.githubusercontent.com/${hpp_githubdocusername}/${hpp_githubdocrepo}/${hpp_githubdocbranch}${githubdocdraftpath}${filename}?ref=${hpp_githubdocbranch}`, hpp_githubgetdocinit))

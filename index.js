@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@0.2.0"
+const zexo_ver = "Zexo@0.2.1"
 const dev_mode_branch = "dist"
 let hpp_logstatus = 0
 
@@ -546,6 +546,25 @@ async function handleRequest(request) {
             </a>
             </div>
 
+<div class="col-lg-6 col-md-6 col-sm-6">
+    <a href="javascript:triggerPagesDeploy()" id="deployTriggerBtn">
+        <div class="card card-stats">
+            <div class="card-header card-header-warning card-header-icon">
+                <div class="card-icon">
+                    <i class="fa fa-cloud-upload"></i>
+                </div>
+                <p class="card-category">站点部署</p>
+                <!-- 主标题 -->
+                <h3 class="card-title">立即触发</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons">autorenew</i>触发 Pages 构建
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
           </div>
         </div>
       </div>`

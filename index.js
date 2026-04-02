@@ -509,56 +509,7 @@ async function handleRequest(request) {
 			if (path == "/hpp/admin/dash/tool") {
               hpp_tool_act = " active"
               hpp_init = `<div class="content">
-              <script>
-async function triggerPagesDeploy() {
-    const btn = document.getElementById('deployTriggerBtn');
-    const resultDiv = document.getElementById('deployResult') || document.createElement('div'); // 结果展示区域
-    const originalBtnHTML = btn.innerHTML;
-
-    // 防止重复点击，更新按钮状态
-    btn.disabled = true;
-    btn.innerHTML = '<i class="material-icons">hourglass_empty</i> 发送中...';
-
-    // 显示加载状态
-    resultDiv.innerHTML = '<div class="alert alert-info">正在向服务器发送部署指令...</div>';
-
-    try {
-        // 关键：调用您已实现的后端 API
-        const response = await fetch('/hpp/admin/api/trigger-deploy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.status === 'success') {
-            resultDiv.innerHTML = `<div class="alert alert-success">
-                                        <i class="material-icons">check_circle</i>
-                                        <strong>成功！</strong> ${data.message}
-                                   </div>`;
-        } else {
-            resultDiv.innerHTML = `<div class="alert alert-danger">
-                                        <i class="material-icons">error</i>
-                                        <strong>操作失败。</strong> ${data.message || '服务器返回错误'}
-                                   </div>`;
-        }
-    } catch (error) {
-        console.error('部署触发失败:', error);
-        resultDiv.innerHTML = `<div class="alert alert-danger">
-                                    <i class="material-icons">error</i>
-                                    <strong>网络请求失败。</strong> 请检查控制台或网络连接。
-                               </div>`;
-    } finally {
-        // 3秒后恢复按钮状态
-        setTimeout(() => {
-            btn.disabled = false;
-            btn.innerHTML = originalBtnHTML;
-        }, 3000);
-    }
-}
-              </script>
+              
         <div class="container-fluid">
           <div class="row">
 
@@ -594,20 +545,6 @@ async function triggerPagesDeploy() {
               </div>
             </a>
             </div>
-
-      <div class="card">
-          <div class="card-header card-header-info">
-              <h4 class="card-title">博客站点部署</h4>
-              <p class="card-category">触发 Cloudflare Pages 重新构建与部署</p>
-          </div>
-          <div class="card-body">
-              <p>此操作将触发与 HexoPlusPlus 关联的 Cloudflare Pages 项目 (<strong>zari-blog</strong>) 重新构建。系统将从 Git 仓库拉取最新代码并执行部署流程。</p>
-              <button type="button" class="btn btn-info" onclick="triggerPagesDeploy()" id="deployTriggerBtn">
-                  <i class="material-icons">cloud_upload</i> 立即触发重新部署
-              </button>
-              <div id="deployResult" style="margin-top: 15px;"></div>
-          </div>
-      </div>
 
           </div>
         </div>

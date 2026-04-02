@@ -1,42 +1,44 @@
-function zexo_trigger_deploy(){
-    var btn = document.getElementById('deployTriggerBtn'); 
-    if (btn) {
-        btn.style.pointerEvents = 'none'; // 防止重复点击
-        btn.style.opacity = '0.7';
-    }
-    
-    swal({title: "确认重新部署",text: "这将触发Cloudflare Pages重新构建您的博客站点",icon: "warning",buttons: ["取消", "确认部署"],dangerMode: true})
+function zexo_trigger_deploy() {
+   swal({
+        title: "确认重新部署",
+        text: "这将触发 Cloudflare Pages 重新构建您的博客站点。",
+        icon: "warning",
+        buttons: ["取消", "确认部署"],
+        dangerMode: true
+    })
     .then((value) => {
-        if(value){
-            swal({title: "\n部署中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
+        // 用户点击“确认部署”
+        if (value) {
+            swal({
+                title: "\n部署中...",
+                icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",
+                text: "\n",
+                button: false,
+                closeOnClickOutside: false,
+                closeOnEsc: false
+            });
             var ajax = ajaxObject();
-            ajax.open( "post" , '/hpp/admin/api/trigger-deploy' , true );
-            ajax.setRequestHeader( "Content-Type" , "application/json" );
+            ajax.open("post", '/hpp/admin/api/trigger-deploy', true);
+            ajax.setRequestHeader("Content-Type", "application/json");
+            
             ajax.onreadystatechange = function () {
-                if( ajax.readyState == 4 ){
+                if (ajax.readyState == 4) {
                     swal.close();
-                    // 请求结束后恢复按钮状态
-                    if (btn) {
-                        btn.style.pointerEvents = 'auto';
-                        btn.style.opacity = '1';
-                    }
-                    if( ajax.status == 200 ){
-                        sweetAlert("成功", "已成功触发重新部署，Cloudflare Pages正在构建", "success");
+                   
+                    if (ajax.status == 200) {
+                        sweetAlert("成功", "已成功触发重新部署！", "success");
                     } else {
-                        sweetAlert("糟糕", "触发部署失败：" + ajax.statusText, "error");
+                        sweetAlert("糟糕", "触发部署失败！", "error");
                     }
                 }
-            }
+            };
+           
             ajax.send(JSON.stringify({}));
-        }else{
-            // 如果用户取消，也需要恢复按钮状态
-            if (btn) {
-                btn.style.pointerEvents = 'auto';
-                btn.style.opacity = '1';
-            }
-            sweetAlert("已取消", "部署操作已取消", "info");
+        } else {
+            // 用户点击“取消”
+            sweetAlert("已取消", "部署操作已取消。", "info");
         }
-    })
+    });
 };
 
 function hpp_artitalk_into_hpptalk(){

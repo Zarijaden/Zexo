@@ -94,3 +94,6 @@ swal({title:"你真的要销毁？",text:"我相信你是手滑了",icon:"warnin
     ajax.send();}else{hpp_no()}})}else{hpp_no()}})}else{hpp_no()}})
 function hpp_no(){swal("您放弃了销毁数据","您的数据是安全的","success")}
 }
+
+<script src="node_modules/eruda/eruda.js"></script>
+<script>eruda.init();</script>

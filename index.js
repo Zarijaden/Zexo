@@ -568,7 +568,8 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://raw.githubusercontent.com/Zarijaden/Zexo/refs/heads/main/src/tool.js'></script>`
+              hpp_js = `<script src='https://raw.githubusercontent.com/Zarijaden/Zexo/refs/heads/main/src/tool.js'></script><script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>`
             }
             if (path == "/hpp/admin/dash/set") {
               hpp_set_act = " active"

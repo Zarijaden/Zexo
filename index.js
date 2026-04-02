@@ -568,6 +568,8 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
+<script src="node_modules/eruda/eruda.js"></script>
+<script>eruda.init();</script>
               hpp_js = `<script src='https://cdn.jsdelivr.net/gh/HexoPlusPlus/HexoPlusPlus@${hpp_CDNver}/tool.js'></script>`
             }
             if (path == "/hpp/admin/dash/set") {

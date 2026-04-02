@@ -1,4 +1,4 @@
-function triggerPagesDeploy(){
+function zexo_trigger_deploy(){
     var btn = document.getElementById('deployTriggerBtn'); 
     if (btn) {
         btn.style.pointerEvents = 'none'; // 防止重复点击

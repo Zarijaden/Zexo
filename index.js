@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@0.2.1"
+const zexo_ver = "Zexo@0.2.2"
 const dev_mode_branch = "dist"
 let hpp_logstatus = 0
 
@@ -547,7 +547,7 @@ async function handleRequest(request) {
             </div>
 
 <div class="col-lg-6 col-md-6 col-sm-6">
-    <a href="javascript:triggerPagesDeploy()" id="deployTriggerBtn">
+    <a href="javascript:zexo_trigger_deploy()" id="triggerDeployBtn">
         <div class="card card-stats">
             <div class="card-header card-header-warning card-header-icon">
                 <div class="card-icon">

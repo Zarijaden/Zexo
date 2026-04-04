@@ -1216,7 +1216,7 @@ if (path == "/hpp/admin/api/trigger-deploy") {
        <button type="button" id="login-button">登录</button>
        <br />
        <br />
-       <a href="https://github.com/HexoPlusPlus/HexoPlusPlus" id="tips" style="color: #fff;">@HexoPP</a>
+       <a href="https://github.com/HexoPlusPlus/HexoPlusPlus" id="tips" style="color: #fff;">@Zexo</a>
       </form>
      </div>
     </div>

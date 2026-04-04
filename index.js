@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@0.2.3"
+const zexo_ver = "Zexo@0.2.4"
 const dev_mode_branch = "dist"
 let hpp_logstatus = 0
 
@@ -312,7 +312,7 @@ async function handleRequest(request) {
             
             
 			<div class="col-lg-6 col-md-6 col-sm-6">
-              <a href="https://github.com/Zarijaden/blog" target="_blank">
+              <a href="https://github.com/${hpp_githubdocusername}/${hpp_githubdocrepo}" target="_blank">
               <div class="card card-stats">
                 <div class="card-header card-header-primary card-header-icon">
                   <div class="card-icon">

@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@0.2.4"
+const zexo_ver = "Zexo@0.2.5"
 const dev_mode_branch = "dist"
 let hpp_logstatus = 0
 
@@ -682,6 +682,14 @@ async function handleRequest(request) {
               <p>图片管理</p>
             </a>
           </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href=${zexo_cms_link}>
+          <i class="material-icons">file</i>
+            <p>CMS</p>
+            </a>
+          </li>
+
 		  <li class="nav-item${hpp_tool_act}">
             <a class="nav-link" href="/hpp/admin/dash/tool">
               <i class="material-icons">widgets</i>

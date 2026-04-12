@@ -154,6 +154,8 @@ async function handleRequest(request) {
 		      <input type="text" class="input_text" id="hpp_Auth_Email" placeholder="ABC@DEF.com" />
               <p>Pages 部署钩子 (Deploy Hook) URL:</p> 
         <input type="text" class="input_text" id="hpp_deploy_hook_url" placeholder="https://api.cloudflare.com/.../deploy_hooks/..."/>
+              <p>CMS邀请魔法URL:</p> 
+        <input type="text" class="input_text" id="zexo_cms_link" placeholder=""/>
               <h3 style="color:#fff">Twikoo加强</h3>
               <p>Twikoo环境ID:</p>    
               <input type="text" class="input_text" id="hpp_twikoo_envId" placeholder="xxx" />
@@ -202,6 +204,7 @@ async function handleRequest(request) {
           const hpp_CF_Auth_Key = config["hpp_CF_Auth_Key"]
           const hpp_Auth_Email = config["hpp_Auth_Email"]
           const hpp_deploy_hook_url = config["hpp_deploy_hook_url"]
+          const zexo_cms_link = config["zexo_cms_link"]
           const hpp_twikoo_envId = config["hpp_twikoo-envId"]
           const hpp_OwO = config["hpp_OwO"]
           const hpp_back = config["hpp_back"]
@@ -691,12 +694,14 @@ async function handleRequest(request) {
               <p>设置</p>
             </a>
           </li>
+
       <li class="nav-item">
         <a class="nav-link" href="/">
           <i class="material-icons">logout</i>
             <p>退出</p>
             </a>
           </li>
+
         </ul>
       </div>
     </div>

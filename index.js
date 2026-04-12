@@ -685,7 +685,7 @@ async function handleRequest(request) {
 
     <li class="nav-item">
         <a class="nav-link" href=${zexo_cms_link}>
-          <i class="material-icons">file</i>
+          <i class="material-icons">InsertDriveFileIcon</i>
             <p>CMS</p>
             </a>
           </li>

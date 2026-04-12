@@ -27,14 +27,14 @@ var ajax = ajaxObject();
     ajax.send();
 }
 
-if(zexo_ver == 'Zexo@0.2.4'){
+if(zexo_ver == 'Zexo@0.2.5'){
   swal({
 title: "成功",
     text: "无需更新，当前已是最新版本",
     icon: "success",
 });
 }else{
-swal("存在0.2.4更新，是否更新？", {
+swal("存在0.2.5更新，是否更新？", {
   icon: "warning",
   buttons: {
     cancel: "否",

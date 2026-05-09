@@ -5,7 +5,7 @@
 const hpp_CDNver = "d4051c3"
 const zexo_ver = "Zexo@0.2.4"
 const dev_mode_branch = "dist"
-let hpp_logstatus = 0
+let zexo_logstatus = 0
 
 
 function getJsonLength(jsonData) {
@@ -50,15 +50,15 @@ async function handleRequest(request) {
     const domain = (urlStr.split('/'))[2]
     const username = hpp_username.split(",");
     const password = hpp_password.split(",");
-    //console.log(hpp_logstatus)
+    //console.log(zexo_logstatus)
     for (var i = 0; i < getJsonLength(username); i++) {
       if (getCookie(request, "password") == md5(password[i]) && getCookie(request, "username") == md5(username[i])) {
-        hpp_logstatus = 1
+        zexo_logstatus = 1
       }
     }
 
     if (path.startsWith('/hpp/admin')) {
-      if (hpp_logstatus == 1) {
+      if (zexo_logstatus == 1) {
         const hpp_config = await KVNAME.get("hpp_config");
         if (hpp_config === null) {
           if (path == '/hpp/admin/api/upconfig') {
@@ -754,19 +754,6 @@ ${hpp_js}
             return new Response(hpp_dash, {
               headers: { "content-type": "text/html;charset=UTF-8" }
             })
-
-
-
-
-
-
-
-
-
-
-
-
-
 
           }
           if (path.startsWith("/hpp/admin/api/adddoc/")) {

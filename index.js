@@ -964,7 +964,7 @@ ${hpp_js}
             })
           }
 if (path == "/hpp/admin/api/trigger-deploy") {
-    if (hpp_logstatus != 1) {
+    if (zexo_logstatus != 1) {
         return new Response('Unauthorized', { status: 401 });
     }
   

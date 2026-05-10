@@ -48,7 +48,7 @@ async function handleRequest(request) {
     const urlObj = new URL(urlStr)
     const path = urlObj.href.substr(urlObj.origin.length)
     const domain = (urlStr.split('/'))[2]
-    const username = zexo_username.split(",");
+    const username = hpp_username.split(",");
     const password = hpp_password.split(",");
     //console.log(zexo_logstatus)
     for (var i = 0; i < getJsonLength(username); i++) {

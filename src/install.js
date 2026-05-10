@@ -64,7 +64,7 @@ function start() {
     } else {
         document.getElementById("butttt").innerHTML = "配置上传中"
 		let hpp_domain=document.getElementById("hpp_domain").value==""?window.location.host:document.getElementById("hpp_domain").value;
-		let hpp_username=document.getElementById("hpp_userimage").value==""?"https://cdn.jsdelivr.net/gh/ChenYFan/CDN@master/img/hpp_upload/1612610340000.jpg":document.getElementById("hpp_userimage").value;
+		let zexo_username=document.getElementById("hpp_userimage").value==""?"https://cdn.jsdelivr.net/gh/ChenYFan/CDN@master/img/hpp_upload/1612610340000.jpg":document.getElementById("hpp_userimage").value;
 		let hpp_title=document.getElementById("hpp_title").value==""?"HexoPlusPlus小飞机":document.getElementById("hpp_title").value;
 		let hpp_usericon=document.getElementById("hpp_usericon").value==""?"https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@master/doc_img/icon.png":document.getElementById("hpp_usericon").value;
 		let hpp_cors=document.getElementById("hpp_cors").value==""?"*":document.getElementById("hpp_cors").value
@@ -79,7 +79,7 @@ function start() {
 		let hpp_page_limit=document.getElementById("hpp_page_limit").value==""?"10":document.getElementById("hpp_page_limit").value
 		const config={
 			"hpp_domain":hpp_domain,
-			"hpp_userimage":hpp_username,
+			"hpp_userimage":zexo_username,
 			"hpp_title":hpp_title,
 			"hpp_usericon":hpp_usericon,
 			"hpp_cors":hpp_cors,

@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@0.2.5"
+const zexo_ver = "Zexo@0.2.5z2"
 const dev_mode_branch = "dist"
 let zexo_logstatus = 0
 
@@ -48,7 +48,7 @@ async function handleRequest(request) {
     const urlObj = new URL(urlStr)
     const path = urlObj.href.substr(urlObj.origin.length)
     const domain = (urlStr.split('/'))[2]
-    const username = hpp_username.split(",");
+    const username = zexo_username.split(",");
     const password = hpp_password.split(",");
     //console.log(zexo_logstatus)
     for (var i = 0; i < getJsonLength(username); i++) {

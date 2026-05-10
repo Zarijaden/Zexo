@@ -79,7 +79,7 @@ function start() {
 		let hpp_page_limit=document.getElementById("hpp_page_limit").value==""?"10":document.getElementById("hpp_page_limit").value
 		const config={
 			"hpp_domain":hpp_domain,
-			"hpp_userimage":zexo_username,
+			"hpp_userimage":hpp_username,
 			"hpp_title":hpp_title,
 			"hpp_usericon":hpp_usericon,
 			"hpp_cors":hpp_cors,

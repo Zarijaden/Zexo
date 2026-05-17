@@ -328,7 +328,13 @@ var ajax = ajaxObject();
 				for(var i=0;i<getJsonLength(arr_list);i++){
 					document.getElementById("choo").innerHTML+=`<option>${arr_list[i]}</option>`
 				}
-				$('#choo').editableSelect();
+				$('#choo').editableSelect({
+			    onSelect: function(element) {
+			        if (element) {
+			            $('#choo').val(element.val());
+			        }
+			    }
+			});
 				choo.placeholder = "选择一个文件或直接新增一个文件"
 				choo.value=localStorage.getItem(`hpp_hpp_docs_choo_backup`);
 

@@ -270,90 +270,13 @@ function base64Encode(input){
                 return rv;
 }
 function hpp_get_list(){
-function getJsonLength(jsonData) {
-
-  var jsonLength = 0;
-
-  for (var item in jsonData) {
-
-    jsonLength++;
-
-  }
-
-  return jsonLength;
-}
-function del_same(_arr){
-        for(n=0;n<_arr.length-1;n++){
-            for(i=n+1; i<_arr.length;i++){
-                if(_arr[n]==_arr[i]){
-                    _arr.splice(i--,1);
-                }
-            }
-        }
-        console.log(_arr);
-}
-let arr_list=[]
-let arr_path=""
-let hpp_arr_githubdocpath=hpp_githubdocpath.substr(1,hpp_githubdocpath.length-1)
-let hpp_arr_draft_githubdocpath=hpp_githubdocdraftpath.substr(1,hpp_githubdocdraftpath.length-1)
-var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/getlist' , true );
-    ajax.setRequestHeader( "Content-Type" , "text/plain" );
-    ajax.onreadystatechange = function () {
-        if( ajax.readyState == 4 ) {
-            if( ajax.status == 200 ) {
-                for(var i=0;i<getJsonLength(JSON.parse(ajax.responseText));i++){
-					try{
-						arr_path=JSON.parse(ajax.responseText)[i]["path"]
-						arr_path=arr_path.split(hpp_arr_githubdocpath)[1]
-						if(arr_path!=undefined)arr_list.push(arr_path)
-						
-					}catch(e){}
-				}
-				var ajax2 = ajaxObject();
-    ajax2.open( "post" , '/hpp/admin/api/get_draftlist' , true );
-    ajax2.setRequestHeader( "Content-Type" , "text/plain" );
-    ajax2.onreadystatechange = function () {
-        if( ajax2.readyState == 4 ) {
-            if( ajax2.status == 200 ) {
-                for(var j=0;j<getJsonLength(JSON.parse(ajax2.responseText));j++){
-					try{
-						arr_path=JSON.parse(ajax2.responseText)[j]["path"]
-						arr_path=arr_path.split(hpp_arr_draft_githubdocpath)[1]
-						if(arr_path!=undefined)arr_list.push(arr_path)
-						
-					}catch(e){}
-				}
-				del_same(arr_list)
-				for(var i=0;i<getJsonLength(arr_list);i++){
-					document.getElementById("choo").innerHTML+=`<option>${arr_list[i]}</option>`
-				}
-				$('#choo').editableSelect({
-			    onSelect: function(element) {
-			        if (element) {
-			            $('#choo').val(element.val());
-			        }
-			    }
-			});
-				choo.placeholder = "选择一个文件或直接新增一个文件"
-				choo.value=localStorage.getItem(`hpp_hpp_docs_choo_backup`);
-
-            }
-            else {
-			sweetAlert("糟糕", "拉取文件失败！", "error")
-            }
-        }
+    choo.placeholder = "新建一个文件"
+    var urlParams = new URLSearchParams(window.location.search);
+    var fileParam = urlParams.get('file');
+    if (fileParam) {
+        choo.value = fileParam;
+        hpp_get_md();
     }
-ajax2.send(new Date().getTime());
-            }
-            else {
-			sweetAlert("糟糕", "拉取文件失败！", "error")
-            }
-        }
-    }
-ajax.send(new Date().getTime());
-
-
 }
 var input = document.getElementById("input");
 input.addEventListener('change', readFile, false);

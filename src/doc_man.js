@@ -27,6 +27,9 @@ var ctJson = "/hpp/admin/api/getlist"
                           <td>
                             <a href="javascript:del(\'${arr_path}\');">删除<\/a>
                           <\/td>
+                          <td>
+                            <a href="/hpp/admin/edit?file=${encodeURIComponent(arr_path)}">修改<\/a>
+                          <\/td>
 						  <td>
                             <a href="${value.download_url}">原始地址<\/a>
                           <\/td>
@@ -58,6 +61,9 @@ var drJson = "/hpp/admin/api/get_draftlist"
                           <\/td>
                           <td>
                             <a href="javascript:del_dr(\'${arr_path}\');">删除<\/a>
+                          <\/td>
+                          <td>
+                            <a href="/hpp/admin/edit?file=${encodeURIComponent(arr_path)}">修改<\/a>
                           <\/td>
 						  <td>
                             <a href="${value.download_url}">原始地址<\/a>

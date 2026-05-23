@@ -1,4 +1,4 @@
-let zexo_lver = "Zexo@1.1dev1"
+let zexo_lver = "Zexo@1.1"
 function hpp_update(){
 swal({title: "\n更新中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 var ajax = ajaxObject();

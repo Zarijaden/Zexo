@@ -1,3 +1,4 @@
+const zexo_lver = "Zexo@1.1dev1"
 function hpp_update(){
 swal({title: "\n更新中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 var ajax = ajaxObject();
@@ -27,14 +28,14 @@ var ajax = ajaxObject();
     ajax.send();
 }
 
-if(zexo_ver == 'Zexo@0.2.8'){
+if(zexo_ver == zexo_lver){
   swal({
 title: "成功",
     text: "无需更新，当前已是最新版本",
     icon: "success",
 });
 }else{
-swal("存在更新，是否更新？", {
+swal("存在更新", zexo_lver, "，是否更新？", {
   icon: "warning",
   buttons: {
     cancel: "否",

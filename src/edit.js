@@ -335,12 +335,7 @@ var ajax = ajaxObject();
 			        }
 			    }
 			});
-				choo.placeholder = "选择一个文件或直接新增一个文件"
-				var fileParam = new URLSearchParams(window.location.search).get('file');
-                    choo.value = fileParam;
-                    localStorage.setItem('hpp_hpp_docs_choo_backup', fileParam);
-                    hpp_get_md();
-
+				choo.placeholder = "选择一个文件或直接新增一个文件";
             }
             else {
 			sweetAlert("糟糕", "拉取文件失败！", "error")

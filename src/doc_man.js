@@ -27,6 +27,10 @@ var ctJson = "/hpp/admin/api/getlist"
                           <td>
                             <a href="javascript:del(\'${arr_path}\');">删除<\/a>
                           <\/td>
+                          <td>
+                            <a href="javascript:void(0)"
+                               onclick="hpp_edit_doc('${arr_path}')">编辑<\/a>
+                          <\/td>
 						  <td>
                             <a href="${value.download_url}">原始地址<\/a>
                           <\/td>
@@ -215,3 +219,8 @@ function deldraft(name){
 	}
 	}
 ajax.send(new Date().getTime());};
+
+function hpp_edit_doc(filename) {
+  // 跳转到书写页，用 URL 参数携带文件名
+  window.location.href = '/hpp/admin/dash/edit?file=' + encodeURIComponent(filename);
+}

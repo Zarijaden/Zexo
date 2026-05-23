@@ -336,7 +336,10 @@ var ajax = ajaxObject();
 			    }
 			});
 				choo.placeholder = "选择一个文件或直接新增一个文件"
-				choo.value=localStorage.getItem(`hpp_hpp_docs_choo_backup`);
+				var fileParam = new URLSearchParams(window.location.search).get('file');
+                    choo.value = fileParam;
+                    localStorage.setItem('hpp_hpp_docs_choo_backup', fileParam);
+                    hpp_get_md();
 
             }
             else {
@@ -571,5 +574,3 @@ new hpp_md_editor({
 	owo: hpp_OwO,
 	backuptime: 60000
 })
-
-

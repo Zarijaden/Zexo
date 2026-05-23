@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@0.2.7"
+const zexo_ver = "Zexo@0.2.8"
 const dev_mode_branch = "dist"
 let zexo_logstatus = 0
 
@@ -74,7 +74,7 @@ async function handleRequest(request) {
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<title>${zexo_ver}安装</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/install.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/install.css">
 </head>
 <body>
 		<div class="cont_principal">
@@ -172,7 +172,7 @@ async function handleRequest(request) {
 		</div>
 	</div>
 	
-	<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/install.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/install.js"></script>
 </body>
 </html>`
             return new Response(hpp_installhtml, {
@@ -331,7 +331,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/home.js'></script>`
+              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/home.js'></script>`
             }
             if (path == "/hpp/admin/dash/edit") {
               hpp_edit_act = " active"
@@ -381,7 +381,7 @@ async function handleRequest(request) {
         </div>
       </div>`
               hpp_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' />
-<script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><script src="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.js"></script><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/edit.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/OwO.min.css">
+<script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><script src="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.js"></script><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/edit.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/OwO.min.css">
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/highlight.min.js"></script>
 <link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/styles/${hpp_highlight_style}.min.css' />
 
@@ -425,7 +425,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' /> <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/talk.css" /><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/talk.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/OwO.min.css">`
+              hpp_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' /> <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/talk.css" /><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/talk.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/OwO.min.css">`
             }
             if (path == "/hpp/admin/dash/docs_man") {
               hpp_docs_man_act = " active"
@@ -464,7 +464,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/doc_man.js'></script>`
+              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/doc_man.js'></script>`
 
             }
             if (path == "/hpp/admin/dash/img_man") {
@@ -503,7 +503,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/css/swipebox.css"><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/img_man.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script>
+              hpp_js = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/css/swipebox.css"><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/img_man.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><script src="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/js/jquery.swipebox.min.js"></script>`
 
             }
@@ -605,7 +605,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/config.js'></script>`
+              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/config.js'></script>`
             }
             let hpp_plugin = ""
             if (hpp_plugin_css != undefined) { hpp_plugin += `<link rel="stylesheet" type="text/css" href="${hpp_plugin_css}" />` }
@@ -620,8 +620,8 @@ async function handleRequest(request) {
   <title>${hpp_title}</title>
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
   ${hpp_plugin}
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/font.css" />
-  <link href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/admin_all_${hpp_theme_mode}.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/font.css" />
+  <link href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/admin_all_${hpp_theme_mode}.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
   <script>
@@ -744,7 +744,7 @@ async function handleRequest(request) {
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert/dist/sweetalert.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/admin_all.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/admin_all.js"></script>
 ${hpp_js}
 
 </body>
@@ -1194,7 +1194,7 @@ if (path == "/hpp/admin/api/trigger-deploy") {
 　　 a:hover { text-decoration:underline;color: white}
 　　 a:visited { text-decoration: none;color: white}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/login.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/login.css" />
  </head>
  <body>
   <div id="all">
@@ -1226,7 +1226,7 @@ if (path == "/hpp/admin/api/trigger-deploy") {
     </ul>
    </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/md5.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/md5.js"></script>
   ${hpp_captcha_no_1}<script src="https://cdn.jsdelivr.net/gh/zpfz/RVerify.js/dist/RVerify.min.js"></script>${hpp_captcha_no_2}
 	  ${hpp_captcha_no_1}<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zpfz/RVerify.js/dist/RVerify.min.css"/>${hpp_captcha_no_2}
   <script>
@@ -1426,8 +1426,8 @@ login();
 <title>HexoPlusPlus_Talk预览页面</title>
 </head>
 <body>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/talk.css" />
-<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/talk_user.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/talk.css" />
+<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/talk_user.js"></script>
 <div id="hpp_talk"></div>
 <script>
 new hpp_talk({
@@ -1451,7 +1451,7 @@ start: 0
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
         <title>HexoPlusPlusError</title>
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/error.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/error.css" />
 	</head>
 	<body>
 		<div class="container demo-2">
@@ -1469,7 +1469,7 @@ start: 0
                 </div>
             </div>
 		</div>
-        <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/error.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/error.js"></script>
 	</body>
 </html>
 `
@@ -1486,7 +1486,7 @@ start: 0
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
         <title>HexoPlusPlusError</title>
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/error.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/error.css" />
 	</head>
 	<body>
 		<div class="container demo-2">
@@ -1505,7 +1505,7 @@ start: 0
                 </div>
             </div>
 		</div>
-        <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo@${hpp_CDNver}/error.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/error.js"></script>
 	</body>
 </html>
 `

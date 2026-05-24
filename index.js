@@ -1,9 +1,8 @@
-//const md5=require ('md5')
+const md5=require ('md5')
 //记得更新时要更新zexo_ver, package-lock.json, package.json, update.js
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@1.1"
 const dev_mode_branch = "dist"
 let zexo_logstatus = 0
 

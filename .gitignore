@@ -6,3 +6,5 @@ demo/
 worker/
 dist/
 .idea/
+.wrangler/
+.env

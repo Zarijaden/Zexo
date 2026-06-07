@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@1.2"
+const zexo_ver = "Zexo@1.1"
 const dev_mode_branch = "dist"
 let zexo_logstatus = 0
 
@@ -566,10 +566,11 @@ async function handleRequest(request) {
         </div>
     </a>
 </div>
+
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/src/tool.js'></script>`
+              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/tool.js'></script>`
             }
             if (path == "/hpp/admin/dash/set") {
               hpp_set_act = " active"

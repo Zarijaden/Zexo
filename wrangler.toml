@@ -1,9 +1,21 @@
+# Zexo — Cloudflare Workers 配置文件
+# 
+# 本地开发: npm run dev   (使用 wrangler dev 本地模拟)
+# 远程部署: npm run deploy (发布到 Cloudflare)
+
 name = "zexo"
-workers_dev = true
-compatibility_date = "2026-05-24"
-account_id = "18a4be16ffbe9059c7820d123caff0b7"
 main = "./index.js"
+compatibility_date = "2026-05-24"
+
+# Cloudflare 账户 ID（部署到远程时需要）
+account_id = "18a4be16ffbe9059c7820d123caff0b7"
+
+# Workers.dev 子域名部署
+workers_dev = true
+
+# KV 命名空间绑定
+# 本地 dev 模式下 Miniflare 3 会自动模拟 KV，不需要远程 KV
 [[kv_namespaces]]
-binding = "KVNAME"
+binding = "KVNAME"               # 代码中使用的绑定名称（await KVNAME.get/put）
 id = "83df7b3228a94bd4bb7fbd3f510f1940"
-preview_id = "83df7b3228a94bd4bb7fbd3f510f1940"
+preview_id = "92ab4987498a4b6682b399ba378cf69f"

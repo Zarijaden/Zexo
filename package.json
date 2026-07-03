@@ -1,0 +1,27 @@
+{
+  "name": "zexo",
+  "version": "1.1.0",
+  "private": true,
+  "description": "基于 Cloudflare Workers 的静态博客后端管理面板",
+  "main": "index.js",
+  "scripts": {
+    "dev": "wrangler dev --persist-to .wrangler/state",
+    "dev:remote": "wrangler dev --remote",
+    "deploy": "wrangler deploy",
+    "login": "wrangler login",
+    "build": "gulp"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "blog",
+    "hexo"
+  ],
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "md5": "^2.3.0"
+  }
+}

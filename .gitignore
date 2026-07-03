@@ -8,3 +8,4 @@ dist/
 .idea/
 .wrangler/
 .env
+.dev.vars

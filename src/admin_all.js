@@ -1558,7 +1558,7 @@ function debounce(func, wait, immediate) {
 
 function kick(){
 	var ajax = ajaxObject();
-    ajax.open( "get" , '/hpp/admin/api/kick', true );
+    ajax.open( "get" , '/zexo/admin/api/kick', true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -1575,7 +1575,7 @@ function kick(){
 };
 
 function hpp_logout(){
-document.cookie="username=;"+"path=/hpp/admin";document.cookie="password=;"+"path=/hpp/admin";  window.location.href = '/hpp/admin/login';
+document.cookie="username=;"+"path=/zexo/admin";document.cookie="password=;"+"path=/zexo/admin";  window.location.href = '/zexo/admin/login';
 };
 function ajaxObject() {
     var xmlHttp;

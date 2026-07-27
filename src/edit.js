@@ -297,7 +297,7 @@ let arr_path=""
 let hpp_arr_githubdocpath=hpp_githubdocpath.substr(1,hpp_githubdocpath.length-1)
 let hpp_arr_draft_githubdocpath=hpp_githubdocdraftpath.substr(1,hpp_githubdocdraftpath.length-1)
 var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/getlist' , true );
+    ajax.open( "post" , '/zexo/admin/api/getlist' , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -311,7 +311,7 @@ var ajax = ajaxObject();
 					}catch(e){}
 				}
 				var ajax2 = ajaxObject();
-    ajax2.open( "post" , '/hpp/admin/api/get_draftlist' , true );
+    ajax2.open( "post" , '/zexo/admin/api/get_draftlist' , true );
     ajax2.setRequestHeader( "Content-Type" , "text/plain" );
     ajax2.onreadystatechange = function () {
         if( ajax2.readyState == 4 ) {
@@ -390,7 +390,7 @@ function readFile() {
 };
 function hpp_uploadimage(image,f_name){
 	var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/addimage/'+f_name , true );
+    ajax.open( "post" , '/zexo/admin/api/addimage/'+f_name , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -415,7 +415,7 @@ function hpp_uploadimage(image,f_name){
 function hpp_upload_md(){
 	swal({title: "\n上传中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 	var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/adddoc/'+choo.value , true );
+    ajax.open( "post" , '/zexo/admin/api/adddoc/'+choo.value , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -444,7 +444,7 @@ document.getElementById(`text_hpp_doc_editor`).style.display = "block";
 document.getElementById(`hpp_eye_hpp_doc_editor`).innerHTML=`<i class="fa fa-eye fa-2x"><\/i>`
 hpp_replace_mark("# 正在获取"+choo.value+"中")
 var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/getdoc/'+choo.value , true );
+    ajax.open( "post" , '/zexo/admin/api/getdoc/'+choo.value , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -467,7 +467,7 @@ document.getElementById(`text_hpp_doc_editor`).style.display = "block";
 document.getElementById(`hpp_eye_hpp_doc_editor`).innerHTML=`<i class="fa fa-eye fa-2x"><\/i>`
 hpp_replace_mark("# 正在获取模板文件中")
 var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/getscaffolds' , true );
+    ajax.open( "post" , '/zexo/admin/api/getscaffolds' , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -488,7 +488,7 @@ var ajax = ajaxObject();
 function hpp_upload_draft(){
 	swal({title: "\n上传中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 	var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/adddraft/'+choo.value , true );
+    ajax.open( "post" , '/zexo/admin/api/adddraft/'+choo.value , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -517,7 +517,7 @@ document.getElementById(`text_hpp_doc_editor`).style.display = "block";
 document.getElementById(`hpp_eye_hpp_doc_editor`).innerHTML=`<i class="fa fa-eye fa-2x"><\/i>`
 hpp_replace_mark("正在获取"+choo.value+"中")
 var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/getdraft/'+choo.value , true );
+    ajax.open( "post" , '/zexo/admin/api/getdraft/'+choo.value , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -536,7 +536,7 @@ var ajax = ajaxObject();
 function hpp_del_index(){
 	swal({title: "\n加载中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 	var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/index_del' , true );
+    ajax.open( "post" , '/zexo/admin/api/index_del' , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {

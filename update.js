@@ -2,7 +2,7 @@ let zexo_lver = "Zexo@1.2"
 function hpp_update(){
 swal({title: "\n更新中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 var ajax = ajaxObject();
-    ajax.open( "get" , '/hpp/admin/api/update' , true );
+    ajax.open( "get" , '/zexo/admin/api/update' , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {swal.close();

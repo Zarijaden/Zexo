@@ -1,6 +1,6 @@
 function hpp_get_doc_long(){
 var ajax = ajaxObject();
-ajax.open( "get" , '/hpp/admin/api/getlist', true );
+ajax.open( "get" , '/zexo/admin/api/getlist', true );
 ajax.setRequestHeader( "Content-Type" , "text/plain" );
 ajax.onreadystatechange = function () {
 if( ajax.readyState == 4 ) {
@@ -17,7 +17,7 @@ if( ajax.readyState == 4 ) {
 }
 function hpp_get_img_long(){
 var ajax = ajaxObject();
-ajax.open( "get" , '/hpp/admin/api/getimglist', true );
+ajax.open( "get" , '/zexo/admin/api/getimglist', true );
 ajax.setRequestHeader( "Content-Type" , "text/plain" );
 ajax.onreadystatechange = function () {
 if( ajax.readyState == 4 ) {
@@ -37,7 +37,7 @@ if( ajax.readyState == 4 ) {
 function checkUpdate(){
 swal({title: "\n检测更新中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/checkupdate' , true );
+    ajax.open( "post" , '/zexo/admin/api/checkupdate' , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {swal.close();

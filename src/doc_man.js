@@ -4,7 +4,7 @@ function round(number, precision) {
 let docsize=0
 let hpp_arr_githubdocpath=hpp_githubdocpath.substr(1,hpp_githubdocpath.length-1)
 let hpp_arr_draft_githubdocpath=hpp_githubdocdraftpath.substr(1,hpp_githubdocdraftpath.length-1)
-var ctJson = "/hpp/admin/api/getlist"
+var ctJson = "/zexo/admin/api/getlist"
         $.getJSON(ctJson, function (data) {
 		document.getElementById("tbody_doc").innerHTML="";
             $.each(data, function (index, value) {
@@ -37,7 +37,7 @@ var ctJson = "/hpp/admin/api/getlist"
                 `);
             })
 						
-var drJson = "/hpp/admin/api/get_draftlist"
+var drJson = "/zexo/admin/api/get_draftlist"
         $.getJSON(drJson, function (data) {
             $.each(data, function (index, value) {
 				docsize=round(value.size/1024, 2)
@@ -135,7 +135,7 @@ function del(name){
 function delfile(name){
 	swal({title: "\n删除中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 	var ajax = ajaxObject();
-    ajax.open( "GET" , '/hpp/admin/api/deldoc/'+name , true );
+    ajax.open( "GET" , '/zexo/admin/api/deldoc/'+name , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -187,7 +187,7 @@ function del_dr(name){
 function deldraft(name){
 	swal({title: "\n删除中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 	var ajax = ajaxObject();
-    ajax.open( "GET" , '/hpp/admin/api/deldraft/'+name , true );
+    ajax.open( "GET" , '/zexo/admin/api/deldraft/'+name , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {

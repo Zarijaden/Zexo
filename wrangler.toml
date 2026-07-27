@@ -19,3 +19,5 @@ workers_dev = true
 binding = "KVNAME"               # 代码中使用的绑定名称（await KVNAME.get/put）
 id = "83df7b3228a94bd4bb7fbd3f510f1940"
 preview_id = "92ab4987498a4b6682b399ba378cf69f"
+[dev]
+local_protocol = "https"

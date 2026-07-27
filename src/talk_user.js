@@ -53,7 +53,7 @@ document.getElementById(id).innerHTML=`<div class="hpp_talk_loading"><div class=
 console.log(id);
 
 
-  back='https://'+domain+'/hpp/api/gethpptalk'
+  back='https://'+domain+'/zexo/api/gethpptalk'
 var ajax = ajaxObject();
     ajax.open( "post" , back , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );

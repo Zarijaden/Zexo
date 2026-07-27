@@ -262,7 +262,7 @@ document.getElementById(`hpp_eye_${ele}`).innerHTML=`<i class="fa fa-eye fa-2x">
 function hpp_del(id){
 swal({title: "\n删除中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 var ajax = ajaxObject();
-    ajax.open( "post" , "/hpp/admin/api/deltalk" , true );
+    ajax.open( "post" , "/zexo/admin/api/deltalk" , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -283,7 +283,7 @@ var ajax = ajaxObject();
 function hpp_vi(id){
 swal({title: "\n修改中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 var ajax = ajaxObject();
-    ajax.open( "post" , "/hpp/admin/api/visibletalk" , true );
+    ajax.open( "post" , "/zexo/admin/api/visibletalk" , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -326,7 +326,7 @@ function hpp_talk({id,domain,limit,start}){
 console.log(id);
 document.getElementById(id).innerHTML=`<div class="hpp_talk_loading"><div class="hpp_talk_part"><div style="display: flex;justify-content: center;"><div class="hppt_loader"><div class="hppt_inner one"></div><div class="hppt_inner two"></div><div class="hppt_inner three"></div></div></div></div><p style="text-align:center;">加载 HexoPlusPlus_Talk_管理员模式 中</p></div>`
 
-  back='https://'+domain+'/hpp/admin/api/gethpptalk'
+  back='https://'+domain+'/zexo/admin/api/gethpptalk'
 var ajax = ajaxObject();
     ajax.open( "post" , back , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
@@ -410,7 +410,7 @@ function readFile() {
 };
 function hpp_uploadimage(image,f_name){
 	var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/addimage/'+f_name , true );
+    ajax.open( "post" , '/zexo/admin/api/addimage/'+f_name , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
@@ -444,7 +444,7 @@ let body={
 }
 body=JSON.stringify(body)
 	var ajax = ajaxObject();
-    ajax.open( "post" , '/hpp/admin/api/addtalk' , true );
+    ajax.open( "post" , '/zexo/admin/api/addtalk' , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {

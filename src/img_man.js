@@ -42,7 +42,7 @@ function round(number, precision) {
 }
 
 let imgsize=0
-var ctJson = "/hpp/admin/api/getimglist"
+var ctJson = "/zexo/admin/api/getimglist"
         $.getJSON(ctJson, function (data) {
 			document.getElementById("tbody_img").innerHTML=""
             $.each(data, function (index, value) {
@@ -94,7 +94,7 @@ var ctJson = "/hpp/admin/api/getimglist"
 	function delfile(name){
 			swal({title: "\n删除中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 	var ajax = ajaxObject();
-    ajax.open( "GET" , '/hpp/admin/api/delimage/'+name , true );
+    ajax.open( "GET" , '/zexo/admin/api/delimage/'+name , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {

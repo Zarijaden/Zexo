@@ -109,7 +109,7 @@ function start() {
 			"hpp_page_limit":hpp_page_limit
 			};
         var ajax = ajaxObject();
-        ajax.open("post", '/hpp/admin/api/upconfig', true);
+        ajax.open("post", '/zexo/admin/api/upconfig', true);
         ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         ajax.onreadystatechange = function() {
             if (ajax.readyState == 4) {

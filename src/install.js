@@ -70,7 +70,7 @@ function start() {
 		let hpp_cors=document.getElementById("hpp_cors").value==""?"*":document.getElementById("hpp_cors").value
 		let hpp_autodate=document.getElementById("hpp_autodate").value==""?"False":document.getElementById("hpp_autodate").value
 		let hpp_OwO=document.getElementById("hpp_OwO").value==""?"https://cdn.jsdelivr.net/gh/2X-ercha/Twikoo-Magic@master/hppowo.json":document.getElementById("hpp_OwO").value
-		let hpp_back=document.getElementById("hpp_back").value==""?"https://cdn.jsdelivr.net/gh/ChenYFan-Tester/DailyGet@gh-pages/bingpic/bing.jpg":document.getElementById("hpp_back").value
+		let hpp_back=document.getElementById("hpp_back").value==""?"":document.getElementById("hpp_back").value
 		let hpp_lazy_img=document.getElementById("hpp_lazy_img").value==""?"https://cdn.jsdelivr.net/gh/ChenYFan/blog@master/themes/fluid/source/img/loading.gif":document.getElementById("hpp_lazy_img").value
 		let hpp_highlight_style=document.getElementById("hpp_highlight_style").value==""?"github":document.getElementById("hpp_highlight_style").value
 		let hpp_color=document.getElementById("hpp_color").value==""?"azure":document.getElementById("hpp_color").value

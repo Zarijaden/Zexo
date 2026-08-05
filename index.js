@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@1.2"
+const zexo_ver = "Zexo@1.3"
 const dev_mode_branch = "dist"
 let zexo_logstatus = 0
 
@@ -103,7 +103,7 @@ async function handleRequest(request) {
 			  <p>OwOJSON地址:</p>    
               <input type="text" class="input_text" id="hpp_OwO" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/CDN@ca3ea6c/assets/list.json" />
 			  <p>面板背景图片:</p>    
-              <input type="text" class="input_text" id="hpp_back" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan-Tester/DailyGet@gh-pages/bingpic/bing.jpg" />
+              <input type="text" class="input_text" id="hpp_back" placeholder="不填则使用纯色背景（不加载外部图片）" />
 			  <p>懒加载图片:</p>    
               <input type="text" class="input_text" id="hpp_lazy_img" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/blog@master/themes/fluid/source/img/loading.gif" />
 			  <p>高亮样式:</p>    

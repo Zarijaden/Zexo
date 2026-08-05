@@ -3,7 +3,7 @@
 //开发者请将上述依赖注释去除
 
 const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@1.3"
+const zexo_ver = "Zexo@1.4a1"
 const dev_mode_branch = "dist"
 let zexo_logstatus = 0
 
@@ -59,11 +59,11 @@ async function handleRequest(request) {
 
     if (path.startsWith('/zexo/admin')) {
       if (zexo_logstatus == 1) {
-        const hpp_config = await KVNAME.get("hpp_config");
-        if (hpp_config === null) {
+        const zexo_config = await KVNAME.get("zexo_config");
+        if (zexo_config === null) {
           if (path == '/zexo/admin/api/upconfig') {
             const config_r = JSON.stringify(await request.text())
-            await KVNAME.put("hpp_config", config_r)
+            await KVNAME.put("zexo_config", config_r)
             return new Response("OK")
           } else {
 
@@ -181,7 +181,7 @@ async function handleRequest(request) {
           }
         } else {
 
-          const config = JSON.parse(JSON.parse(hpp_config))
+          const config = JSON.parse(JSON.parse(zexo_config))
           const hpp_domain = config["hpp_domain"]
           const hpp_userimage = config["hpp_userimage"]
           const hpp_title = config["hpp_title"]
@@ -1124,25 +1124,25 @@ if (path == "/zexo/admin/api/trigger-deploy") {
             return new Response(update_check_script, { headers: { headers: "content-type: application/javascript; charset=utf-8" } })
           }
           if (path == "/zexo/admin/api/del_all") {
-            await KVNAME.delete("hpp_config")
+            await KVNAME.delete("zexo_config")
             return new Response('OK')
           }
-          if (path == "/zexo/admin/api/get_config") { return new Response(await JSON.parse(hpp_config)) }
+          if (path == "/zexo/admin/api/get_config") { return new Response(await JSON.parse(zexo_config)) }
           if (path == "/zexo/admin/api/edit_config") {
             let req_con = await JSON.parse(await request.text())
             let _index = req_con["index"]
             let _value = req_con["value"]
-            let k = await JSON.parse(await JSON.parse(hpp_config))
+            let k = await JSON.parse(await JSON.parse(zexo_config))
             k[_index] = _value
             k = await JSON.stringify(k)
-            await KVNAME.put("hpp_config", await JSON.stringify(k))
+            await KVNAME.put("zexo_config", await JSON.stringify(k))
             return new Response('OK')
           }
           if (path == "/zexo/admin/api/del_config") {
             let _index = await request.text()
-            let k = await JSON.parse(await JSON.parse(hpp_config))
+            let k = await JSON.parse(await JSON.parse(zexo_config))
             delete k[_index]
-            await KVNAME.put("hpp_config", await JSON.stringify(await JSON.stringify(k)))
+            await KVNAME.put("zexo_config", await JSON.stringify(await JSON.stringify(k)))
             return new Response('OK')
           }
           if (path == "/zexo/admin/api/gethpptalk") {
@@ -1300,9 +1300,9 @@ login();
 
       }
       if (path == "/zexo/api/twikoo") {
-        const hpp_config = await JSON.parse(await JSON.parse(await KVNAME.get("hpp_config")));
-        const env_id = hpp_config["hpp_twikoo_envId"]
-        const hpp_cors = hpp_config["hpp_cors"]
+        const zexo_config = await JSON.parse(await JSON.parse(await KVNAME.get("zexo_config")));
+        const env_id = zexo_config["hpp_twikoo_envId"]
+        const hpp_cors = zexo_config["hpp_cors"]
         const url = "https://tcb-api.tencentcloudapi.com/web?env=" + env_id
         async function get_refresh_token() {
           /*第一步获得refresh_token*/
@@ -1417,14 +1417,14 @@ login();
       }
 
     }
-    if (path == "/zexo/hpp_talk") {
+    if (path == "/zexo/talk") {
       const talk_user_html = `<!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HexoPlusPlus_Talk预览页面</title>
+<title>ZexoTalk预览页面</title>
 </head>
 <body>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.css" />

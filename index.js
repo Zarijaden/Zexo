@@ -106,6 +106,7 @@ async function handleRequest(request) {
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<title>${zexo_ver}安装</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/install.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css">
 </head>
 <body>
 		<div class="cont_principal">
@@ -668,6 +669,7 @@ async function handleRequest(request) {
   ${zexo_plugin}
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/font.css" />
   <link href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/admin_all_${zexo_theme_mode}.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
   <script>
@@ -1247,6 +1249,7 @@ if (path == "/zexo/admin/api/trigger-deploy") {
 　　 a:visited { text-decoration: none;color: white}
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/login.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
  </head>
  <body>
   <div id="all">
@@ -1479,6 +1482,7 @@ login();
 </head>
 <body>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
 <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk_user.js"></script>
 <div id="zexo_talk"></div>
 <script>
@@ -1504,6 +1508,7 @@ start: 0
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
         <title>ZexoError</title>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/error.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
 	</head>
 	<body>
 		<div class="container demo-2">
@@ -1539,6 +1544,7 @@ start: 0
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
         <title>ZexoError</title>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/error.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
 	</head>
 	<body>
 		<div class="container demo-2">

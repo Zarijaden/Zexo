@@ -1,0 +1,664 @@
+/*!
+ * zexo_theme.css —— Zexo 界面皮肤
+ * ---------------------------------------------------------------------------
+ * 视觉风格参照 https://zarijaden.cc.cd/ 所使用的 Hexo 主题 Redefine v2.9.0
+ * (https://github.com/EvanNotFound/hexo-theme-redefine) 的线上产物：
+ *   https://zarijaden.cc.cd/css/style.css
+ *
+ * 设计原则：只做「覆盖」，不改写 login.css / install.css / error.css /
+ * admin_all_*.css 本体。本文件在这些样式之后加载，靠后置 + 必要时的
+ * !important 取得优先级。
+ *
+ * 作用域约定（避免各页互相串色）：
+ *   - 后台：.sidebar / .main-panel / .card ... 这些选择器只存在于后台 dash
+ *   - 后台暗色：body.dark-edition（由 index.js 依据 zexo_theme_mode 输出）
+ *   - 登录页：#all 作用域（login.css 里 body{color:white} 只在登录页生效）
+ *   - 安装页：.cont_principal / .cont_join
+ *   - 错误页：#large-header / .main-title / .codrops-demos
+ * ---------------------------------------------------------------------------
+ * 变量名对照 Redefine 原变量（加 zexo- 前缀以避免与本项目引入的第三方库冲突）：
+ *   --zexo-bg            <= --background-color
+ *   --zexo-bg-trans      <= --background-color-transparent
+ *   --zexo-bg-2          <= --second-background-color
+ *   --zexo-bg-3          <= --third-background-color
+ *   --zexo-primary       <= --primary-color  (#a31f34)
+ *   --zexo-text-1..4     <= --first/second/third/fourth-text-color
+ *   --zexo-text          <= --default-text-color
+ *   --zexo-border        <= --border-color
+ *   --zexo-selection     <= --selection-color
+ *   --zexo-shadow-1/2    <= --shadow-color-1/2
+ *   --zexo-shadow        <= --redefine-box-shadow
+ *   --zexo-shadow-flat   <= --redefine-box-shadow-flat
+ *   --zexo-scrollbar(-hover/-bg) <= --scrollbar-color(-hover) / --scroll-bar-bg-color
+ */
+
+/* =========================================================================
+ * 1. 设计 token（亮色）
+ * ========================================================================= */
+:root {
+  --zexo-bg: #fff;
+  --zexo-bg-trans: rgba(255, 255, 255, 0.6);
+  --zexo-bg-2: #fafafa;
+  --zexo-bg-3: #f7f7f7;
+  --zexo-primary: #a31f34;
+  --zexo-primary-dark: #8a1a2c;
+  --zexo-primary-light: #c62a41;
+
+  --zexo-text-1: #323739;
+  --zexo-text-2: #343a3c;
+  --zexo-text-3: #5c6669;
+  --zexo-text-4: #eaeced;
+  --zexo-text: #373d3f;
+
+  --zexo-border: rgba(0, 0, 0, 0.08);
+  --zexo-selection: #be243c;
+
+  --zexo-shadow-1: rgba(0, 0, 0, 0.08);
+  --zexo-shadow-2: rgba(0, 0, 0, 0.05);
+  --zexo-shadow: var(--zexo-shadow-2) 0px 6px 24px 0px, var(--zexo-shadow-1) 0px 0px 0px 1px;
+  --zexo-shadow-hover: var(--zexo-shadow-2) 0px 6px 24px 0px, var(--zexo-shadow-1) 0px 0px 0px 1px,
+    var(--zexo-shadow-1) 0px 0px 0px 1px inset;
+  --zexo-shadow-flat: var(--zexo-shadow-2) 0px 1px 4px 0px, var(--zexo-shadow-1) 0px 0px 0px 1px;
+
+  /* 圆角（Redefine: 卡片 18px / 按钮等 14px / 小徽标 9px） */
+  --zexo-radius: 18px;
+  --zexo-radius-sm: 14px;
+  --zexo-radius-xs: 9px;
+
+  --zexo-scrollbar: #c1c1c1;
+  --zexo-scrollbar-hover: #a1a1a1;
+  --zexo-scrollbar-bg: #fafafa;
+
+  /* Redefine 字体栈 */
+  --zexo-font: "Geist Variable", "Noto Sans SC", -apple-system, system-ui, "Segoe UI", Roboto,
+    Ubuntu, Cantarell, "Noto Sans", sans-serif, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Arial;
+}
+
+/* =========================================================================
+ * 2. 暗色 token —— 挂在 body.dark-edition 上（后台暗色模式）
+ *    注意：不用 prefers-color-scheme。后台主题由 zexo_theme_mode 决定，
+ *    Material Dashboard 的亮/暗样式也由它选择；若跟随系统，会出现
+ *    「token 变暗但 Material 亮色样式仍在」的串色。
+ * ========================================================================= */
+body.dark-edition {
+  --zexo-bg: #202124;
+  --zexo-bg-trans: rgba(32, 33, 36, 0.4);
+  --zexo-bg-2: #242529;
+  --zexo-bg-3: #292b2f;
+  --zexo-primary: #a31f34;
+  --zexo-primary-light: #c62a41;
+
+  --zexo-text-1: #d2d2d7;
+  --zexo-text-2: #cbcbd1;
+  --zexo-text-3: #9595a2;
+  --zexo-text-4: #3a3d42;
+  --zexo-text: #bebec6;
+
+  --zexo-border: rgba(255, 255, 255, 0.08);
+  --zexo-shadow-1: rgba(255, 255, 255, 0.08);
+  --zexo-shadow-2: rgba(255, 255, 255, 0.05);
+
+  --zexo-scrollbar: #898989;
+  --zexo-scrollbar-hover: #a1a1a1;
+  --zexo-scrollbar-bg: #2a2c30;
+}
+
+/* =========================================================================
+ * 3. 全局：字体、过渡、选区、滚动条
+ * ========================================================================= */
+body {
+  font-family: var(--zexo-font) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Redefine 的全局过渡语言：只过渡颜色类属性，不影响布局 */
+body,
+body * {
+  transition-property: color, background, background-color, box-shadow, border-color, fill, stroke;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+::selection {
+  background-color: var(--zexo-selection);
+  color: #fff;
+}
+
+/* 只作用于 body 内部元素，避免覆盖 html 级滚动条（后台亮/暗自带样式） */
+body ::-webkit-scrollbar {
+  width: 14px;
+  height: 8px;
+}
+body ::-webkit-scrollbar-thumb {
+  background: var(--zexo-scrollbar);
+  border-radius: 18px;
+  background-clip: content-box;
+  border: 3px solid transparent;
+}
+body ::-webkit-scrollbar-thumb:hover {
+  background: var(--zexo-scrollbar-hover);
+  background-clip: content-box;
+}
+body ::-webkit-scrollbar-track {
+  background-color: var(--zexo-scrollbar-bg);
+  border: 1px solid var(--zexo-shadow-1);
+}
+
+/* =========================================================================
+ * 4. 后台 dash —— 侧栏
+ * ========================================================================= */
+.sidebar,
+.sidebar[data-background-color],
+.sidebar[data-color] {
+  background: var(--zexo-bg-2) !important;
+  background-image: none !important;
+  box-shadow: var(--zexo-shadow-flat) !important;
+  border-right: 1px solid var(--zexo-border) !important;
+}
+/* 关掉 Material Dashboard 叠加在侧栏上的暗色图片蒙层 */
+.sidebar::after,
+.sidebar[data-image]::after,
+.sidebar.has-image::after {
+  opacity: 0 !important;
+}
+
+.sidebar .logo a,
+.sidebar .logo .simple-text,
+.sidebar .logo a.simple-text,
+.sidebar .user .photo + div {
+  color: var(--zexo-text-1) !important;
+  font-weight: 600 !important;
+}
+
+.sidebar .nav li > a,
+.sidebar .nav-link,
+.sidebar .nav-link p,
+.sidebar .nav-link i,
+.sidebar .nav-link .material-icons {
+  color: var(--zexo-text-3) !important;
+}
+.sidebar .nav-link:hover,
+.sidebar .nav li > a:hover {
+  color: var(--zexo-primary) !important;
+  background-color: transparent !important;
+}
+.sidebar .nav .nav-item.active > .nav-link,
+.sidebar .nav li.active > a {
+  background-color: var(--zexo-bg-3) !important;
+  color: var(--zexo-primary) !important;
+  box-shadow: var(--zexo-shadow-flat) !important;
+  border-radius: var(--zexo-radius-sm) !important;
+}
+.sidebar .nav .nav-item.active > .nav-link i,
+.sidebar .nav li.active > a i {
+  color: var(--zexo-primary) !important;
+}
+
+/* =========================================================================
+ * 5. 后台 dash —— 顶栏 / 主面板
+ * ========================================================================= */
+.main-panel {
+  background-color: var(--zexo-bg) !important;
+}
+.main-panel > .content {
+  padding-top: 90px;
+}
+
+.navbar {
+  background-color: var(--zexo-bg-trans) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--zexo-border) !important;
+}
+.navbar .navbar-brand {
+  color: var(--zexo-text-1) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+}
+.navbar .navbar-toggler i,
+.navbar .navbar-nav .nav-link {
+  color: var(--zexo-text-3) !important;
+}
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link:focus {
+  color: var(--zexo-primary) !important;
+  background: transparent !important;
+}
+
+/* =========================================================================
+ * 6. 后台 dash —— 卡片
+ * ========================================================================= */
+.card {
+  background: var(--zexo-bg) !important;
+  border: 1px solid var(--zexo-border) !important;
+  border-radius: var(--zexo-radius) !important;
+  box-shadow: var(--zexo-shadow-flat) !important;
+  transition: box-shadow 0.2s ease !important;
+}
+.card:hover {
+  box-shadow: var(--zexo-shadow) !important;
+}
+
+.card .card-header {
+  border-radius: var(--zexo-radius) var(--zexo-radius) 0 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+/* 只在「头部即标题栏」的卡片上画分隔线；统计卡片的头部下方已有 footer 分隔线，
+   再加一条会出现双线 */
+.card .card-header:not(.card-header-icon):not(.card-header-text) {
+  border-bottom: 1px solid var(--zexo-border) !important;
+}
+.card .card-header .card-title,
+.card .card-title,
+.card .card-header .card-category,
+.card .card-category {
+  color: var(--zexo-text-1) !important;
+}
+.card .card-category {
+  color: var(--zexo-text-3) !important;
+}
+.card .card-body,
+.card .card-footer {
+  color: var(--zexo-text) !important;
+}
+.card .card-footer {
+  border-top: 1px solid var(--zexo-border) !important;
+  background: transparent !important;
+}
+
+/* 彩色 card-header：换成 Redefine 的语义色
+   ⚠️ 与 Material Dashboard 的原逻辑保持一致：带 .card-header-icon /
+   .card-header-text 的头部本体**不**上色（统计卡片 card-stats 的头部保持透明，
+   它的 .card-category / .card-title 仍是深色文字），颜色只落在 .card-icon 上。
+   若不给这里加 :not() 守卫，统计卡片会被整片涂成主色、深色标题会糊在红底上。 */
+.card .card-header-primary:not(.card-header-icon):not(.card-header-text) {
+  background: linear-gradient(60deg, var(--zexo-primary-light), var(--zexo-primary)) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(163, 31, 52, 0.4) !important;
+}
+.card .card-header-warning:not(.card-header-icon):not(.card-header-text) {
+  background: linear-gradient(60deg, #ffd43b, #ffa940) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(255, 169, 64, 0.4) !important;
+}
+.card .card-header-success:not(.card-header-icon):not(.card-header-text) {
+  background: linear-gradient(60deg, #47da55, #00c58e) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(0, 197, 142, 0.4) !important;
+}
+.card .card-header-info:not(.card-header-icon):not(.card-header-text) {
+  background: linear-gradient(60deg, #2fd6f0, #1aa9c4) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(47, 214, 240, 0.4) !important;
+}
+.card .card-header-danger:not(.card-header-icon):not(.card-header-text),
+.card .card-header-rose:not(.card-header-icon):not(.card-header-text) {
+  background: linear-gradient(60deg, #f85676, #e44b8d) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(232, 75, 116, 0.4) !important;
+}
+/* 确实着了色的头部里，标题/分类文字保持白色 */
+.card
+  .card-header:is(
+    .card-header-primary,
+    .card-header-warning,
+    .card-header-success,
+    .card-header-info,
+    .card-header-danger,
+    .card-header-rose
+  ):not(.card-header-icon):not(.card-header-text)
+  :is(.card-title, .card-category) {
+  color: #fff !important;
+}
+
+/* 统计卡片的图标块：承载语义色 */
+.card .card-icon {
+  border-radius: var(--zexo-radius-sm) !important;
+  color: #fff !important;
+}
+.card .card-icon i,
+.card-stats .card-header .card-icon i {
+  color: #fff !important;
+}
+.card .card-header-primary .card-icon {
+  background: linear-gradient(60deg, var(--zexo-primary-light), var(--zexo-primary)) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(163, 31, 52, 0.4) !important;
+}
+.card .card-header-warning .card-icon {
+  background: linear-gradient(60deg, #ffd43b, #ffa940) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(255, 169, 64, 0.4) !important;
+}
+.card .card-header-success .card-icon {
+  background: linear-gradient(60deg, #47da55, #00c58e) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(0, 197, 142, 0.4) !important;
+}
+.card .card-header-info .card-icon {
+  background: linear-gradient(60deg, #2fd6f0, #1aa9c4) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(47, 214, 240, 0.4) !important;
+}
+.card .card-header-danger .card-icon,
+.card .card-header-rose .card-icon {
+  background: linear-gradient(60deg, #f85676, #e44b8d) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(232, 75, 116, 0.4) !important;
+}
+.card-stats .card-title small {
+  color: var(--zexo-text-3) !important;
+}
+
+/* =========================================================================
+ * 7. 后台 dash —— 表单 / 按钮 / 表格 / 下拉 / 分页
+ * ========================================================================= */
+.form-control,
+.es-input,
+textarea.form-control,
+input.form-control,
+select.form-control {
+  background-color: var(--zexo-bg-2) !important;
+  border: 1px solid var(--zexo-border) !important;
+  border-radius: var(--zexo-radius-sm) !important;
+  color: var(--zexo-text) !important;
+  box-shadow: none !important;
+  padding: 8px 12px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.form-control:focus,
+.es-input:focus {
+  border-color: var(--zexo-primary) !important;
+  box-shadow: 0 0 0 3px rgba(163, 31, 52, 0.12) !important;
+  background-color: var(--zexo-bg) !important;
+}
+::placeholder {
+  color: var(--zexo-text-3) !important;
+  opacity: 1;
+}
+
+.btn,
+.btn.btn-primary,
+.btn.btn-simple,
+button {
+  border-radius: var(--zexo-radius-sm) !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  transition: all 0.2s ease !important;
+}
+.btn:active,
+button:active {
+  transform: scale(0.95);
+}
+.btn.btn-primary,
+.btn.btn-primary:focus,
+.btn.btn-primary:active {
+  background-color: var(--zexo-primary) !important;
+  color: #fff !important;
+  box-shadow: var(--zexo-shadow-flat) !important;
+}
+.btn.btn-primary:hover {
+  background-color: var(--zexo-primary-dark) !important;
+  box-shadow: var(--zexo-shadow) !important;
+}
+.btn.btn-simple,
+.btn.btn-simple.btn-primary {
+  color: var(--zexo-primary) !important;
+  background: transparent !important;
+  border: 1px solid var(--zexo-primary) !important;
+}
+.btn.btn-simple:hover {
+  background-color: var(--zexo-primary) !important;
+  color: #fff !important;
+}
+
+.table,
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  border-color: var(--zexo-border) !important;
+  color: var(--zexo-text) !important;
+}
+.table thead th,
+.table > thead > tr > th {
+  background-color: var(--zexo-bg-3) !important;
+  color: var(--zexo-text-3) !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+}
+.table tbody tr:hover td {
+  background-color: var(--zexo-bg-2) !important;
+}
+
+.dropdown-menu,
+.es-dropdown-menu,
+.es-list {
+  background-color: var(--zexo-bg) !important;
+  border: 1px solid var(--zexo-border) !important;
+  border-radius: var(--zexo-radius-sm) !important;
+  box-shadow: var(--zexo-shadow) !important;
+  overflow: hidden;
+}
+.dropdown-menu .dropdown-item,
+.es-list li,
+.es-dropdown-menu li {
+  color: var(--zexo-text) !important;
+  border-radius: var(--zexo-radius-xs) !important;
+}
+.dropdown-menu .dropdown-item:hover,
+.es-list li:hover,
+.es-list li.hover {
+  background-color: var(--zexo-bg-3) !important;
+  color: var(--zexo-primary) !important;
+}
+
+/* 分页 */
+.pagination .page-item .page-link,
+#pageStyle {
+  background-color: transparent !important;
+  border: 1px solid var(--zexo-border) !important;
+  border-radius: var(--zexo-radius-xs) !important;
+  color: var(--zexo-text-3) !important;
+  box-shadow: none !important;
+}
+.pagination .page-item .page-link:hover,
+#pageStyle:hover {
+  background-color: var(--zexo-bg-3) !important;
+  color: var(--zexo-primary) !important;
+}
+.pagination .page-item.active .page-link,
+#pageStyle .active,
+#pageStyle.active {
+  background-color: var(--zexo-primary) !important;
+  color: #fff !important;
+  border-color: var(--zexo-primary) !important;
+}
+
+/* 搜索框：保留原放大镜图标（外链不替换），只换底色/圆角/描边 */
+#search_Input {
+  background-color: var(--zexo-bg-2) !important;
+  border: 1px solid var(--zexo-border) !important;
+  border-radius: var(--zexo-radius-sm) !important;
+  color: var(--zexo-text) !important;
+}
+#search_Input:focus {
+  border-color: var(--zexo-primary) !important;
+  box-shadow: 0 0 0 3px rgba(163, 31, 52, 0.12) !important;
+}
+
+/* 引用块：Redefine 的无引号样式 */
+blockquote.zexo_blockquote {
+  background: var(--zexo-bg-3) !important;
+  border-left: 5px solid var(--zexo-primary) !important;
+  border-radius: 0 var(--zexo-radius-sm) var(--zexo-radius-sm) 0 !important;
+  color: var(--zexo-text) !important;
+}
+blockquote.zexo_blockquote::before {
+  content: none !important;
+}
+
+/* 复选框/单选框选中色 */
+.magic-checkbox:checked + label::before,
+.magic-radio:checked + label::before {
+  background-color: var(--zexo-primary) !important;
+  border-color: var(--zexo-primary) !important;
+}
+
+/* 弹窗 / 通知 */
+.modal-content,
+.sweet-alert,
+.swal-modal {
+  border-radius: var(--zexo-radius) !important;
+  box-shadow: var(--zexo-shadow) !important;
+}
+.sweet-alert button,
+.swal-button,
+.swal-button--confirm {
+  border-radius: var(--zexo-radius-sm) !important;
+  background-color: var(--zexo-primary) !important;
+  box-shadow: none !important;
+}
+.notyf__toast,
+#toast-container > div {
+  border-radius: var(--zexo-radius-sm) !important;
+  box-shadow: var(--zexo-shadow) !important;
+}
+
+/* =========================================================================
+ * 8. 登录页（#all 作用域，避免污染其他页面）
+ * ========================================================================= */
+#all {
+  color: var(--zexo-text);
+}
+#all .wrapper {
+  background: linear-gradient(to bottom right, var(--zexo-bg) 0%, var(--zexo-bg-3) 100%) !important;
+}
+#all .bg-bubbles li {
+  background-color: rgba(163, 31, 52, 0.06) !important;
+}
+#all .container h1 {
+  color: var(--zexo-text-1) !important;
+  font-weight: 600 !important;
+}
+#all form input {
+  background: var(--zexo-bg-2) !important;
+  border: 1px solid var(--zexo-border) !important;
+  border-radius: var(--zexo-radius-sm) !important;
+  color: var(--zexo-text) !important;
+  transition: all 0.2s ease !important;
+}
+#all form input:hover {
+  background: var(--zexo-bg) !important;
+}
+#all form input:focus {
+  background: var(--zexo-bg) !important;
+  color: var(--zexo-text-1) !important;
+  border-color: var(--zexo-primary) !important;
+  box-shadow: 0 0 0 3px rgba(163, 31, 52, 0.12) !important;
+}
+#all form button {
+  background: var(--zexo-primary) !important;
+  color: #fff !important;
+  border-radius: var(--zexo-radius-sm) !important;
+  font-weight: 500 !important;
+  box-shadow: var(--zexo-shadow-flat) !important;
+  transition: all 0.2s ease !important;
+}
+#all form button:hover {
+  background: var(--zexo-primary-dark) !important;
+  box-shadow: var(--zexo-shadow) !important;
+}
+#all form button:active {
+  transform: scale(0.95);
+}
+#all ::placeholder {
+  color: var(--zexo-text-3) !important;
+}
+/* login.css 把链接与 #tips 写成白色/内联白色，这里改回主题色 */
+#all a,
+#all a:link,
+#all a:hover,
+#all a:visited,
+#all #tips {
+  color: var(--zexo-text-3) !important;
+}
+#all a:hover {
+  color: var(--zexo-primary) !important;
+}
+
+/* =========================================================================
+ * 9. 安装页（保留 bing 背景与暗色玻璃卡片，只对齐主色/圆角/阴影）
+ * ========================================================================= */
+.cont_join {
+  border-radius: var(--zexo-radius) !important;
+  box-shadow: 0 0 1000px 1000px rgba(0, 0, 0, 0.2), 0 0 60px 8px rgba(0, 0, 0, 0.35) !important;
+}
+.cont_btn_join > a {
+  background-color: var(--zexo-primary) !important;
+  border-radius: var(--zexo-radius-sm) !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+.cont_btn_join > a:hover {
+  background-color: var(--zexo-primary-dark) !important;
+}
+.input_text {
+  border-radius: var(--zexo-radius-sm) !important;
+  font-family: var(--zexo-font) !important;
+}
+.input_text:focus {
+  border-color: var(--zexo-primary) !important;
+  box-shadow: 0 0 0 3px rgba(163, 31, 52, 0.25) !important;
+}
+
+/* =========================================================================
+ * 10. 错误页（bing 背景 + canvas 动画保留，只换主色与按钮语言）
+ * ========================================================================= */
+.main-title {
+  color: #f9f1e9 !important;
+}
+.demo-2 .main-title::before {
+  opacity: 0.55;
+}
+.codrops-demos a {
+  border-radius: var(--zexo-radius-sm) !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  padding: 10px 22px !important;
+  transition: all 0.2s ease !important;
+}
+.codrops-demos a:hover,
+.codrops-demos a.current-demo {
+  background-color: var(--zexo-primary) !important;
+  border-color: var(--zexo-primary) !important;
+  color: #fff !important;
+}
+.codrops-header h1,
+.codrops-header h1 span {
+  font-weight: 400 !important;
+}
+
+/* =========================================================================
+ * 11. 说说 / 评论等内嵌小组件：只对齐圆角、阴影、主色，不动布局
+ * ========================================================================= */
+.zexot_panel,
+.OwO.OwO-open .OwO-body {
+  border-radius: var(--zexo-radius-sm) !important;
+  box-shadow: var(--zexo-shadow-flat) !important;
+}
+.zexot_panel button,
+.zexot_button_nextpage,
+.OwO .OwO-logo {
+  border-radius: var(--zexo-radius-sm) !important;
+}
+.OwO .OwO-body {
+  border-color: var(--zexo-border) !important;
+}
+
+/* =========================================================================
+ * 12. 小屏（对齐 Redefine 的响应式字号收敛）
+ * ========================================================================= */
+@media (max-width: 768px) {
+  body {
+    font-size: 15.36px;
+  }
+  .main-panel > .content {
+    padding-top: 80px;
+  }
+}

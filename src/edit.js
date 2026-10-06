@@ -16,25 +16,27 @@
 
         document.getElementById('upload_md').onchange = function () {
             var content = document.getElementById('text_zexo_doc_editor');
+            if (!content) { return; }
 
             getFileContent(this, function (str) {
                 content.value = str;
+                content.dispatchEvent(new Event('input', { bubbles: true }));
             });
         };
-function zexo_md_editor({ele,data_name,owo,backuptime}){
+function zexo_md_editor_legacy({ele,data_name,owo,backuptime}){
 var notyf = new Notyf();
 
 if(ele==undefined){console.log("ERROR:No ID");ele="edit"}
 if(data_name==undefined){console.log("ERROR:No data_name");data_name="zexo_editor"}
 if(owo==undefined){console.log("ERROR:No owo");owo="https://cdn.jsdelivr.net/gh/ChenYFan/CDN@master/assets/list.json"}
-document.getElementById(ele).innerHTML=`
+if(document.getElementById(ele)){document.getElementById(ele).innerHTML=`
 <div class="black2">
 	<button onclick="zexo_start_or_stop_backup()" class="btn btn-primary"><i class="fa fa-clock-o fa-2x"><\/i><\/button> 
     <button onclick="$('#input').click();" class="btn btn-primary"><i class="fa fa-photo fa-2x"><\/i><\/button>
     <button onclick="$('#upload_md').click();" class="btn btn-primary"><i class="fa fa-file fa-2x"><\/i><\/button>
     <button onclick="zexo_preview('${ele}','${data_name}')" id="zexo_eye_${ele}" class="btn btn-primary"><i class="fa fa-eye fa-2x"><\/i><\/button>
 	
-<\/div>   
+<\/div>      
 <textarea style="border:0;border-radius:5px;background-color:#90939920;width: 100%;min-height: 400px;padding: 10px;resize: none;display:block" id="text_${ele}"><\/textarea><div style="border:0;border-radius:5px;background-color:#90939920;max-width: 100%;min-height: 70%;padding: 10px;resize: none;display: none;" id="div_${ele}" class="zexo_pre_div"><\/div><div class="OwO"><\/div>`
 document.getElementById(`text_${ele}`).value=localStorage.getItem(`zexo_${data_name}_backup`)
 setInterval(`zexo_backup('${data_name}','${ele}')`,backuptime)
@@ -45,22 +47,67 @@ var OwO_demo = new OwO({
     maxHeight: '250px'
 });
 }
+}
+/* ===== Zexo Markdown 编辑器（移植 Modrinth 编辑命令，核心见 src/md_editor.js） ===== */
+
+// 通过后端图床上传一张图片，成功后由 zexo_uploadimage 插入 Markdown
+function zexo_md_upload_file(file) {
+    if (!file) { return; }
+    var f_name = file["name"].substring(file["name"].lastIndexOf(".") + 1);
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        zexo_uploadimage(this.result.substring(this.result.indexOf(',') + 1), f_name);
+    };
+}
+
+// 兼容旧调用方式：真正构建编辑器的是 initZexoMarkdownEditor
+function zexo_md_editor(options) {
+    options = options || {};
+    options.onFilePaste = zexo_md_upload_file;
+    return initZexoMarkdownEditor(options);
+}
+
+// 用编辑器实例插入内容，保证光标位置正确
+function zexo_md_append(ele, text) {
+    var editor = (typeof zexoMdEditorOf === "function") ? zexoMdEditorOf(ele) : null;
+    if (editor) { editor.append(text); return true; }
+    var el = document.getElementById("text_" + ele);
+    if (el) { el.value += text; return true; }
+    return false;
+}
+
+// 用编辑器实例整体替换内容
+function zexo_md_replace(ele, text) {
+    var editor = (typeof zexoMdEditorOf === "function") ? zexoMdEditorOf(ele) : null;
+    if (editor) {
+        editor.textarea.value = text;
+        editor.textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        return true;
+    }
+    var el = document.getElementById("text_" + ele);
+    if (el) { el.value = text; return true; }
+    return false;
+}
+
 function zexo_add_mark(c){
-document.getElementById("text_zexo_doc_editor").value+=c
+zexo_md_append("zexo_doc_editor", c)
 }
 function zexo_replace_mark(c){
-document.getElementById("text_zexo_doc_editor").value=c
+zexo_md_replace("zexo_doc_editor", c)
 }
 
 function zexo_backup(data_name,ele){
+var el=document.getElementById(`text_${ele}`);
+if(!el){return;}
 if(localStorage.getItem("zexo_editor_autobackup")=="1"){
 var notyf = new Notyf();
-localStorage.setItem(`zexo_${data_name}_backup`,document.getElementById(`text_${ele}`).value);
+localStorage.setItem(`zexo_${data_name}_backup`,el.value);
 localStorage.setItem(`zexo_${data_name}_choo_backup`,document.getElementById(`choo`).value);
 notyf.success('自动备份成功！')
 }
 else if(localStorage.getItem("zexo_editor_autobackup")=="2"){
-localStorage.setItem(`zexo_${data_name}_backup`,document.getElementById(`text_${ele}`).value);
+localStorage.setItem(`zexo_${data_name}_backup`,el.value);
 localStorage.setItem(`zexo_${data_name}_choo_backup`,document.getElementById(`choo`).value);
 }else{}
 };
@@ -82,12 +129,17 @@ notyf.success('自动备份打开成功！自动备份提醒关闭成功！');
 function zexo_upload_photo(){}
 function zexo_upload_file(){}
 function zexo_preview(ele,data_name){
+var editor = (typeof zexoMdEditorOf === "function") ? zexoMdEditorOf(ele) : null;
+if (editor) {
+editor.togglePreview();
+return;
+}
 if(document.getElementById(`text_${ele}`).style.display != "none"){
 document.getElementById(`div_${ele}`).style.display = "block";
 document.getElementById(`text_${ele}`).style.display = "none";
 document.getElementById(`zexo_eye_${ele}`).innerHTML=`<i class="fa fa-eye-slash fa-2x"><\/i>`
 document.getElementById(`div_${ele}`).innerHTML="正在渲染markdown文本中..."
-document.getElementById(`div_${ele}`).innerHTML=marked(document.getElementById(`text_${ele}`).value)
+document.getElementById(`div_${ele}`).innerHTML=zexoRenderMarkdown(document.getElementById(`text_${ele}`).value)
 
 }else{
 document.getElementById(`div_${ele}`).style.display = "none";
@@ -553,7 +605,6 @@ function zexo_del_index(){
     ajax.send(new Date().getTime());
 }
 
-zexo_get_list();
 marked.setOptions({
     renderer: new marked.Renderer(),
     gfm: true,
@@ -567,6 +618,11 @@ marked.setOptions({
     return hljs.highlightAuto(code).value;
   }
 });
+
+// 先拉列表：拉列表成功后会立刻调用 zexo_get_md() 写入编辑器
+zexo_get_list();
+
+// 注意：必须放在文件末尾 —— OwO 类在文件中部定义，编辑器初始化内部会用到它
 new zexo_md_editor({
 	ele: "zexo_doc_editor",
 	data_name: "zexo_docs",

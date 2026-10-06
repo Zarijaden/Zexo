@@ -15,19 +15,21 @@
         };
 
         document.getElementById('upload_md').onchange = function () {
-            var content = document.getElementById('text_zexo_doc_editor');
+            var content = document.getElementById('text_zexo_talk_editor');
+            if (!content) { return; }
 
             getFileContent(this, function (str) {
                 content.value = str;
+                content.dispatchEvent(new Event('input', { bubbles: true }));
             });
         };
-function zexo_md_editor({ele,data_name,owo,backuptime}){
+function zexo_md_editor_legacy({ele,data_name,owo,backuptime}){
 var notyf = new Notyf();
 
 if(ele==undefined){console.log("ERROR:No ID");ele="edit"}
 if(data_name==undefined){console.log("ERROR:No data_name");data_name="zexo_editor"}
 if(owo==undefined){console.log("ERROR:No owo");owo="https://cdn.jsdelivr.net/gh/ChenYFan/CDN@master/assets/list.json"}
-document.getElementById(ele).innerHTML=`
+if(document.getElementById(ele)){document.getElementById(ele).innerHTML=`
 <div class="black2">
 	<button onclick="zexo_start_or_stop_backup()" class="btn btn-primary"><i class="fa fa-clock-o fa-2x"><\/i><\/button> 
     <button onclick="$('#input').click();" class="btn btn-primary"><i class="fa fa-photo fa-2x"><\/i><\/button>
@@ -45,11 +47,54 @@ var OwO_demo = new OwO({
     maxHeight: '250px'
 });
 }
+}
+/* ===== Zexo Markdown 编辑器（移植 Modrinth 编辑命令，核心见 src/md_editor.js） ===== */
+
+// 通过后端图床上传一张图片，成功后由 zexo_uploadimage 插入 Markdown
+function zexo_md_upload_file(file) {
+    if (!file) { return; }
+    var f_name = file["name"].substring(file["name"].lastIndexOf(".") + 1);
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        zexo_uploadimage(this.result.substring(this.result.indexOf(',') + 1), f_name);
+    };
+}
+
+// 兼容旧调用方式：真正构建编辑器的是 initZexoMarkdownEditor
+function zexo_md_editor(options) {
+    options = options || {};
+    options.onFilePaste = zexo_md_upload_file;
+    return initZexoMarkdownEditor(options);
+}
+
+// 用编辑器实例插入内容，保证光标位置正确
+function zexo_md_append(ele, text) {
+    var editor = (typeof zexoMdEditorOf === "function") ? zexoMdEditorOf(ele) : null;
+    if (editor) { editor.append(text); return true; }
+    var el = document.getElementById("text_" + ele);
+    if (el) { el.value += text; return true; }
+    return false;
+}
+
+// 用编辑器实例整体替换内容
+function zexo_md_replace(ele, text) {
+    var editor = (typeof zexoMdEditorOf === "function") ? zexoMdEditorOf(ele) : null;
+    if (editor) {
+        editor.textarea.value = text;
+        editor.textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        return true;
+    }
+    var el = document.getElementById("text_" + ele);
+    if (el) { el.value = text; return true; }
+    return false;
+}
+
 function zexo_add_mark(c){
-document.getElementById("text_zexo_talk_editor").value+=c
+zexo_md_append("zexo_talk_editor", c)
 }
 function zexo_replace_mark(c){
-document.getElementById("text_zexo_talk_editor").value=c
+zexo_md_replace("zexo_talk_editor", c)
 }
 
 function zexo_backup(data_name,ele){
@@ -80,12 +125,17 @@ notyf.success('自动备份打开成功！自动备份提醒关闭成功！');
 function zexo_upload_photo(){}
 function zexo_upload_file(){}
 function zexo_preview(ele,data_name){
+var editor = (typeof zexoMdEditorOf === "function") ? zexoMdEditorOf(ele) : null;
+if (editor) {
+editor.togglePreview();
+return;
+}
 if(document.getElementById(`text_${ele}`).style.display != "none"){
 document.getElementById(`div_${ele}`).style.display = "block";
 document.getElementById(`text_${ele}`).style.display = "none";
 document.getElementById(`zexo_eye_${ele}`).innerHTML=`<i class="fa fa-eye-slash fa-2x"><\/i>`
 document.getElementById(`div_${ele}`).innerHTML="正在渲染markdown文本中..."
-document.getElementById(`div_${ele}`).innerHTML=marked(document.getElementById(`text_${ele}`).value)
+document.getElementById(`div_${ele}`).innerHTML=zexoRenderMarkdown(document.getElementById(`text_${ele}`).value)
 }else{
 document.getElementById(`div_${ele}`).style.display = "none";
 document.getElementById(`text_${ele}`).style.display = "block";
@@ -346,7 +396,7 @@ var ajax = ajaxObject();
 				if(res[i]==null){localStorage.setItem("zexo_start", 0);break;}
 				let q=JSON.parse(res[i]);
 				vi=q["visible"]=="False"?`<svg t="1612656293849" class="zexot_icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8311" width="20" height="20"><path d="M246.4 258.304l-83.84-83.84 46.464-46.4L309.12 228.288A543.04 543.04 0 0 1 512 190.72c211.968 0 382.592 107.136 512 321.28-58.688 98.56-126.464 174.464-203.456 227.648l109.888 109.888-46.4 46.4-121.408-121.408a517.504 517.504 0 0 1-1.088 0.576l-68.224-68.224 1.216-0.512-117.312-117.312-0.896 0.832L435.2 448.832l0.768-0.96L313.6 325.376a435.968 435.968 0 0 0-1.152 0.576L245.376 258.944l1.088-0.64z m509.248 416.448c60.8-37.76 115.456-91.712 164.48-162.432-108.736-155.136-242.88-229.76-408.128-229.76-46.08 0-89.728 5.76-131.072 17.472l112.32 112.32c6.144-1.28 12.48-1.92 19.008-1.92 54.272 0 98.368 45.696 98.368 102.016 0 5.44-0.448 10.816-1.28 16l146.304 146.304z m-566.4-379.2L253.44 359.808c-54.592 37.12-104.32 87.808-149.632 152.512 107.2 154.688 241.28 229.12 408.128 229.12 38.72 0 75.712-3.968 111.04-12.096l73.6 73.6A553.984 553.984 0 0 1 512 833.28c-213.888 0-384.512-107.136-512-321.28 55.488-91.84 118.592-163.968 189.248-216.448zM508.032 614.4L414.144 520.448c3.84 51.2 44.096 91.776 93.888 93.952z" fill="#1296db" p-id="8312"></path></svg>`:`<svg t="1612656197741" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7951" width="20" height="20"><path d="M512 283.456c-165.248 0-299.392 74.304-408.128 228.864 107.2 154.112 241.28 228.224 408.128 228.224 166.848 0 300.928-74.112 408.128-228.224C811.392 357.76 677.248 283.52 512 283.52zM512 832c-213.888 0-384.512-106.688-512-320 129.408-213.312 300.032-320 512-320 211.968 0 382.592 106.688 512 320-127.488 213.312-298.112 320-512 320z m0-137.152a182.848 182.848 0 1 0 0-365.696 182.848 182.848 0 0 0 0 365.696zM512 576a64 64 0 1 1 0-128 64 64 0 0 1 0 128z" fill="#1296db" p-id="7952"></path></svg>`
-			let mark_content=marked(q["content"]);
+			let mark_content=zexoRenderMarkdown(q["content"]);
 document.getElementById("zexo_talk_list").innerHTML+=`<div id="${q["id"]}" class="zexot_comment-body zexot_comment-parent zexot_comment-odd zexot_comment-by-user"> <div id="item">
      <a class="zexot_pull-left zexot_thumb-sm zexot_avatar zexot_m-l-n-md"> <img nogallery="" src="${q["avatar"]}" class="zexot_img-40px zexot_photo zexot_img-square zexot_normal-shadow"> <\/a> 
      <div class="zexot_time-machine zexot_m-l-lg zexot_panel zexot_box-shadow-wrap-normal"> 
@@ -416,6 +466,7 @@ function zexo_uploadimage(image,f_name){
         if( ajax.readyState == 4 ) {
             if( ajax.status == 200 ) {
 				swal.close()
+				zexo_add_mark(`![](${ajax.responseText})`)
                 sweetAlert("成功",  "图片已更新", "success");
             }
 		else if( ajax.status == 201 ){
@@ -474,19 +525,7 @@ body=JSON.stringify(body)
 ajax.send(body);
 }
 //我废了，editormd顺序有问题
-//初始化函数
-new zexo_talk({
-id:"zexo_talk",
-domain: window.location.host,
-limit: 10,
-start: 0
-});
-new zexo_md_editor({
-	ele: "zexo_talk_editor",
-	data_name: "talk",
-	owo: zexo_OwO,
-	backuptime: 60000
-})
+//初始化顺序：先配置 marked，再建编辑器，最后渲染说说列表
 marked.setOptions({
     renderer: new marked.Renderer(),
     gfm: true,
@@ -499,4 +538,32 @@ marked.setOptions({
     highlight: function (code) {
     return hljs.highlightAuto(code).value;
   }
+});
+//说说页没有 #choo，自动备份不能依赖它
+function zexo_backup(data_name,ele){
+var el=document.getElementById(`text_${ele}`);
+if(!el){return;}
+var choo=document.getElementById("choo");
+if(localStorage.getItem("zexo_editor_autobackup")=="1"){
+var notyf = new Notyf();
+localStorage.setItem(`zexo_${data_name}_backup`,el.value);
+if(choo){localStorage.setItem(`zexo_${data_name}_choo_backup`,choo.value);}
+notyf.success('自动备份成功！')
+}
+else if(localStorage.getItem("zexo_editor_autobackup")=="2"){
+localStorage.setItem(`zexo_${data_name}_backup`,el.value);
+if(choo){localStorage.setItem(`zexo_${data_name}_choo_backup`,choo.value);}
+}else{}
+};
+new zexo_md_editor({
+	ele: "zexo_talk_editor",
+	data_name: "talk",
+	owo: zexo_OwO,
+	backuptime: 60000
+})
+new zexo_talk({
+id:"zexo_talk",
+domain: window.location.host,
+limit: 10,
+start: 0
 });

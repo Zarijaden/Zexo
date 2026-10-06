@@ -1,0 +1,172 @@
+/*!
+ * Zexo Markdown 编辑器样式（配合 src/md_editor.js）
+ * 工具栏 / 分组按钮 / 预览区排版，深浅两套主题都做了适配。
+ */
+
+.zexo_md_toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.zexo_md_group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background-color: #90939914;
+}
+
+.zexo_md_btn {
+  position: relative;
+  margin: 0 !important;
+  padding: 4px 8px !important;
+  line-height: 1;
+  box-shadow: none !important;
+}
+
+.zexo_md_btn sub {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-size: 10px;
+}
+
+.zexo_md_textarea {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  tab-size: 2;
+}
+
+.zexo_md_textarea:focus {
+  outline: none;
+  background-color: #9093992e !important;
+}
+
+/* ---------------- 预览区 ---------------- */
+
+.zexo_pre_div {
+  overflow-x: auto;
+  word-break: break-word;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.zexo_pre_div h1,
+.zexo_pre_div h2,
+.zexo_pre_div h3,
+.zexo_pre_div h4,
+.zexo_pre_div h5,
+.zexo_pre_div h6 {
+  margin-top: 18px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.zexo_pre_div h2 {
+  padding-bottom: 6px;
+  border-bottom: 1px solid #90939933;
+}
+
+.zexo_pre_div p {
+  margin: 0 0 12px;
+}
+
+.zexo_pre_div a {
+  color: #9c27b0;
+  text-decoration: none;
+}
+
+.zexo_pre_div a:hover {
+  text-decoration: underline;
+}
+
+.zexo_pre_div blockquote {
+  margin: 0 0 14px;
+  padding: 6px 14px;
+  border-left: 4px solid #9c27b066;
+  background-color: #90939914;
+  border-radius: 0 6px 6px 0;
+}
+
+.zexo_pre_div img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.zexo_pre_div iframe {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.zexo_pre_div code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #90939933;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 90%;
+}
+
+.zexo_pre_div pre {
+  padding: 12px 14px;
+  border-radius: 6px;
+  background-color: #90939926;
+  overflow-x: auto;
+}
+
+.zexo_pre_div pre code {
+  padding: 0;
+  background-color: transparent;
+}
+
+.zexo_pre_div table {
+  width: 100%;
+  margin-bottom: 14px;
+  border-collapse: collapse;
+}
+
+.zexo_pre_div table th,
+.zexo_pre_div table td {
+  padding: 8px 10px;
+  border: 1px solid #90939944;
+}
+
+.zexo_pre_div table th {
+  background-color: #9093991f;
+}
+
+.zexo_pre_div details {
+  margin: 0 0 14px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background-color: #90939914;
+}
+
+.zexo_pre_div details summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.zexo_pre_div hr {
+  border: 0;
+  border-top: 1px solid #90939944;
+  margin: 20px 0;
+}
+
+/* 深色主题下的微调 */
+.dark-edition .zexo_md_group {
+  background-color: #ffffff14;
+}
+
+.dark-edition .zexo_pre_div code {
+  background-color: #ffffff1f;
+}
+
+.dark-edition .zexo_pre_div pre {
+  background-color: #ffffff14;
+}

@@ -23,6 +23,31 @@ Zexo 是一个基于 CloudFlare Workers 和 CloudFlare KV 构建的静态博客�
 前端框架 jQuery+Bootstrap
 核心依赖 已全面更新至最新稳定版本
 
+# 🔄 从 HexoPlusPlus 迁移
+
+Zexo 已完成从 HexoPlusPlus（`hpp`）到 Zexo（`zexo`）的全量改名：后台路由、KV 键、配置项、环境变量、前端函数名与 CSS 类名均已改为 `zexo_` / `zexot_` 前缀。
+
+已有部署升级时，Worker 会自动兼容旧数据（首次打开管理面板即完成迁移）：
+
+- **环境变量**：优先读取 `zexo_username` / `zexo_password` / `zexo_captcha`，未设置时自动回退到旧的 `hpp_*`。建议在 CloudFlare 面板中补上新的变量名。
+- **KV 键**：读取 `zexo_*` 时若不存在会回退读取旧的 `hpp_*` 并自动写回新键（说说数据、签到时间、Twikoo token 等不会丢失）。
+- **面板配置**：`zexo_config` 中的旧 `hpp_*` 配置项会在解析时自动改名并写回。
+- **博客中嵌入的说说组件**：公开接口由 `/zexo/api/gethpptalk` 改为 `/zexo/api/getzexotalk`，前端对象 `hpp_talk` 改名为 `zexo_talk`，CSS 类前缀 `hppt_` 改为 `zexot_`，分页状态键 `hpp_start` 改为 `zexo_start`。博客里的嵌入代码需要同步更新：
+
+  ```html
+  <div id="zexo_talk"></div>
+  <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk_user.js"></script>
+  <script>
+    new zexo_talk({ id: "zexo_talk", domain: "你的域名", limit: 10, start: 0 });
+  </script>
+  ```
+
+- **浏览器本地草稿**：编辑器自动备份的 localStorage 键（`hpp_editor_autobackup` 等）已改为 `zexo_*`，旧草稿不会自动迁移。
+
+# 🧩 关于外部资源
+
+加载动画、字体、搜索图标、默认头像 / OwO 列表等第三方静态资源，仍然引用上游 HexoPlusPlus CDN 及其他第三方仓库的公开地址：这些链接指向的是对方托管的文件本身，与 Zexo 的品牌命名无关，在 Zexo 自建同款资源之前保持不变，避免界面资源 404。
+
 # 🤝 参与贡献
 
 Zexo 是一个完全由社区驱动的开源项目，我们热烈欢迎任何形式的贡献！

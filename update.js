@@ -1,5 +1,5 @@
-let zexo_lver = "Zexo@1.4" //last version
-function hpp_update(){
+let zexo_lver = "Zexo@1.5" //last version
+function zexo_update(){
 swal({title: "\n更新中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
 var ajax = ajaxObject();
     ajax.open( "get" , '/zexo/admin/api/update' , true );
@@ -46,7 +46,7 @@ swal(`存在更新 ${zexo_lver} ，是否更新？`, {
   switch (value) {
  
     case "update":
-      hpp_update();
+      zexo_update();
 	  break;
  
     default:

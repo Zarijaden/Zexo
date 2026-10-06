@@ -12,7 +12,7 @@ var ctJson = "/zexo/admin/api/get_config"
                             ${value}
                           <\/td><td><a href="javascript:edit_config('${index}')">修改<\/td><td><a href="javascript:del_config('${index}')">删除<\/td>
                 `);
-            });document.getElementById("tbody_config").innerHTML+=`<tr><a href="javascript:hpp_add_config()">新增一项<\/a> <td> <\/td> <td> <\/td><td><\/td>`});
+            });document.getElementById("tbody_config").innerHTML+=`<tr><a href="javascript:zexo_add_config()">新增一项<\/a> <td> <\/td> <td> <\/td><td><\/td>`});
 function edit_config(index){
 			swal({
   content: {
@@ -58,7 +58,7 @@ ajax.send(JSON.stringify(t_body));
 }
 else{swal("配置修改已取消！","您输入了空值","success")}})};
 
-function hpp_add_config(){
+function zexo_add_config(){
 	
 swal({
   content: {
@@ -133,8 +133,8 @@ swal({title:"你真的要删除此键值？",text:"我相信你是手滑了",ico
             }
         }
     }
-    ajax.send(index);}else{hpp_no()}})}else{hpp_no()}})}else{hpp_no()}})
-function hpp_no(){swal("您放弃了销毁数据","您的数据是安全的","success")}
+    ajax.send(index);}else{zexo_no()}})}else{zexo_no()}})}else{zexo_no()}})
+function zexo_no(){swal("您放弃了销毁数据","您的数据是安全的","success")}
 
 
 };

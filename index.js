@@ -2,8 +2,8 @@
 //记得更新时要更新zexo_ver, package-lock.json, package.json, update.js
 //开发者请将上述依赖注释去除
 
-const hpp_CDNver = "d4051c3"
-const zexo_ver = "Zexo@1.4a1"
+const zexo_CDNver = "d4051c3"
+const zexo_ver = "Zexo@1.5"
 const dev_mode_branch = "dist"
 let zexo_logstatus = 0
 
@@ -19,6 +19,36 @@ function getJsonLength(jsonData) {
   }
 
   return jsonLength;
+}
+
+// KV 读取：优先读取新键（zexo_*），若不存在则回退旧版 HexoPlusPlus 键（hpp_*），
+// 命中旧键时自动写回新键，保证老部署升级后数据（说说、签到时间、评论 token 等）不丢失。
+async function zexo_kv_get(key) {
+  let zexo_kv_val = await KVNAME.get(key)
+  if (zexo_kv_val === null && key.indexOf("zexo_") == 0) {
+    const zexo_old_key = "hpp_" + key.substr(5)
+    zexo_kv_val = await KVNAME.get(zexo_old_key)
+    if (zexo_kv_val !== null) {
+      await KVNAME.put(key, zexo_kv_val)
+    }
+  }
+  return zexo_kv_val
+}
+
+// 读取配置项：优先新键（zexo_*），回退旧版 HexoPlusPlus 键（hpp_*）；
+// 同时兼容历史上 twikoo 环境 ID 的两种拼写（下划线 / 连字符）。
+function zexo_config_get(config, key) {
+  if (config[key] != undefined) { return config[key] }
+  const zexo_key_alias = {
+    "zexo_twikoo_envId": ["zexo_twikoo-envId", "hpp_twikoo_envId", "hpp_twikoo-envId"]
+  }
+  const zexo_aliases = zexo_key_alias[key]
+  if (zexo_aliases != undefined) {
+    for (const zexo_alias of zexo_aliases) {
+      if (config[zexo_alias] != undefined) { return config[zexo_alias] }
+    }
+  }
+  return config["hpp_" + key.substr(5)]
 }
 
 addEventListener("fetch", event => {
@@ -48,8 +78,9 @@ async function handleRequest(request) {
     const urlObj = new URL(urlStr)
     const path = urlObj.href.substr(urlObj.origin.length)
     const domain = (urlStr.split('/'))[2]
-    const username = hpp_username.split(",");
-    const password = hpp_password.split(",");
+    // 环境变量读取：优先新版 zexo_*，回退旧版 hpp_*（避免老部署升级后无法登录）
+    const username = (typeof zexo_username != "undefined" ? zexo_username : (typeof hpp_username != "undefined" ? hpp_username : "")).split(",");
+    const password = (typeof zexo_password != "undefined" ? zexo_password : (typeof hpp_password != "undefined" ? hpp_password : "")).split(",");
     //console.log(zexo_logstatus)
     for (var i = 0; i < getJsonLength(username); i++) {
       if (getCookie(request, "password") == md5(password[i]) && getCookie(request, "username") == md5(username[i])) {
@@ -59,7 +90,7 @@ async function handleRequest(request) {
 
     if (path.startsWith('/zexo/admin')) {
       if (zexo_logstatus == 1) {
-        const zexo_config = await KVNAME.get("zexo_config");
+        const zexo_config = await zexo_kv_get("zexo_config");
         if (zexo_config === null) {
           if (path == '/zexo/admin/api/upconfig') {
             const config_r = JSON.stringify(await request.text())
@@ -67,7 +98,7 @@ async function handleRequest(request) {
             return new Response("OK")
           } else {
 
-            let hpp_installhtml = `<!doctype html>
+            let zexo_installhtml = `<!doctype html>
 <html lang="zh">
 <head>
 	<meta charset="UTF-8">
@@ -81,83 +112,83 @@ async function handleRequest(request) {
 			
 		  <div class="cont_join  ">
 		    <div class="cont_letras">
-		      <p>Hexo</p>
-		      <p>Plus</p>
-		      <p>plus</p>
+		      <p>Zexo</p>
+		      <p>Zexo</p>
+		      <p>Zexo</p>
 		    </div>
 
 		    <div class="cont_form_join" style="overflow-x: auto;">
 		      <h2>安装信息</h2>
 			  <h3 style="color:#fff">基本信息</h3>
 		      <p>域名:</p>    
-		      <input type="text" class="input_text" id="hpp_domain" placeholder="xxx.xxx.com"/>
+		      <input type="text" class="input_text" id="zexo_domain" placeholder="xxx.xxx.com"/>
 		      <p>头像地址:</p>    
-		      <input type="text" class="input_text" id="hpp_userimage" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/CDN/img/avatar.png"/>
+		      <input type="text" class="input_text" id="zexo_userimage" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/CDN/img/avatar.png"/>
 		      <p>标题:</p>    
-		      <input type="text" class="input_text" id="hpp_title" placeholder="XXX的后台"/>
+		      <input type="text" class="input_text" id="zexo_title" placeholder="XXX的后台"/>
 		      <p>icon地址:</p>    
-		      <input type="text" class="input_text" id="hpp_usericon" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/chenyfan.github.io/favicon.ico"/>
+		      <input type="text" class="input_text" id="zexo_usericon" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/chenyfan.github.io/favicon.ico"/>
 		      <p>跨域请求:</p>    
-			  <input type="text" class="input_text" id="hpp_cors" placeholder="*"/>
+			  <input type="text" class="input_text" id="zexo_cors" placeholder="*"/>
 			  <h3 style="color:#fff">面板配置</h3>
 			  <p>OwOJSON地址:</p>    
-              <input type="text" class="input_text" id="hpp_OwO" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/CDN@ca3ea6c/assets/list.json" />
+              <input type="text" class="input_text" id="zexo_OwO" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/CDN@ca3ea6c/assets/list.json" />
 			  <p>面板背景图片:</p>    
-              <input type="text" class="input_text" id="hpp_back" placeholder="不填则使用纯色背景（不加载外部图片）" />
+              <input type="text" class="input_text" id="zexo_back" placeholder="不填则使用纯色背景（不加载外部图片）" />
 			  <p>懒加载图片:</p>    
-              <input type="text" class="input_text" id="hpp_lazy_img" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/blog@master/themes/fluid/source/img/loading.gif" />
+              <input type="text" class="input_text" id="zexo_lazy_img" placeholder="https://cdn.jsdelivr.net/gh/ChenYFan/blog@master/themes/fluid/source/img/loading.gif" />
 			  <p>高亮样式:</p>    
-              <input type="text" class="input_text" id="hpp_highlight_style" placeholder="github" />
+              <input type="text" class="input_text" id="zexo_highlight_style" placeholder="github" />
 			  
 			  <p>面板选项卡颜色:</p>    
-              <input type="text" class="input_text" id="hpp_color" placeholder="azure" />
+              <input type="text" class="input_text" id="zexo_color" placeholder="azure" />
 			  <p>面板选项框颜色:</p>    
-              <input type="text" class="input_text" id="hpp_bg_color" placeholder="black" />
+              <input type="text" class="input_text" id="zexo_bg_color" placeholder="black" />
 			  <p>面板主题色:</p>    
-              <input type="text" class="input_text" id="hpp_theme_mode" placeholder="light" />
+              <input type="text" class="input_text" id="zexo_theme_mode" placeholder="light" />
 			  
 			  <p>列表限制数量:</p>    
-              <input type="text" class="input_text" id="hpp_page_limit" placeholder="10" />
+              <input type="text" class="input_text" id="zexo_page_limit" placeholder="10" />
 			  
 			  <h3 style="color:#fff">Github信息</h3>
 		      <p>Github文档仓库Token:</p>    
-		      <input type="text" class="input_text" id="hpp_githubdoctoken" placeholder="*********"/>
+		      <input type="text" class="input_text" id="zexo_githubdoctoken" placeholder="*********"/>
 			  <p>Github图片仓库Token:</p>    
-		      <input type="text" class="input_text" id="hpp_githubimagetoken" placeholder="*********"/>
+		      <input type="text" class="input_text" id="zexo_githubimagetoken" placeholder="*********"/>
 			  <p>Github文档仓库用户名:</p>    
-		      <input type="text" class="input_text" id="hpp_githubdocusername" placeholder="XXX" />
+		      <input type="text" class="input_text" id="zexo_githubdocusername" placeholder="XXX" />
 			  <p>Github图片仓库用户名:</p>    
-		      <input type="text" class="input_text" id="hpp_githubimageusername" placeholder="XXX" />
+		      <input type="text" class="input_text" id="zexo_githubimageusername" placeholder="XXX" />
 			  <p>Github文档仓库名:</p>    
-		      <input type="text" class="input_text" id="hpp_githubdocrepo" placeholder="blog" />
+		      <input type="text" class="input_text" id="zexo_githubdocrepo" placeholder="blog" />
 			  <p>Github图片仓库名:</p>    
-		      <input type="text" class="input_text" id="hpp_githubimagerepo" placeholder="image" />
+		      <input type="text" class="input_text" id="zexo_githubimagerepo" placeholder="image" />
 			  <p>Github文档仓库根目录:</p>    
-		      <input type="text" class="input_text" id="hpp_githubdocroot" placeholder="/" />
+		      <input type="text" class="input_text" id="zexo_githubdocroot" placeholder="/" />
 			  <p>Github图片仓库路径:</p>    
-		      <input type="text" class="input_text" id="hpp_githubimagepath" placeholder="/" />
+		      <input type="text" class="input_text" id="zexo_githubimagepath" placeholder="/" />
 			  <p>Github文档仓库分支:</p>    
-		      <input type="text" class="input_text" id="hpp_githubdocbranch" placeholder="master" />
+		      <input type="text" class="input_text" id="zexo_githubdocbranch" placeholder="master" />
 			  <p>Github图片仓库分支:</p>    
-		      <input type="text" class="input_text" id="hpp_githubimagebranch" placeholder="main" />
+		      <input type="text" class="input_text" id="zexo_githubimagebranch" placeholder="main" />
 			  <h3 style="color:#fff">附加功能</h3>
 			  <p>是否自动签到【是为True，否为False】:</p>    
-		      <input type="text" class="input_text" id="hpp_autodate" placeholder="False" />
+		      <input type="text" class="input_text" id="zexo_autodate" placeholder="False" />
               <h3 style="color:#fff">CloudFlare访问功能</h3>
 			  <p>Global API Key:</p>    
-		      <input type="text" class="input_text" id="hpp_CF_Auth_Key" placeholder="***" />
+		      <input type="text" class="input_text" id="zexo_CF_Auth_Key" placeholder="***" />
               <p>目标Workers名称:</p>    
-		      <input type="text" class="input_text" id="hpp_script_name" placeholder="HexoPlusPlus" />
+		      <input type="text" class="input_text" id="zexo_script_name" placeholder="Zexo" />
               <p>Workers账户ID:</p>    
-		      <input type="text" class="input_text" id="hpp_account_identifier" placeholder="***" />
+		      <input type="text" class="input_text" id="zexo_account_identifier" placeholder="***" />
               <p>账户登录邮箱:</p>    
-		      <input type="text" class="input_text" id="hpp_Auth_Email" placeholder="ABC@DEF.com" />
+		      <input type="text" class="input_text" id="zexo_Auth_Email" placeholder="ABC@DEF.com" />
               <p>Pages 部署钩子 (Deploy Hook) URL:</p> 
-        <input type="text" class="input_text" id="hpp_deploy_hook_url" placeholder="https://api.cloudflare.com/.../deploy_hooks/..."/>
+        <input type="text" class="input_text" id="zexo_deploy_hook_url" placeholder="https://api.cloudflare.com/.../deploy_hooks/..."/>
               
               <h3 style="color:#fff">Twikoo加强</h3>
               <p>Twikoo环境ID:</p>    
-              <input type="text" class="input_text" id="hpp_twikoo_envId" placeholder="xxx" />
+              <input type="text" class="input_text" id="zexo_twikoo_envId" placeholder="xxx" />
 			  
 		    </div>
 		  
@@ -175,85 +206,99 @@ async function handleRequest(request) {
 	<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/install.js"></script>
 </body>
 </html>`
-            return new Response(hpp_installhtml, {
+            return new Response(zexo_installhtml, {
               headers: { "content-type": "text/html;charset=UTF-8" }
             })
           }
         } else {
 
-          const config = JSON.parse(JSON.parse(zexo_config))
-          const hpp_domain = config["hpp_domain"]
-          const hpp_userimage = config["hpp_userimage"]
-          const hpp_title = config["hpp_title"]
-          const hpp_usericon = config["hpp_usericon"]
-          const hpp_cors = config["hpp_cors"]
-          const hpp_githubdoctoken = config["hpp_githubdoctoken"]
-          const hpp_githubimagetoken = config["hpp_githubimagetoken"]
-          const hpp_githubdocusername = config["hpp_githubdocusername"]
-          const hpp_githubdocrepo = config["hpp_githubdocrepo"]
-          const hpp_githubdocroot = config["hpp_githubdocroot"]
-          const hpp_githubdocbranch = config["hpp_githubdocbranch"]
-          const hpp_githubimageusername = config["hpp_githubimageusername"]
-          const hpp_githubimagerepo = config["hpp_githubimagerepo"]
-          const hpp_githubimagepath = config["hpp_githubimagepath"]
-          const hpp_githubimagebranch = config["hpp_githubimagebranch"]
-          const hpp_autodate = config["hpp_autodate"]
-          const hpp_account_identifier = config["hpp_account_identifier"]
-          const hpp_script_name = config["hpp_script_name"]
-          const hpp_CF_Auth_Key = config["hpp_CF_Auth_Key"]
-          const hpp_Auth_Email = config["hpp_Auth_Email"]
-          const hpp_deploy_hook_url = config["hpp_deploy_hook_url"]
-          const hpp_twikoo_envId = config["hpp_twikoo-envId"]
-          const hpp_OwO = config["hpp_OwO"]
-          const hpp_back = config["hpp_back"]
-          const hpp_lazy_img = config["hpp_lazy_img"]
-          const hpp_highlight_style = config["hpp_highlight_style"]
-          const hpp_plugin_js = config["hpp_plugin_js"]
-          const hpp_plugin_css = config["hpp_plugin_css"]
-          const hpp_githubdocpath = hpp_githubdocroot + "source/_posts/"
-          const hpp_githubdocdraftpath = hpp_githubdocroot + "source/_drafts/"
-          const githubdocdraftpath = encodeURI(hpp_githubdocdraftpath)
-          const githubdocpath = encodeURI(hpp_githubdocpath)
-          const githubimagepath = encodeURI(hpp_githubimagepath)
-		  const hpp_color=config["hpp_color"]==undefined?"rose":config["hpp_color"]
-		  const hpp_bg_color=config["hpp_bg_color"]==undefined?"white":config["hpp_bg_color"]
-		  const hpp_theme_mode=config["hpp_theme_mode"]=="dark"?"dark":"light"
-		  const hpp_page_limit=config["hpp_page_limit"]==undefined?"10":config["hpp_page_limit"]
-          if (hpp_autodate == "True") {
-            const now = Date.now(new Date())
-            await KVNAME.put("hpp_activetime", now)
-            const hpp_kvwait = Date.now(new Date()) - now
+          let config = JSON.parse(JSON.parse(zexo_config))
+          // 兼容旧版 HexoPlusPlus 配置：hpp_* 键自动迁移为 zexo_* 并写回 KV
+          if (config["zexo_domain"] == undefined) {
+            let zexo_config_migrated = false
+            let zexo_config_new = {}
+            for (const zexo_config_key in config) {
+              const zexo_config_newkey = zexo_config_key.indexOf("hpp_") == 0 ? "zexo_" + zexo_config_key.substr(4) : zexo_config_key
+              if (zexo_config_newkey != zexo_config_key) { zexo_config_migrated = true }
+              zexo_config_new[zexo_config_newkey] = config[zexo_config_key]
+            }
+            if (zexo_config_migrated) {
+              config = zexo_config_new
+              await KVNAME.put("zexo_config", JSON.stringify(JSON.stringify(config)))
+            }
           }
-          const hpp_githubgetimageinit = {
+          const zexo_domain = config["zexo_domain"]
+          const zexo_userimage = config["zexo_userimage"]
+          const zexo_title = config["zexo_title"]
+          const zexo_usericon = config["zexo_usericon"]
+          const zexo_cors = config["zexo_cors"]
+          const zexo_githubdoctoken = config["zexo_githubdoctoken"]
+          const zexo_githubimagetoken = config["zexo_githubimagetoken"]
+          const zexo_githubdocusername = config["zexo_githubdocusername"]
+          const zexo_githubdocrepo = config["zexo_githubdocrepo"]
+          const zexo_githubdocroot = config["zexo_githubdocroot"]
+          const zexo_githubdocbranch = config["zexo_githubdocbranch"]
+          const zexo_githubimageusername = config["zexo_githubimageusername"]
+          const zexo_githubimagerepo = config["zexo_githubimagerepo"]
+          const zexo_githubimagepath = config["zexo_githubimagepath"]
+          const zexo_githubimagebranch = config["zexo_githubimagebranch"]
+          const zexo_autodate = config["zexo_autodate"]
+          const zexo_account_identifier = config["zexo_account_identifier"]
+          const zexo_script_name = config["zexo_script_name"]
+          const zexo_CF_Auth_Key = config["zexo_CF_Auth_Key"]
+          const zexo_Auth_Email = config["zexo_Auth_Email"]
+          const zexo_deploy_hook_url = config["zexo_deploy_hook_url"]
+          const zexo_twikoo_envId = config["zexo_twikoo_envId"] != undefined ? config["zexo_twikoo_envId"] : config["zexo_twikoo-envId"]
+          const zexo_OwO = config["zexo_OwO"]
+          const zexo_back = config["zexo_back"]
+          const zexo_lazy_img = config["zexo_lazy_img"]
+          const zexo_highlight_style = config["zexo_highlight_style"]
+          const zexo_plugin_js = config["zexo_plugin_js"]
+          const zexo_plugin_css = config["zexo_plugin_css"]
+          const zexo_githubdocpath = zexo_githubdocroot + "source/_posts/"
+          const zexo_githubdocdraftpath = zexo_githubdocroot + "source/_drafts/"
+          const githubdocdraftpath = encodeURI(zexo_githubdocdraftpath)
+          const githubdocpath = encodeURI(zexo_githubdocpath)
+          const githubimagepath = encodeURI(zexo_githubimagepath)
+		  const zexo_color=config["zexo_color"]==undefined?"rose":config["zexo_color"]
+		  const zexo_bg_color=config["zexo_bg_color"]==undefined?"white":config["zexo_bg_color"]
+		  const zexo_theme_mode=config["zexo_theme_mode"]=="dark"?"dark":"light"
+		  const zexo_page_limit=config["zexo_page_limit"]==undefined?"10":config["zexo_page_limit"]
+          if (zexo_autodate == "True") {
+            const now = Date.now(new Date())
+            await KVNAME.put("zexo_activetime", now)
+            const zexo_kvwait = Date.now(new Date()) - now
+          }
+          const zexo_githubgetimageinit = {
             method: "GET",
             headers: {
               "content-type": "application/json;charset=UTF-8",
               "user-agent": zexo_ver,
-              "Authorization": "token " + hpp_githubimagetoken
+              "Authorization": "token " + zexo_githubimagetoken
             },
           }
-          const hpp_githubgetdocinit = {
+          const zexo_githubgetdocinit = {
             method: "GET",
             headers: {
               "content-type": "application/json;charset=UTF-8",
               "user-agent": zexo_ver,
-              "Authorization": "token " + hpp_githubdoctoken
+              "Authorization": "token " + zexo_githubdoctoken
             },
           }
           /*主面板*/
           if (path.startsWith("/zexo/admin/dash")) {
-            let hpp_home_act = ""
-            let hpp_edit_act = ""
-            let hpp_talk_act = ""
-            let hpp_docs_man_act = ""
-            let hpp_img_man_act = ""
-			let hpp_tool_act = ""
-            let hpp_set_act = ""
-            let hpp_js = ""
-            let hpp_init = `<div class="content"><div class="container-fluid"><div class="row"><div class="col-md-12"><div class="card"><div class="card-header card-header-primary"><h4 class="card-title">404</h4><p class="card-category">我们不知道您的需求</p></div></br><div class="card-body"><a href="/zexo/admin/dash/home">回到主页</a></div></div></div></div></div></div>`
+            let zexo_home_act = ""
+            let zexo_edit_act = ""
+            let zexo_talk_act = ""
+            let zexo_docs_man_act = ""
+            let zexo_img_man_act = ""
+			let zexo_tool_act = ""
+            let zexo_set_act = ""
+            let zexo_js = ""
+            let zexo_init = `<div class="content"><div class="container-fluid"><div class="row"><div class="col-md-12"><div class="card"><div class="card-header card-header-primary"><h4 class="card-title">404</h4><p class="card-category">我们不知道您的需求</p></div></br><div class="card-body"><a href="/zexo/admin/dash/home">回到主页</a></div></div></div></div></div></div>`
             if (path == "/zexo/admin/dash/home") {
-              hpp_home_act = " active"
-              hpp_init = `<div class="content">
+              zexo_home_act = " active"
+              zexo_init = `<div class="content">
         <div class="container-fluid">
           <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
@@ -313,7 +358,7 @@ async function handleRequest(request) {
             
             
 			<div class="col-lg-6 col-md-6 col-sm-6">
-              <a href="https://github.com/${hpp_githubdocusername}/${hpp_githubdocrepo}" target="_blank">
+              <a href="https://github.com/${zexo_githubdocusername}/${zexo_githubdocrepo}" target="_blank">
               <div class="card card-stats">
                 <div class="card-header card-header-primary card-header-icon">
                   <div class="card-icon">
@@ -331,11 +376,11 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/home.js'></script>`
+              zexo_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/home.js'></script>`
             }
             if (path == "/zexo/admin/dash/edit") {
-              hpp_edit_act = " active"
-              hpp_init = `<div class="content">
+              zexo_edit_act = " active"
+              zexo_init = `<div class="content">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
@@ -349,23 +394,23 @@ async function handleRequest(request) {
                           <div class="col-md-8">
                               <label class="bmd-label-floating">文件选择</label>
                               <select id="choo" class="form-control form-control-chosen" style="display: inline;"></select>
-							  <button type="submit" class="btn btn-success" onclick="javascript:hpp_get_md()">获取文章</button>
-							  <button type="submit" class="btn btn-normal" onclick="javascript:hpp_get_draft()">获取艹稿</button>
-							  <button type="submit" class="btn btn-danger" onclick="javascript:hpp_del_index()">徒手清索引</button>
+							  <button type="submit" class="btn btn-success" onclick="javascript:zexo_get_md()">获取文章</button>
+							  <button type="submit" class="btn btn-normal" onclick="javascript:zexo_get_draft()">获取艹稿</button>
+							  <button type="submit" class="btn btn-danger" onclick="javascript:zexo_del_index()">徒手清索引</button>
                           </div>
 
                         <div class="row">
                           <div class="col-md-12">
                             <div class="form-group">
                               <label>内容</label>
-                              <div class="form-group" id="hpp_doc_editor">
+                              <div class="form-group" id="zexo_doc_editor">
 
                               </div>
                             </div>
                           </div>
                         </div>
-						<button type="submit" class="btn btn-normal pull-right" onclick="javascript:hpp_upload_draft()">发布艹稿</button>
-                        <button type="submit" class="btn btn-primary pull-right" onclick="javascript:hpp_upload_md()">发布文件</button>
+						<button type="submit" class="btn btn-normal pull-right" onclick="javascript:zexo_upload_draft()">发布艹稿</button>
+                        <button type="submit" class="btn btn-primary pull-right" onclick="javascript:zexo_upload_md()">发布文件</button>
                         <div class="clearfix"></div>
 						<input type="file" name="upload" id="upload_md" style="display:none"/>
 						<form id="upform" enctype='multipart/form-data' style="display:none;">
@@ -380,16 +425,16 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' />
+              zexo_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' />
 <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><script src="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.js"></script><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/edit.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/OwO.min.css">
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/highlight.min.js"></script>
-<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/styles/${hpp_highlight_style}.min.css' />
+<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/styles/${zexo_highlight_style}.min.css' />
 
 `
             }
             if (path == "/zexo/admin/dash/talk") {
-              hpp_talk_act = " active"
-              hpp_init = `<div class="content">
+              zexo_talk_act = " active"
+              zexo_init = `<div class="content">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
@@ -406,11 +451,11 @@ async function handleRequest(request) {
                           <div class="col-md-12">
                             <div class="form-group">
                               <label>书写</label>
-                              <div class="form-group" id="hpp_talk_editor"></div>
+                              <div class="form-group" id="zexo_talk_editor"></div>
                             </div>
                           </div>
                         </div>
-                        <button type="submit" class="btn btn-primary pull-right" onclick="javascript:hpp_upload_md()">Upload</button>
+                        <button type="submit" class="btn btn-primary pull-right" onclick="javascript:zexo_upload_md()">Upload</button>
                         <div class="clearfix"></div>
 						<input type="file" name="upload" id="upload_md" style="display:none"/>
 						<form id="upform" enctype='multipart/form-data' style="display:none;">
@@ -418,18 +463,18 @@ async function handleRequest(request) {
         <label for="upteainput">上传文件</label>
         <input type="file" id="input">
     </div>
-</form><div id="hpp_talk"></div>
+</form><div id="zexo_talk"></div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>`
-              hpp_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' /> <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.css" /><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/OwO.min.css">`
+              zexo_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' /> <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.css" /><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/OwO.min.css">`
             }
             if (path == "/zexo/admin/dash/docs_man") {
-              hpp_docs_man_act = " active"
-              hpp_init = `
+              zexo_docs_man_act = " active"
+              zexo_init = `
 <div class="content">
         <div class="container-fluid">
           <div class="row">
@@ -441,8 +486,8 @@ async function handleRequest(request) {
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-				  <input type="text" id="search_Input" onkeyup="hpp_search()" placeholder="搜索文章...">
-                    <table class="table" id="hpp_table">
+				  <input type="text" id="search_Input" onkeyup="zexo_search()" placeholder="搜索文章...">
+                    <table class="table" id="zexo_table">
                       <thead class="text-primary">
                         <th>
                           名称
@@ -464,12 +509,12 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/doc_man.js'></script>`
+              zexo_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/doc_man.js'></script>`
 
             }
             if (path == "/zexo/admin/dash/img_man") {
-              hpp_img_man_act = " active"
-              hpp_init = `<div class="content">
+              zexo_img_man_act = " active"
+              zexo_init = `<div class="content">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
@@ -480,8 +525,8 @@ async function handleRequest(request) {
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-				  <input type="text" id="search_Input" onkeyup="hpp_search()" placeholder="搜索图片...">
-                    <table class="table" id="hpp_table">
+				  <input type="text" id="search_Input" onkeyup="zexo_search()" placeholder="搜索图片...">
+                    <table class="table" id="zexo_table">
                       <thead class=" text-primary">
                         <th>
                           名称
@@ -503,19 +548,19 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/css/swipebox.css"><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/img_man.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script>
+              zexo_js = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/css/swipebox.css"><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/img_man.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><script src="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/js/jquery.swipebox.min.js"></script>`
 
             }
 			if (path == "/zexo/admin/dash/tool") {
-              hpp_tool_act = " active"
-              hpp_init = `<div class="content">
+              zexo_tool_act = " active"
+              zexo_init = `<div class="content">
               
         <div class="container-fluid">
           <div class="row">
 
 			<div class="col-lg-6 col-md-6 col-sm-6">
-              <a href="javascript:hpp_artitalk_into_hpptalk()">
+              <a href="javascript:zexo_artitalk_into_zexotalk()">
               <div class="card card-stats">
                 <div class="card-header card-header-primary card-header-icon">
                   <div class="card-icon">
@@ -530,7 +575,7 @@ async function handleRequest(request) {
             </div>
 
 			<div class="col-lg-6 col-md-6 col-sm-6">
-              <a href="javascript:hpp_del_all()">
+              <a href="javascript:zexo_del_all()">
               <div class="card card-stats">
                 <div class="card-header card-header-danger card-header-icon">
                   <div class="card-icon">
@@ -570,11 +615,11 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/tool.js'></script>`
+              zexo_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/tool.js'></script>`
             }
             if (path == "/zexo/admin/dash/set") {
-              hpp_set_act = " active"
-              hpp_init = `<div class="content">
+              zexo_set_act = " active"
+              zexo_init = `<div class="content">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
@@ -585,8 +630,8 @@ async function handleRequest(request) {
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-				  <input type="text" id="search_Input" onkeyup="hpp_search()" placeholder="搜索配置...">
-                    <table class="table" id="hpp_table">
+				  <input type="text" id="search_Input" onkeyup="zexo_search()" placeholder="搜索配置...">
+                    <table class="table" id="zexo_table">
                       <thead class=" text-primary">
                         <th>
                           键值
@@ -606,76 +651,76 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              hpp_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/config.js'></script>`
+              zexo_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/config.js'></script>`
             }
-            let hpp_plugin = ""
-            if (hpp_plugin_css != undefined) { hpp_plugin += `<link rel="stylesheet" type="text/css" href="${hpp_plugin_css}" />` }
-            if (hpp_plugin_js != undefined) { hpp_js += `<script src="${hpp_plugin_js}"></script>` }
-            let hpp_dash_head = `<!DOCTYPE html>
+            let zexo_plugin = ""
+            if (zexo_plugin_css != undefined) { zexo_plugin += `<link rel="stylesheet" type="text/css" href="${zexo_plugin_css}" />` }
+            if (zexo_plugin_js != undefined) { zexo_js += `<script src="${zexo_plugin_js}"></script>` }
+            let zexo_dash_head = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8" />
-  <link rel="apple-touch-icon" sizes="76x76" href="${hpp_usericon}">
-  <link rel="icon" type="image/png" href="${hpp_usericon}">
-  <title>${hpp_title}</title>
+  <link rel="apple-touch-icon" sizes="76x76" href="${zexo_usericon}">
+  <link rel="icon" type="image/png" href="${zexo_usericon}">
+  <title>${zexo_title}</title>
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
-  ${hpp_plugin}
+  ${zexo_plugin}
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/font.css" />
-  <link href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/admin_all_${hpp_theme_mode}.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/admin_all_${zexo_theme_mode}.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
   <script>
   //这个脚本的用途是前端变量传递
   const zexo_ver="${zexo_ver}";
-  const hpp_OwO="${hpp_OwO}";
-  const avatar="${hpp_userimage}";
+  const zexo_OwO="${zexo_OwO}";
+  const avatar="${zexo_userimage}";
   const username="${username[0]}";
-  const hpp_githubdocusername = "${hpp_githubdocusername}"
-  const hpp_githubdocrepo ="${hpp_githubdocrepo}"
-  const hpp_githubdocbranch ="${hpp_githubdocbranch}"
-  const hpp_githubdocpath ="${hpp_githubdocpath}"
-  const hpp_githubimageusername = "${hpp_githubimageusername}"
-  const hpp_githubimagerepo ="${hpp_githubimagerepo}"
-  const hpp_githubimagebranch ="${hpp_githubimagebranch}"
-  const hpp_githubimagepath ="${hpp_githubimagepath}"
-  const hpp_githubdocdraftpath ="${hpp_githubdocdraftpath}"
-  const hpp_lazy_img = "${hpp_lazy_img}"
-  const hpp_highlight_style = "${hpp_highlight_style}"
-  const hpp_page_limit = ${hpp_page_limit}
+  const zexo_githubdocusername = "${zexo_githubdocusername}"
+  const zexo_githubdocrepo ="${zexo_githubdocrepo}"
+  const zexo_githubdocbranch ="${zexo_githubdocbranch}"
+  const zexo_githubdocpath ="${zexo_githubdocpath}"
+  const zexo_githubimageusername = "${zexo_githubimageusername}"
+  const zexo_githubimagerepo ="${zexo_githubimagerepo}"
+  const zexo_githubimagebranch ="${zexo_githubimagebranch}"
+  const zexo_githubimagepath ="${zexo_githubimagepath}"
+  const zexo_githubdocdraftpath ="${zexo_githubdocdraftpath}"
+  const zexo_lazy_img = "${zexo_lazy_img}"
+  const zexo_highlight_style = "${zexo_highlight_style}"
+  const zexo_page_limit = ${zexo_page_limit}
   </script>
 </head>
-<body class="${hpp_theme_mode=='dark'?'dark-edition':''}">
+<body class="${zexo_theme_mode=='dark'?'dark-edition':''}">
   <div class="wrapper ">
-    <div class="sidebar" data-color="${hpp_color}" data-background-color="${hpp_theme_mode=='dark'?'default':hpp_bg_color}" data-image="${hpp_back}">
-      <div class="logo"><a class="simple-text logo-normal">${hpp_title}</a></div>
+    <div class="sidebar" data-color="${zexo_color}" data-background-color="${zexo_theme_mode=='dark'?'default':zexo_bg_color}" data-image="${zexo_back}">
+      <div class="logo"><a class="simple-text logo-normal">${zexo_title}</a></div>
       <div class="sidebar-wrapper">
         <ul class="nav">
-          <li class="nav-item${hpp_home_act}">
+          <li class="nav-item${zexo_home_act}">
             <a class="nav-link" href="/zexo/admin/dash/home">
               <i class="material-icons">dashboard</i>
               <p>主页</p>
             </a>
           </li>
-          <li class="nav-item${hpp_edit_act}">
+          <li class="nav-item${zexo_edit_act}">
             <a class="nav-link" href="/zexo/admin/dash/edit">
               <i class="material-icons">create</i>
               <p>书写</p>
             </a>
           </li>
-          <li class="nav-item${hpp_talk_act}">
+          <li class="nav-item${zexo_talk_act}">
             <a class="nav-link" href="/zexo/admin/dash/talk">
               <i class="material-icons">chat</i>
               <p>说说</p>
             </a>
           </li>
-          <li class="nav-item${hpp_docs_man_act}">
+          <li class="nav-item${zexo_docs_man_act}">
             <a class="nav-link" href="/zexo/admin/dash/docs_man">
               <i class="material-icons">descriptionoutlined</i>
               <p>文档管理</p>
             </a>
           </li>
-		  <li class="nav-item${hpp_img_man_act}">
+		  <li class="nav-item${zexo_img_man_act}">
             <a class="nav-link" href="/zexo/admin/dash/img_man">
               <i class="material-icons">imagerounded</i>
               <p>图片管理</p>
@@ -683,13 +728,13 @@ async function handleRequest(request) {
           </li>
 
 
-		  <li class="nav-item${hpp_tool_act}">
+		  <li class="nav-item${zexo_tool_act}">
             <a class="nav-link" href="/zexo/admin/dash/tool">
               <i class="material-icons">widgets</i>
               <p>工具</p>
             </a>
           </li>
-		  <li class="nav-item${hpp_set_act}">
+		  <li class="nav-item${zexo_set_act}">
             <a class="nav-link" href="/zexo/admin/dash/set">
               <i class="material-icons">settings</i>
               <p>设置</p>
@@ -723,13 +768,13 @@ async function handleRequest(request) {
             <ul class="navbar-nav">
               <li class="nav-item dropdown">
                 <a class="nav-link" href="javascript:;" id="navbarDropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <img src="${hpp_userimage}" style="width: 30px;border-radius: 50%;border: 0;">
+                  <img src="${zexo_userimage}" style="width: 30px;border-radius: 50%;border: 0;">
                   <p class="d-lg-none d-md-block">
                     Account
                   </p>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                  <a class="dropdown-item" href="javascript:hpp_logout()">退出</a>
+                  <a class="dropdown-item" href="javascript:zexo_logout()">退出</a>
                 </div>
               </li>
             </ul>
@@ -739,20 +784,20 @@ async function handleRequest(request) {
       <!-- End Navbar -->
 
 <!--innerHTMLSTART-->`
-            let hpp_dash_foot = `
+            let zexo_dash_foot = `
 					<!--innerHTMLEND-->
 </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert/dist/sweetalert.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/admin_all.js"></script>
-${hpp_js}
+${zexo_js}
 
 </body>
 
 </html>`
-            let hpp_dash = `${hpp_dash_head}${hpp_init}${hpp_dash_foot}`
-            return new Response(hpp_dash, {
+            let zexo_dash = `${zexo_dash_head}${zexo_init}${zexo_dash_foot}`
+            return new Response(zexo_dash, {
               headers: { "content-type": "text/html;charset=UTF-8" }
             })
 
@@ -761,27 +806,27 @@ ${hpp_js}
 
             const file = await request.text()
             const filename = path.substr(("/zexo/admin/api/adddoc/").length)
-            const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${githubdocpath}${filename}?ref=${hpp_githubdocbranch}`
-            const hpp_sha = (JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())).sha
-            const hpp_body = {
-              branch: hpp_githubdocbranch, message: `Upload from ${zexo_ver} By ${hpp_githubdocusername}`, content: file, sha: hpp_sha
+            const url = `https://api.github.com/repos/${zexo_githubdocusername}/${zexo_githubdocrepo}/contents${githubdocpath}${filename}?ref=${zexo_githubdocbranch}`
+            const zexo_sha = (JSON.parse(await (await fetch(url, zexo_githubgetdocinit)).text())).sha
+            const zexo_body = {
+              branch: zexo_githubdocbranch, message: `Upload from ${zexo_ver} By ${zexo_githubdocusername}`, content: file, sha: zexo_sha
             }
-            const hpp_docputinit = {
-              body: JSON.stringify(hpp_body),
+            const zexo_docputinit = {
+              body: JSON.stringify(zexo_body),
               method: "PUT",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "user-agent": zexo_ver,
-                "Authorization": "token " + hpp_githubdoctoken
+                "Authorization": "token " + zexo_githubdoctoken
               }
             }
-            const hpp_r = await fetch(url, hpp_docputinit)
-            const hpp_r_s = await hpp_r.status
-            if (hpp_r_s == 200 || hpp_r_s == 201) {
-              if (hpp_r_s == 201) { await KVNAME.delete("hpp_doc_list_index") }
-              return new Response('Update Success', { status: hpp_r_s })
+            const zexo_r = await fetch(url, zexo_docputinit)
+            const zexo_r_s = await zexo_r.status
+            if (zexo_r_s == 200 || zexo_r_s == 201) {
+              if (zexo_r_s == 201) { await KVNAME.delete("zexo_doc_list_index") }
+              return new Response('Update Success', { status: zexo_r_s })
             } else {
-              return new Response('Fail To Update', { status: hpp_r_s })
+              return new Response('Fail To Update', { status: zexo_r_s })
             }
 
           }
@@ -789,178 +834,178 @@ ${hpp_js}
 
             const file = await request.text()
             const filename = path.substr(("/zexo/admin/api/adddraft/").length)
-            const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${githubdocdraftpath}${filename}?ref=${hpp_githubdocbranch}`
-            const hpp_sha = (JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())).sha
-            const hpp_body = {
-              branch: hpp_githubdocbranch, message: `Upload draft from ${zexo_ver} By ${hpp_githubdocusername}`, content: file, sha: hpp_sha
+            const url = `https://api.github.com/repos/${zexo_githubdocusername}/${zexo_githubdocrepo}/contents${githubdocdraftpath}${filename}?ref=${zexo_githubdocbranch}`
+            const zexo_sha = (JSON.parse(await (await fetch(url, zexo_githubgetdocinit)).text())).sha
+            const zexo_body = {
+              branch: zexo_githubdocbranch, message: `Upload draft from ${zexo_ver} By ${zexo_githubdocusername}`, content: file, sha: zexo_sha
             }
-            const hpp_docputinit = {
-              body: JSON.stringify(hpp_body),
+            const zexo_docputinit = {
+              body: JSON.stringify(zexo_body),
               method: "PUT",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "user-agent": zexo_ver,
-                "Authorization": "token " + hpp_githubdoctoken
+                "Authorization": "token " + zexo_githubdoctoken
               }
             }
-            const hpp_r = await fetch(url, hpp_docputinit)
-            const hpp_r_s = await hpp_r.status
-            if (hpp_r_s == 200 || hpp_r_s == 201) {
-              if (hpp_r_s == 201) { await KVNAME.delete("hpp_doc_draft_list_index") }
-              return new Response('Update Success', { status: hpp_r_s })
+            const zexo_r = await fetch(url, zexo_docputinit)
+            const zexo_r_s = await zexo_r.status
+            if (zexo_r_s == 200 || zexo_r_s == 201) {
+              if (zexo_r_s == 201) { await KVNAME.delete("zexo_doc_draft_list_index") }
+              return new Response('Update Success', { status: zexo_r_s })
             } else {
-              return new Response('Fail To Update', { status: hpp_r_s })
+              return new Response('Fail To Update', { status: zexo_r_s })
             }
 
           }
           if (path.startsWith("/zexo/admin/api/addimage")) {
             const file = await request.text()
-            const hpp_time = Date.parse(new Date())
+            const zexo_time = Date.parse(new Date())
             const filename = path.substr(("/zexo/admin/api/addimage/").length)
 
-            const url = `https://api.github.com/repos/${hpp_githubimageusername}/${hpp_githubimagerepo}/contents${githubimagepath}${hpp_time}.${filename}`
-            const hpp_body = {
-              branch: hpp_githubimagebranch, message: `Upload from ${zexo_ver} By ${hpp_githubimageusername}`, content: file
+            const url = `https://api.github.com/repos/${zexo_githubimageusername}/${zexo_githubimagerepo}/contents${githubimagepath}${zexo_time}.${filename}`
+            const zexo_body = {
+              branch: zexo_githubimagebranch, message: `Upload from ${zexo_ver} By ${zexo_githubimageusername}`, content: file
             }
-            const hpp_imageputinit = {
-              body: JSON.stringify(hpp_body),
+            const zexo_imageputinit = {
+              body: JSON.stringify(zexo_body),
               method: "PUT",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "user-agent": zexo_ver,
-                "Authorization": "token " + hpp_githubimagetoken
+                "Authorization": "token " + zexo_githubimagetoken
               }
             }
-            const hpp_r = await fetch(url, hpp_imageputinit)
-            const hpp_r_s = await hpp_r.status
-            if (hpp_r_s == 200 || hpp_r_s == 201) {
-              return new Response(`https://cdn.jsdelivr.net/gh/${hpp_githubimageusername}/${hpp_githubimagerepo}@${hpp_githubimagebranch}${hpp_githubimagepath}${hpp_time}.${filename}`, { status: hpp_r_s })
+            const zexo_r = await fetch(url, zexo_imageputinit)
+            const zexo_r_s = await zexo_r.status
+            if (zexo_r_s == 200 || zexo_r_s == 201) {
+              return new Response(`https://cdn.jsdelivr.net/gh/${zexo_githubimageusername}/${zexo_githubimagerepo}@${zexo_githubimagebranch}${zexo_githubimagepath}${zexo_time}.${filename}`, { status: zexo_r_s })
             } else {
-              return new Response(`Fail To Upload Image`, { status: hpp_r_s })
+              return new Response(`Fail To Upload Image`, { status: zexo_r_s })
             }
           }
           if (path.startsWith("/zexo/admin/api/deldoc")) {
 
             const filename = path.substr(("/zexo/admin/api/deldoc/").length)
-            const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${githubdocpath}${filename}?ref=${hpp_githubdocbranch}`
-            const hpp_sha = (JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())).sha
-            const hpp_body = {
-              branch: hpp_githubdocbranch, message: `Delete from ${zexo_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
+            const url = `https://api.github.com/repos/${zexo_githubdocusername}/${zexo_githubdocrepo}/contents${githubdocpath}${filename}?ref=${zexo_githubdocbranch}`
+            const zexo_sha = (JSON.parse(await (await fetch(url, zexo_githubgetdocinit)).text())).sha
+            const zexo_body = {
+              branch: zexo_githubdocbranch, message: `Delete from ${zexo_ver} By ${zexo_githubdocusername}`, sha: zexo_sha
             }
-            const hpp_docputinit = {
-              body: JSON.stringify(hpp_body),
+            const zexo_docputinit = {
+              body: JSON.stringify(zexo_body),
               method: "DELETE",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "user-agent": zexo_ver,
-                "Authorization": "token " + hpp_githubdoctoken
+                "Authorization": "token " + zexo_githubdoctoken
               }
             }
-            const hpp_r = await fetch(url, hpp_docputinit)
-            const hpp_r_s = await hpp_r.status
-            if (hpp_r_s == 200) {
-              await KVNAME.delete("hpp_doc_list_index")
-              return new Response('Delete Success', { status: hpp_r_s })
+            const zexo_r = await fetch(url, zexo_docputinit)
+            const zexo_r_s = await zexo_r.status
+            if (zexo_r_s == 200) {
+              await KVNAME.delete("zexo_doc_list_index")
+              return new Response('Delete Success', { status: zexo_r_s })
             } else {
-              return new Response('Fail To Delete doc', { status: hpp_r_s })
+              return new Response('Fail To Delete doc', { status: zexo_r_s })
             }
           }
 
           if (path.startsWith("/zexo/admin/api/deldraft")) {
 
             const filename = path.substr(("/zexo/admin/api/deldraft/").length)
-            const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${githubdocdraftpath}${filename}?ref=${hpp_githubdocbranch}`
-            const hpp_sha = (JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())).sha
-            const hpp_body = {
-              branch: hpp_githubdocbranch, message: `Delete draft from ${zexo_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
+            const url = `https://api.github.com/repos/${zexo_githubdocusername}/${zexo_githubdocrepo}/contents${githubdocdraftpath}${filename}?ref=${zexo_githubdocbranch}`
+            const zexo_sha = (JSON.parse(await (await fetch(url, zexo_githubgetdocinit)).text())).sha
+            const zexo_body = {
+              branch: zexo_githubdocbranch, message: `Delete draft from ${zexo_ver} By ${zexo_githubdocusername}`, sha: zexo_sha
             }
-            const hpp_docputinit = {
-              body: JSON.stringify(hpp_body),
+            const zexo_docputinit = {
+              body: JSON.stringify(zexo_body),
               method: "DELETE",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "user-agent": zexo_ver,
-                "Authorization": "token " + hpp_githubdoctoken
+                "Authorization": "token " + zexo_githubdoctoken
               }
             }
-            const hpp_r = await fetch(url, hpp_docputinit)
-            const hpp_r_s = await hpp_r.status
-            if (hpp_r_s == 200) {
-              await KVNAME.delete("hpp_doc_draft_list_index")
-              return new Response('Delete Success', { status: hpp_r_s })
+            const zexo_r = await fetch(url, zexo_docputinit)
+            const zexo_r_s = await zexo_r.status
+            if (zexo_r_s == 200) {
+              await KVNAME.delete("zexo_doc_draft_list_index")
+              return new Response('Delete Success', { status: zexo_r_s })
             } else {
-              return new Response('Fail To Delete doc', { status: hpp_r_s })
+              return new Response('Fail To Delete doc', { status: zexo_r_s })
             }
           }
 
           if (path.startsWith("/zexo/admin/api/delimage")) {
             const filepath = githubimagepath.substr(0, (githubimagepath).length - 1)
-            const listurl = `https://api.github.com/repos/${hpp_githubimageusername}/${hpp_githubimagerepo}/contents${filepath}?ref=${hpp_githubimagebranch}`
+            const listurl = `https://api.github.com/repos/${zexo_githubimageusername}/${zexo_githubimagerepo}/contents${filepath}?ref=${zexo_githubimagebranch}`
             const filename = path.substr(("/zexo/admin/api/delimage/").length)
-            const url = `https://api.github.com/repos/${hpp_githubimageusername}/${hpp_githubimagerepo}/contents${githubimagepath}${filename}?ref=${hpp_githubimagebranch}`
-            const hpp_re = (JSON.parse(await (await fetch(listurl, hpp_githubgetimageinit)).text()))
-            //console.log(hpp_re)
-            let hpp_sha = ""
-            for (var i = 0; i < getJsonLength(hpp_re); i++) {
-              if (hpp_re[i]["name"] == filename) {
-                hpp_sha = hpp_re[i]["sha"]
+            const url = `https://api.github.com/repos/${zexo_githubimageusername}/${zexo_githubimagerepo}/contents${githubimagepath}${filename}?ref=${zexo_githubimagebranch}`
+            const zexo_re = (JSON.parse(await (await fetch(listurl, zexo_githubgetimageinit)).text()))
+            //console.log(zexo_re)
+            let zexo_sha = ""
+            for (var i = 0; i < getJsonLength(zexo_re); i++) {
+              if (zexo_re[i]["name"] == filename) {
+                zexo_sha = zexo_re[i]["sha"]
                 break
               }
             }
-            //console.log(hpp_sha)
-            const hpp_body = {
-              branch: hpp_githubimagebranch, message: `Delete from ${zexo_ver} By ${hpp_githubdocusername}`, sha: hpp_sha
+            //console.log(zexo_sha)
+            const zexo_body = {
+              branch: zexo_githubimagebranch, message: `Delete from ${zexo_ver} By ${zexo_githubdocusername}`, sha: zexo_sha
             }
-            const hpp_imageputinit = {
-              body: JSON.stringify(hpp_body),
+            const zexo_imageputinit = {
+              body: JSON.stringify(zexo_body),
               method: "DELETE",
               headers: {
                 "content-type": "application/json;charset=UTF-8",
                 "user-agent": zexo_ver,
-                "Authorization": "token " + hpp_githubimagetoken
+                "Authorization": "token " + zexo_githubimagetoken
               }
             }
-            const hpp_r = await fetch(url, hpp_imageputinit)
-            const hpp_r_s = await hpp_r.status
-            if (hpp_r_s == 200) {
-              return new Response('Delete Success', { status: hpp_r_s })
+            const zexo_r = await fetch(url, zexo_imageputinit)
+            const zexo_r_s = await zexo_r.status
+            if (zexo_r_s == 200) {
+              return new Response('Delete Success', { status: zexo_r_s })
             } else {
-              return new Response('Fail To Delete Image', { status: hpp_r_s })
+              return new Response('Fail To Delete Image', { status: zexo_r_s })
             }
           }
           if (path.startsWith("/zexo/admin/api/getdoc")) {
             const filename = path.substr(("/zexo/admin/api/getdoc/").length)
-            return (fetch(`https://raw.githubusercontent.com/${hpp_githubdocusername}/${hpp_githubdocrepo}/${hpp_githubdocbranch}${githubdocpath}${filename}?ref=${hpp_githubdocbranch}`, hpp_githubgetdocinit))
+            return (fetch(`https://raw.githubusercontent.com/${zexo_githubdocusername}/${zexo_githubdocrepo}/${zexo_githubdocbranch}${githubdocpath}${filename}?ref=${zexo_githubdocbranch}`, zexo_githubgetdocinit))
           }
 		  if (path == ("/zexo/admin/api/getscaffolds")) {
-            return (fetch(`https://raw.githubusercontent.com/${hpp_githubdocusername}/${hpp_githubdocrepo}/${hpp_githubdocbranch}${hpp_githubdocroot}scaffolds/post.md?ref=${hpp_githubdocbranch}`, hpp_githubgetdocinit))
+            return (fetch(`https://raw.githubusercontent.com/${zexo_githubdocusername}/${zexo_githubdocrepo}/${zexo_githubdocbranch}${zexo_githubdocroot}scaffolds/post.md?ref=${zexo_githubdocbranch}`, zexo_githubgetdocinit))
           }
           //他名字叫bfs，他就叫bfs/doge
           async function fetch_bfs(arr, url, getinit) {
             try {
-              const hpp_getlist = await JSON.parse(await (await fetch(url, hpp_githubgetdocinit)).text())
-              for (var i = 0; i < getJsonLength(hpp_getlist); i++) {
-                if (hpp_getlist[i]["type"] != "dir") {
-                  arr.push(hpp_getlist[i])
+              const zexo_getlist = await JSON.parse(await (await fetch(url, zexo_githubgetdocinit)).text())
+              for (var i = 0; i < getJsonLength(zexo_getlist); i++) {
+                if (zexo_getlist[i]["type"] != "dir") {
+                  arr.push(zexo_getlist[i])
                 } else {
-                  await fetch_bfs(arr, hpp_getlist[i]["_links"]["self"], getinit)
+                  await fetch_bfs(arr, zexo_getlist[i]["_links"]["self"], getinit)
                 }
               }
               return arr;
             } catch (e) { return {} }
           }
           if (path == "/zexo/admin/api/getlist") {
-            let hpp_doc_list_index = await KVNAME.get("hpp_doc_list_index")
-            if (hpp_doc_list_index === null) {
+            let zexo_doc_list_index = await zexo_kv_get("zexo_doc_list_index")
+            if (zexo_doc_list_index === null) {
               const filepath = githubdocpath.substr(0, (githubdocpath).length - 1)
-              const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${filepath}?ref=${hpp_githubdocbranch}`
-              hpp_doc_list_index = await JSON.stringify(await fetch_bfs([], url, hpp_githubgetdocinit))
-              await KVNAME.put("hpp_doc_list_index", hpp_doc_list_index)
+              const url = `https://api.github.com/repos/${zexo_githubdocusername}/${zexo_githubdocrepo}/contents${filepath}?ref=${zexo_githubdocbranch}`
+              zexo_doc_list_index = await JSON.stringify(await fetch_bfs([], url, zexo_githubgetdocinit))
+              await KVNAME.put("zexo_doc_list_index", zexo_doc_list_index)
             }
-            return new Response(hpp_doc_list_index, {
+            return new Response(zexo_doc_list_index, {
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "Access-Control-Allow-Origin": hpp_cors
+                "Access-Control-Allow-Origin": zexo_cors
               }
             })
           }
@@ -969,7 +1014,7 @@ if (path == "/zexo/admin/api/trigger-deploy") {
         return new Response('Unauthorized', { status: 401 });
     }
   
-    const hookUrl = hpp_deploy_hook_url;
+    const hookUrl = zexo_deploy_hook_url;
 
     const deployRes = await fetch(hookUrl, {
         method: 'POST',
@@ -986,82 +1031,82 @@ if (path == "/zexo/admin/api/trigger-deploy") {
 }
           if (path.startsWith("/zexo/admin/api/getdraft")) {
             const filename = path.substr(("/zexo/admin/api/getdraft/").length)
-            return (fetch(`https://raw.githubusercontent.com/${hpp_githubdocusername}/${hpp_githubdocrepo}/${hpp_githubdocbranch}${githubdocdraftpath}${filename}?ref=${hpp_githubdocbranch}`, hpp_githubgetdocinit))
+            return (fetch(`https://raw.githubusercontent.com/${zexo_githubdocusername}/${zexo_githubdocrepo}/${zexo_githubdocbranch}${githubdocdraftpath}${filename}?ref=${zexo_githubdocbranch}`, zexo_githubgetdocinit))
           }
           if (path == "/zexo/admin/api/get_draftlist") {
-            let hpp_doc_draft_list_index = await KVNAME.get("hpp_doc_draft_list_index")
-            if (hpp_doc_draft_list_index === null) {
+            let zexo_doc_draft_list_index = await zexo_kv_get("zexo_doc_draft_list_index")
+            if (zexo_doc_draft_list_index === null) {
               const filepath = githubdocdraftpath.substr(0, (githubdocdraftpath).length - 1)
-              const url = `https://api.github.com/repos/${hpp_githubdocusername}/${hpp_githubdocrepo}/contents${filepath}?ref=${hpp_githubdocbranch}`
-              hpp_doc_draft_list_index = await JSON.stringify(await fetch_bfs([], url, hpp_githubgetdocinit))
-              await KVNAME.put("hpp_doc_draft_list_index", hpp_doc_draft_list_index)
+              const url = `https://api.github.com/repos/${zexo_githubdocusername}/${zexo_githubdocrepo}/contents${filepath}?ref=${zexo_githubdocbranch}`
+              zexo_doc_draft_list_index = await JSON.stringify(await fetch_bfs([], url, zexo_githubgetdocinit))
+              await KVNAME.put("zexo_doc_draft_list_index", zexo_doc_draft_list_index)
             }
-            return new Response(hpp_doc_draft_list_index, {
+            return new Response(zexo_doc_draft_list_index, {
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "Access-Control-Allow-Origin": hpp_cors
+                "Access-Control-Allow-Origin": zexo_cors
               }
             })
           }
           if (path == "/zexo/admin/api/getimglist") {
             const filepath = githubimagepath.substr(0, (githubimagepath).length - 1)
-            const url = `https://api.github.com/repos/${hpp_githubimageusername}/${hpp_githubimagerepo}/contents${filepath}?ref=${hpp_githubimagebranch}`
-            return new Response(await JSON.stringify(await fetch_bfs([], url, hpp_githubgetimageinit)), {
+            const url = `https://api.github.com/repos/${zexo_githubimageusername}/${zexo_githubimagerepo}/contents${filepath}?ref=${zexo_githubimagebranch}`
+            return new Response(await JSON.stringify(await fetch_bfs([], url, zexo_githubgetimageinit)), {
               headers: {
                 "content-type": "application/json;charset=UTF-8",
-                "Access-Control-Allow-Origin": hpp_cors
+                "Access-Control-Allow-Origin": zexo_cors
               }
             })
           }
 
           if (path == "/zexo/admin/api/index_del") {
-            await KVNAME.delete("hpp_doc_draft_list_index")
-            await KVNAME.delete("hpp_doc_list_index")
+            await KVNAME.delete("zexo_doc_draft_list_index")
+            await KVNAME.delete("zexo_doc_list_index")
             return new Response("OK")
           }
 
           if (path == "/zexo/admin/api/addtalk") {
-            let hpp_talk_re = await KVNAME.get("hpp_talk_data")
-            if (hpp_talk_re === null) { hpp_talk_re = "[]" }
-            let hpp_talk = await JSON.parse(hpp_talk_re);
-            let hpp_talk_id_re = await KVNAME.get("hpp_talk_id")
-            if (hpp_talk_id_re === null) { hpp_talk_id_re = 0 }
-            let hpp_talk_id = hpp_talk_id_re;
-            hpp_talk_id++;
+            let zexo_talk_re = await zexo_kv_get("zexo_talk_data")
+            if (zexo_talk_re === null) { zexo_talk_re = "[]" }
+            let zexo_talk = await JSON.parse(zexo_talk_re);
+            let zexo_talk_id_re = await zexo_kv_get("zexo_talk_id")
+            if (zexo_talk_id_re === null) { zexo_talk_id_re = 0 }
+            let zexo_talk_id = zexo_talk_id_re;
+            zexo_talk_id++;
             const now = await request.json()
             const add = {
-              id: hpp_talk_id,
+              id: zexo_talk_id,
               time: now["time"],
               name: now["name"],
               avatar: now["avatar"],
               content: now["content"],
               visible: "True"
             }
-            hpp_talk.push(add);
-            await KVNAME.put("hpp_talk_data", JSON.stringify(hpp_talk))
-            await KVNAME.put("hpp_talk_id", hpp_talk_id)
+            zexo_talk.push(add);
+            await KVNAME.put("zexo_talk_data", JSON.stringify(zexo_talk))
+            await KVNAME.put("zexo_talk_id", zexo_talk_id)
             return new Response('OK')
           }
           if (path == "/zexo/admin/api/deltalk") {
-            const hpp_talk = JSON.parse(await KVNAME.get("hpp_talk_data"));
+            const zexo_talk = JSON.parse(await zexo_kv_get("zexo_talk_data"));
             const now = Number(await request.text())
-            for (var i = 0; i < getJsonLength(hpp_talk); i++) {
-              if (Number(hpp_talk[i]["id"]) == now) {
-                hpp_talk.splice(i, 1)
+            for (var i = 0; i < getJsonLength(zexo_talk); i++) {
+              if (Number(zexo_talk[i]["id"]) == now) {
+                zexo_talk.splice(i, 1)
               }
             }
-            await KVNAME.put("hpp_talk_data", JSON.stringify(hpp_talk))
+            await KVNAME.put("zexo_talk_data", JSON.stringify(zexo_talk))
             return new Response('OK')
           }
           if (path == "/zexo/admin/api/visibletalk") {
-            const hpp_talk = JSON.parse(await KVNAME.get("hpp_talk_data"));
+            const zexo_talk = JSON.parse(await zexo_kv_get("zexo_talk_data"));
             const now = await request.text()
-            for (var i = 0; i < getJsonLength(hpp_talk); i++) {
-              if (hpp_talk[i]["id"] == now) {
-                hpp_talk[i]["visible"] = hpp_talk[i]["visible"] == "False" ? "True" : "False"
+            for (var i = 0; i < getJsonLength(zexo_talk); i++) {
+              if (zexo_talk[i]["id"] == now) {
+                zexo_talk[i]["visible"] = zexo_talk[i]["visible"] == "False" ? "True" : "False"
               }
             }
-            await KVNAME.put("hpp_talk_data", JSON.stringify(hpp_talk))
+            await KVNAME.put("zexo_talk_data", JSON.stringify(zexo_talk))
             return new Response('OK')
           }
           if (path == "/zexo/admin/api/update") {
@@ -1071,53 +1116,53 @@ if (path == "/zexo/admin/api/trigger-deploy") {
               method: "PUT",
               headers: {
                 "content-type": "application/javascript",
-                "X-Auth-Key": hpp_CF_Auth_Key,
-                "X-Auth-Email": hpp_Auth_Email
+                "X-Auth-Key": zexo_CF_Auth_Key,
+                "X-Auth-Email": zexo_Auth_Email
               }
             }
-            const update_resul = await (await fetch(`https://api.cloudflare.com/client/v4/accounts/${hpp_account_identifier}/workers/scripts/${hpp_script_name}`, up_init)).text()
+            const update_resul = await (await fetch(`https://api.cloudflare.com/client/v4/accounts/${zexo_account_identifier}/workers/scripts/${zexo_script_name}`, up_init)).text()
             return new Response(JSON.parse(update_resul)["success"])
           }
           if (path == "/zexo/admin/api/small_white_mouse_update") {
-            const update_script = await (await fetch(`https://raw.githubusercontent.com/HexoPlusPlus/HexoPlusPlus/dev/index.js`)).text()
+            const update_script = await (await fetch(`https://raw.githubusercontent.com/Zarijaden/Zexo/dist/index.js`)).text()
             const up_init = {
               body: update_script,
               method: "PUT",
               headers: {
                 "content-type": "application/javascript",
-                "X-Auth-Key": hpp_CF_Auth_Key,
-                "X-Auth-Email": hpp_Auth_Email
+                "X-Auth-Key": zexo_CF_Auth_Key,
+                "X-Auth-Email": zexo_Auth_Email
               }
             }
-            const update_resul = await (await fetch(`https://api.cloudflare.com/client/v4/accounts/${hpp_account_identifier}/workers/scripts/${hpp_script_name}`, up_init)).text()
+            const update_resul = await (await fetch(`https://api.cloudflare.com/client/v4/accounts/${zexo_account_identifier}/workers/scripts/${zexo_script_name}`, up_init)).text()
             return new Response(JSON.parse(update_resul)["success"])
           }
           if (path == "/zexo/admin/api/inputtalk") {
-            let hpp_talk_re = await KVNAME.get("hpp_talk_data")
-            if (hpp_talk_re === null) { hpp_talk_re = "[]" }
-            let hpp_talk = await JSON.parse(hpp_talk_re);
-            let hpp_talk_id_re = await KVNAME.get("hpp_talk_id")
-            if (hpp_talk_id_re === null) { hpp_talk_id_re = 0 }
-            let hpp_talk_id = hpp_talk_id_re;
+            let zexo_talk_re = await zexo_kv_get("zexo_talk_data")
+            if (zexo_talk_re === null) { zexo_talk_re = "[]" }
+            let zexo_talk = await JSON.parse(zexo_talk_re);
+            let zexo_talk_id_re = await zexo_kv_get("zexo_talk_id")
+            if (zexo_talk_id_re === null) { zexo_talk_id_re = 0 }
+            let zexo_talk_id = zexo_talk_id_re;
             let now = await JSON.parse(await request.text())
             let talk_init = {}
             for (var i = 0; i < now.length; i++) {
-              hpp_talk_id++;
+              zexo_talk_id++;
               ftime = now[i]["updatedAt"]
               ftime = ftime.split('T')
               talk_init = {
-                id: hpp_talk_id,
+                id: zexo_talk_id,
                 time: ftime[0],
                 name: username[0],
                 avatar: now[i]["avatar"],
                 content: now[i]["atContentHtml"],
                 visible: "True"
               }
-              hpp_talk.push(talk_init)
+              zexo_talk.push(talk_init)
             }
-            await KVNAME.put("hpp_talk_data", JSON.stringify(hpp_talk))
-            await KVNAME.put("hpp_talk_id", hpp_talk_id)
-            return new Response(JSON.stringify(hpp_talk))
+            await KVNAME.put("zexo_talk_data", JSON.stringify(zexo_talk))
+            await KVNAME.put("zexo_talk_id", zexo_talk_id)
+            return new Response(JSON.stringify(zexo_talk))
           }
           if (path.startsWith("/zexo/admin/api/checkupdate")) {
             const update_check_script = await (await fetch(`https://raw.githubusercontent.com/Zarijaden/Zexo/main/update.js`)).text()
@@ -1125,6 +1170,11 @@ if (path == "/zexo/admin/api/trigger-deploy") {
           }
           if (path == "/zexo/admin/api/del_all") {
             await KVNAME.delete("zexo_config")
+            return new Response('OK')
+          }
+          if (path == "/zexo/admin/api/kick") {
+            // 手动签到：更新活跃时间（原 HexoPlusPlus 同功能接口）
+            await KVNAME.put("zexo_activetime", Date.now(new Date()))
             return new Response('OK')
           }
           if (path == "/zexo/admin/api/get_config") { return new Response(await JSON.parse(zexo_config)) }
@@ -1145,17 +1195,17 @@ if (path == "/zexo/admin/api/trigger-deploy") {
             await KVNAME.put("zexo_config", await JSON.stringify(await JSON.stringify(k)))
             return new Response('OK')
           }
-          if (path == "/zexo/admin/api/gethpptalk") {
+          if (path == "/zexo/admin/api/getzexotalk") {
             const req_r = await request.text()
             if (req_r != "") {
               const limit = (await JSON.parse(req_r))["limit"]
               const start = (await JSON.parse(req_r))["start"]
-              const hpp_talk = await JSON.parse(await KVNAME.get("hpp_talk_data"));
-              let hpp_talk_res = []
-              for (var i = getJsonLength(hpp_talk) - start - 1; i > getJsonLength(hpp_talk) - start - limit; i--) {
-                hpp_talk_res.push(await JSON.stringify(hpp_talk[i]))
+              const zexo_talk = await JSON.parse(await zexo_kv_get("zexo_talk_data"));
+              let zexo_talk_res = []
+              for (var i = getJsonLength(zexo_talk) - start - 1; i > getJsonLength(zexo_talk) - start - limit; i--) {
+                zexo_talk_res.push(await JSON.stringify(zexo_talk[i]))
               }
-              return new Response(JSON.stringify(hpp_talk_res), {
+              return new Response(JSON.stringify(zexo_talk_res), {
                 headers: {
                   "content-type": "application/json;charset=UTF-8",
                   "Access-Control-Allow-Origin": "*"
@@ -1173,12 +1223,13 @@ if (path == "/zexo/admin/api/trigger-deploy") {
       }
       else {
         if (path == '/zexo/admin/login') {
-          let hpp_captcha_html = ""
-          let hpp_captcha_no_1 = ""
-          let hpp_captcha_no_2 = ""
-          try { captcha = hpp_captcha } catch (e) { captcha = "Flase" }
-          if (captcha != "True") { hpp_captcha_html = "//"; hpp_captcha_no_1 = "<!--"; hpp_captcha_no_2 = "-->" }
-          let hpp_loginhtml = `
+          let zexo_captcha_html = ""
+          let zexo_captcha_no_1 = ""
+          let zexo_captcha_no_2 = ""
+          // 环境变量读取：优先 zexo_captcha，回退旧版 hpp_captcha
+          try { captcha = zexo_captcha } catch (e) { try { captcha = hpp_captcha } catch (e) { captcha = "Flase" } }
+          if (captcha != "True") { zexo_captcha_html = "//"; zexo_captcha_no_1 = "<!--"; zexo_captcha_no_2 = "-->" }
+          let zexo_loginhtml = `
 <!DOCTYPE html>
 <html lang="zh-cmn-Hans">
  <head>
@@ -1209,7 +1260,7 @@ if (path == "/zexo/admin/api/trigger-deploy") {
        <button type="button" id="login-button">登录</button>
        <br />
        <br />
-       <a href="https://github.com/HexoPlusPlus/HexoPlusPlus" id="tips" style="color: #fff;">@Zexo</a>
+       <a href="https://github.com/Zarijaden/Zexo" id="tips" style="color: #fff;">@Zexo</a>
       </form>
      </div>
     </div>
@@ -1228,24 +1279,24 @@ if (path == "/zexo/admin/api/trigger-deploy") {
    </div>
   </div>
   <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/md5.js"></script>
-  ${hpp_captcha_no_1}<script src="https://cdn.jsdelivr.net/gh/zpfz/RVerify.js/dist/RVerify.min.js"></script>${hpp_captcha_no_2}
-	  ${hpp_captcha_no_1}<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zpfz/RVerify.js/dist/RVerify.min.css"/>${hpp_captcha_no_2}
+  ${zexo_captcha_no_1}<script src="https://cdn.jsdelivr.net/gh/zpfz/RVerify.js/dist/RVerify.min.js"></script>${zexo_captcha_no_2}
+	  ${zexo_captcha_no_1}<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zpfz/RVerify.js/dist/RVerify.min.css"/>${zexo_captcha_no_2}
   <script>
 document.onkeydown=keyListener;
-${hpp_captcha_html}  RVerify.configure({
-${hpp_captcha_html}   mask: 0.5,
-${hpp_captcha_html}   maskClosable: true,
-${hpp_captcha_html}   title: '人机验证',
-${hpp_captcha_html}   album: ['/zexo/api/captchaimg']
-${hpp_captcha_html} })
+${zexo_captcha_html}  RVerify.configure({
+${zexo_captcha_html}   mask: 0.5,
+${zexo_captcha_html}   maskClosable: true,
+${zexo_captcha_html}   title: '人机验证',
+${zexo_captcha_html}   album: ['/zexo/api/captchaimg']
+${zexo_captcha_html} })
 function login(){
-${hpp_captcha_html} RVerify.action(function(res){
-${hpp_captcha_html} if(res==1){
+${zexo_captcha_html} RVerify.action(function(res){
+${zexo_captcha_html} if(res==1){
 document.cookie = "username=" + md5(document.getElementById("username").value);
 document.cookie = "password=" + md5(document.getElementById("password").value);
 window.location.href = '/zexo/admin/dash/home';
-${hpp_captcha_html} }
-${hpp_captcha_html}});
+${zexo_captcha_html} }
+${zexo_captcha_html}});
 }
 function keyListener(e){
     if(e.keyCode == 13){
@@ -1259,7 +1310,7 @@ login();
   </body>
 </html>
 `
-          return new Response(hpp_loginhtml, {
+          return new Response(zexo_loginhtml, {
             headers: { "content-type": "text/html;charset=UTF-8" }
           })
         }
@@ -1270,25 +1321,25 @@ login();
     }
     if (path.startsWith('/zexo/api')) {
       if (path == "/zexo/api/getblogeractive") {
-        const hpp_activetime = await KVNAME.get("hpp_activetime")
-        var k = (Date.parse(new Date()) - hpp_activetime) / 1000
-        const hpp_re_active_init = {
+        const zexo_activetime = await zexo_kv_get("zexo_activetime")
+        var k = (Date.parse(new Date()) - zexo_activetime) / 1000
+        const zexo_re_active_init = {
           headers: {
             "content-type": "application/javascript; charset=utf-8",
             "Access-Control-Allow-Origin": "*"
           }
         }
         if (k < 30) {
-          return new Response('document.getElementById("bloggeractivetime").innerHTML=\'博主刚刚还在这儿呢\'', hpp_re_active_init)
+          return new Response('document.getElementById("bloggeractivetime").innerHTML=\'博主刚刚还在这儿呢\'', zexo_re_active_init)
         }
         else if (k < 60) {
-          return new Response('document.getElementById("bloggeractivetime").innerHTML=\'博主在' + k + '秒前离开这儿\'', hpp_re_active_init)
+          return new Response('document.getElementById("bloggeractivetime").innerHTML=\'博主在' + k + '秒前离开这儿\'', zexo_re_active_init)
         }
         else if (k < 3600) {
-          return new Response('document.getElementById("bloggeractivetime").innerHTML=\'博主在' + Math.round(k / 60) + '分钟前偷偷瞄了一眼博客\'', hpp_re_active_init)
+          return new Response('document.getElementById("bloggeractivetime").innerHTML=\'博主在' + Math.round(k / 60) + '分钟前偷偷瞄了一眼博客\'', zexo_re_active_init)
         }
         else {
-          return new Response('document.getElementById("bloggeractivetime").innerHTML=\'博主在' + Math.round(k / 3600) + '小时前活跃了一次\'', hpp_re_active_init)
+          return new Response('document.getElementById("bloggeractivetime").innerHTML=\'博主在' + Math.round(k / 3600) + '小时前活跃了一次\'', zexo_re_active_init)
         }
       }
       if (path == "/zexo/api/captchaimg") {
@@ -1300,9 +1351,9 @@ login();
 
       }
       if (path == "/zexo/api/twikoo") {
-        const zexo_config = await JSON.parse(await JSON.parse(await KVNAME.get("zexo_config")));
-        const env_id = zexo_config["hpp_twikoo_envId"]
-        const hpp_cors = zexo_config["hpp_cors"]
+        const zexo_config = await JSON.parse(await JSON.parse(await zexo_kv_get("zexo_config")));
+        const env_id = zexo_config_get(zexo_config, "zexo_twikoo_envId")
+        const zexo_cors = zexo_config_get(zexo_config, "zexo_cors")
         const url = "https://tcb-api.tencentcloudapi.com/web?env=" + env_id
         async function get_refresh_token() {
           /*第一步获得refresh_token*/
@@ -1369,15 +1420,15 @@ login();
         const req = await JSON.parse(await request.text())
         const path = req["path"]
         const before = req["before"]
-        let refresh_token = await KVNAME.get("hpp_comment_refresh_token")
-        let access_token = await KVNAME.get("hpp_comment_access_token")
+        let refresh_token = await zexo_kv_get("zexo_comment_refresh_token")
+        let access_token = await zexo_kv_get("zexo_comment_access_token")
         let val = await get_comment(access_token, path, before)
         let twikoo_code = await JSON.parse(val)['code']
         if (twikoo_code == 'CHECK_LOGIN_FAILED' | twikoo_code == 'INVALID_PARAM') {
           refresh_token = await get_refresh_token()
-          await KVNAME.put("hpp_comment_refresh_token", refresh_token)
+          await KVNAME.put("zexo_comment_refresh_token", refresh_token)
           access_token = await get_access_token(refresh_token)
-          await KVNAME.put("hpp_comment_access_token", access_token)
+          await KVNAME.put("zexo_comment_access_token", access_token)
           val = await get_comment(access_token, path, before)
         }
         return new Response(val, {
@@ -1387,21 +1438,21 @@ login();
         }
         )
       }
-      if (path == "/zexo/api/gethpptalk") {
+      if (path == "/zexo/api/getzexotalk") {
         const req_r = await request.text()
         if (req_r != "") {
           const limit = (await JSON.parse(req_r))["limit"]
           const start = (await JSON.parse(req_r))["start"]
-          const hpp_talk = await JSON.parse(await KVNAME.get("hpp_talk_data"));
-          let hpp_talk_res = []
-          let hpp_vi = ""
-          for (var i = getJsonLength(hpp_talk) - start - 1; i > getJsonLength(hpp_talk) - start - limit; i--) {
-            try { hpp_vi = hpp_talk[i]["visible"] } catch (e) { hpp_vi = null }
-            if (hpp_vi != "False") {
-              hpp_talk_res.push(await JSON.stringify(hpp_talk[i]))
+          const zexo_talk = await JSON.parse(await zexo_kv_get("zexo_talk_data"));
+          let zexo_talk_res = []
+          let zexo_vi = ""
+          for (var i = getJsonLength(zexo_talk) - start - 1; i > getJsonLength(zexo_talk) - start - limit; i--) {
+            try { zexo_vi = zexo_talk[i]["visible"] } catch (e) { zexo_vi = null }
+            if (zexo_vi != "False") {
+              zexo_talk_res.push(await JSON.stringify(zexo_talk[i]))
             }
           }
-          return new Response(JSON.stringify(hpp_talk_res), {
+          return new Response(JSON.stringify(zexo_talk_res), {
             headers: {
               "content-type": "application/json;charset=UTF-8",
               "Access-Control-Allow-Origin": "*"
@@ -1429,10 +1480,10 @@ login();
 <body>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.css" />
 <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk_user.js"></script>
-<div id="hpp_talk"></div>
+<div id="zexo_talk"></div>
 <script>
-new hpp_talk({
-id:"hpp_talk",
+new zexo_talk({
+id:"zexo_talk",
 domain: window.location.host,
 limit: 10,
 start: 0
@@ -1444,14 +1495,14 @@ start: 0
         headers: { "content-type": "text/html;charset=UTF-8" }
       })
     }
-    let hpp_errorhtml = `
+    let zexo_errorhtml = `
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 	<head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
-        <title>HexoPlusPlusError</title>
+        <title>ZexoError</title>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/error.css" />
 	</head>
 	<body>
@@ -1462,10 +1513,10 @@ start: 0
                     <h1 class="main-title"><span>Error</span></h1>
                 </div>
                 <div class="codrops-header">
-                    <h1>HexoPlusPlus 错误<span>不知道你的目的是什么</span></h1>
+                    <h1>Zexo 错误<span>不知道你的目的是什么</span></h1>
                     <nav class="codrops-demos">
                         <a class="current-demo" href="/zexo/admin/dash/home">仪表盘</a>
-                        <a class="current-demo" href="https://github.com/HexoPlusPlus/HexoPlusPlus">Github</a>
+                        <a class="current-demo" href="https://github.com/Zarijaden/Zexo">Github</a>
                     </nav>
                 </div>
             </div>
@@ -1474,19 +1525,19 @@ start: 0
 	</body>
 </html>
 `
-    return new Response(hpp_errorhtml, {
+    return new Response(zexo_errorhtml, {
       headers: { "content-type": "text/html;charset=UTF-8" }
     })
 
   } catch (e) {
-    let hpp_errorhtml = `
+    let zexo_errorhtml = `
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 	<head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
-        <title>HexoPlusPlusError</title>
+        <title>ZexoError</title>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/error.css" />
 	</head>
 	<body>
@@ -1497,11 +1548,11 @@ start: 0
                     <h1 class="main-title"><span>Error</span></h1>
                 </div>
                 <div class="codrops-header">
-                    <h1>HexoPlusPlus 异常<span>${e}</span></h1>
+                    <h1>Zexo 异常<span>${e}</span></h1>
                     <nav class="codrops-demos">
-                        <a class="current-demo" href="https://hexoplusplus.js.org">文档</a>
-                        <a class="current-demo" href="https://github.com/HexoPlusPlus/HexoPlusPlus">Github</a>
-						<a class="current-demo" href="https://jq.qq.com/?_wv=1027&k=rAcnhzqK">QQ群寻求帮助</a>
+                        <a class="current-demo" href="https://github.com/Zarijaden/Zexo#readme">文档</a>
+                        <a class="current-demo" href="https://github.com/Zarijaden/Zexo">Github</a>
+						<a class="current-demo" href="https://github.com/Zarijaden/Zexo/issues">Issues 反馈</a>
                     </nav>
                 </div>
             </div>
@@ -1510,7 +1561,7 @@ start: 0
 	</body>
 </html>
 `
-    return new Response(hpp_errorhtml, {
+    return new Response(zexo_errorhtml, {
       headers: { "content-type": "text/html;charset=UTF-8" }
     })
 

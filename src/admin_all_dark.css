@@ -191,14 +191,14 @@ Docs & License: https://fullcalendar.io/
 }
 
 
-blockquote.hpp_blockquote {
+blockquote.zexo_blockquote {
   background: #444;
   border-left: 10px solid #ccc;
   margin: 1.5em 10px;
   padding: 0.5em 10px;
   quotes: "\201C""\201D""\2018""\2019";
 }
-blockquote.hpp_blockquote:before {
+blockquote.zexo_blockquote:before {
   color: #777;
   content: open-quote;
   font-size: 4em;
@@ -206,7 +206,7 @@ blockquote.hpp_blockquote:before {
   margin-right: 0.25em;
   vertical-align: -0.4em;
 }
-blockquote.hpp_blockquote p {
+blockquote.zexo_blockquote p {
   display: inline;
 }
 
@@ -225,7 +225,7 @@ blockquote.hpp_blockquote p {
 textarea{
 	color: #ddd
 }
-#hpp_doc_editor p{
+#zexo_doc_editor p{
 color: #ddd;	
 }
 pre{

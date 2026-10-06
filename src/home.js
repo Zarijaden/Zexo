@@ -1,4 +1,4 @@
-function hpp_get_doc_long(){
+function zexo_get_doc_long(){
 var ajax = ajaxObject();
 ajax.open( "get" , '/zexo/admin/api/getlist', true );
 ajax.setRequestHeader( "Content-Type" , "text/plain" );
@@ -15,7 +15,7 @@ if( ajax.readyState == 4 ) {
     }
     ajax.send();
 }
-function hpp_get_img_long(){
+function zexo_get_img_long(){
 var ajax = ajaxObject();
 ajax.open( "get" , '/zexo/admin/api/getimglist', true );
 ajax.setRequestHeader( "Content-Type" , "text/plain" );
@@ -52,5 +52,5 @@ var ajax = ajaxObject();
     ajax.send(new Date().getTime());
 }
 
-hpp_get_doc_long();
-hpp_get_img_long()
+zexo_get_doc_long();
+zexo_get_img_long()

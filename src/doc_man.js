@@ -2,14 +2,14 @@ function round(number, precision) {
     return Math.round(+number + 'e' + precision) / Math.pow(10, precision);
 }
 let docsize=0
-let hpp_arr_githubdocpath=hpp_githubdocpath.substr(1,hpp_githubdocpath.length-1)
-let hpp_arr_draft_githubdocpath=hpp_githubdocdraftpath.substr(1,hpp_githubdocdraftpath.length-1)
+let zexo_arr_githubdocpath=zexo_githubdocpath.substr(1,zexo_githubdocpath.length-1)
+let zexo_arr_draft_githubdocpath=zexo_githubdocdraftpath.substr(1,zexo_githubdocdraftpath.length-1)
 var ctJson = "/zexo/admin/api/getlist"
         $.getJSON(ctJson, function (data) {
 		document.getElementById("tbody_doc").innerHTML="";
             $.each(data, function (index, value) {
 				docsize=round(value.size/1024, 2)
-				arr_path=value.path.split(hpp_arr_githubdocpath)[1]
+				arr_path=value.path.split(zexo_arr_githubdocpath)[1]
                 $("#tbody_doc").append(`
 				<tr>
                           <td>
@@ -22,7 +22,7 @@ var ctJson = "/zexo/admin/api/getlist"
                             已发布
                           <\/td>
                           <td>
-                            <a href="https://cdn.jsdelivr.net/gh/${hpp_githubdocusername}/${hpp_githubdocrepo}@${hpp_githubdocbranch}/${value.path}">CDN链接<\/a>
+                            <a href="https://cdn.jsdelivr.net/gh/${zexo_githubdocusername}/${zexo_githubdocrepo}@${zexo_githubdocbranch}/${value.path}">CDN链接<\/a>
                           <\/td>
                           <td>
                             <a href="javascript:del(\'${arr_path}\');">删除<\/a>
@@ -41,7 +41,7 @@ var drJson = "/zexo/admin/api/get_draftlist"
         $.getJSON(drJson, function (data) {
             $.each(data, function (index, value) {
 				docsize=round(value.size/1024, 2)
-				arr_path=value.path.split(hpp_arr_draft_githubdocpath)[1]
+				arr_path=value.path.split(zexo_arr_draft_githubdocpath)[1]
                 $("#tbody_doc").append(`
 				<tr>
                           <td>
@@ -54,7 +54,7 @@ var drJson = "/zexo/admin/api/get_draftlist"
                             未发布
                           <\/td>
                           <td>
-                            <a href="https://cdn.jsdelivr.net/gh/${hpp_githubdocusername}/${hpp_githubdocrepo}@${hpp_githubdocbranch}/${value.path}">CDN链接<\/a>
+                            <a href="https://cdn.jsdelivr.net/gh/${zexo_githubdocusername}/${zexo_githubdocrepo}@${zexo_githubdocbranch}/${value.path}">CDN链接<\/a>
                           <\/td>
                           <td>
                             <a href="javascript:del_dr(\'${arr_path}\');">删除<\/a>
@@ -77,7 +77,7 @@ var drJson = "/zexo/admin/api/get_draftlist"
 			function start_limit(){
 				var $table = $("table");
             var currentPage = 0; 
-            var pageSize = hpp_page_limit;  
+            var pageSize = zexo_page_limit;  
             $table.bind('paging', function () {
                 $table.find('tbody tr').hide().slice(currentPage * pageSize, (currentPage + 1) * pageSize).show();
             });

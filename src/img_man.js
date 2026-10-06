@@ -1,7 +1,7 @@
 function start_limit(){
 				var $table = $("table");
             var currentPage = 0; 
-            var pageSize = hpp_page_limit;  
+            var pageSize = zexo_page_limit;  
             $table.bind('paging', function () {
                 $table.find('tbody tr').hide().slice(currentPage * pageSize, (currentPage + 1) * pageSize).show();
             });
@@ -56,10 +56,10 @@ var ctJson = "/zexo/admin/api/getimglist"
                             ${imgsize}KB
                           <\/td>
 						  <td>
-                            <a href="https://cdn.jsdelivr.net/gh/${hpp_githubimageusername}/${hpp_githubimagerepo}@${hpp_githubimagebranch}${hpp_githubimagepath}${value.name}" class="swipebox" title="图片预览"><img data-src="https://cdn.jsdelivr.net/gh/${hpp_githubimageusername}/${hpp_githubimagerepo}@${hpp_githubimagebranch}${hpp_githubimagepath}${value.name}" class="lazy_img" style="width:100px" src="${hpp_lazy_img}"></a>
+                            <a href="https://cdn.jsdelivr.net/gh/${zexo_githubimageusername}/${zexo_githubimagerepo}@${zexo_githubimagebranch}${zexo_githubimagepath}${value.name}" class="swipebox" title="图片预览"><img data-src="https://cdn.jsdelivr.net/gh/${zexo_githubimageusername}/${zexo_githubimagerepo}@${zexo_githubimagebranch}${zexo_githubimagepath}${value.name}" class="lazy_img" style="width:100px" src="${zexo_lazy_img}"></a>
                           <\/td>
                           <td>
-                            <a href="https://cdn.jsdelivr.net/gh/${hpp_githubimageusername}/${hpp_githubimagerepo}@${hpp_githubimagebranch}${hpp_githubimagepath}${value.name}">CDN链接<\/a>
+                            <a href="https://cdn.jsdelivr.net/gh/${zexo_githubimageusername}/${zexo_githubimagerepo}@${zexo_githubimagebranch}${zexo_githubimagepath}${value.name}">CDN链接<\/a>
                           <\/td>
                           <td>
                             <a href="javascript:del(\'${value.name}\');">删除<\/a>

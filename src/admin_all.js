@@ -1574,7 +1574,7 @@ function kick(){
     ajax.send();
 };
 
-function hpp_logout(){
+function zexo_logout(){
 document.cookie="username=;"+"path=/zexo/admin";document.cookie="password=;"+"path=/zexo/admin";  window.location.href = '/zexo/admin/login';
 };
 function ajaxObject() {
@@ -1598,11 +1598,11 @@ function ajaxObject() {
     }
     return xmlHttp;
 };
-function hpp_search() {
+function zexo_search() {
   var input, filter, table, tr, td, i;
   input = document.getElementById("search_Input");
   filter = input.value.toUpperCase();
-  table = document.getElementById("hpp_table");
+  table = document.getElementById("zexo_table");
   tr = table.getElementsByTagName("tr");
   for (i = 0; i < tr.length; i++) {
     td = tr[i].getElementsByTagName("td")[0];

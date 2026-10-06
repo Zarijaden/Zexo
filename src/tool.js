@@ -41,7 +41,7 @@ function zexo_trigger_deploy() {
     });
 };
 
-function hpp_artitalk_into_hpptalk(){
+function zexo_artitalk_into_zexotalk(){
 var slider = document.createElement("textarea");
 slider.id="artitalk";
 slider.style="border:0;border-radius:5px;background-color:rgba(241,241,241,.98);width: 355px;height: 100px;padding: 10px;resize: none;"
@@ -77,7 +77,7 @@ var ajax = ajaxObject();
 })
 };
 
-function hpp_del_all(){
+function zexo_del_all(){
 swal({title:"你真的要销毁？",text:"我相信你是手滑了",icon:"warning",buttons:["没有", "是的！"],dangerMode: true}).then((value) => {if(value){swal({title:"你真的要删除数据吗？",text:"我寻思你也不想再配置一遍",icon:"warning",buttons:["我放弃了", "爷肯定了"],dangerMode: true}).then((value) => {if(value){swal({title:"你真的要重来啦？",text:"我觉得也不是不可以(bushi",icon:"warning",buttons:["我萎了", "视死如归"],dangerMode: true}).then((value) => {if(value){var ajax = ajaxObject();swal({title: "\n删除中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
     ajax.open( "get" , '/zexo/admin/api/del_all' , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
@@ -91,6 +91,6 @@ swal({title:"你真的要销毁？",text:"我相信你是手滑了",icon:"warnin
             }
         }
     }
-    ajax.send();}else{hpp_no()}})}else{hpp_no()}})}else{hpp_no()}})
-function hpp_no(){swal("您放弃了销毁数据","您的数据是安全的","success")}
+    ajax.send();}else{zexo_no()}})}else{zexo_no()}})}else{zexo_no()}})
+function zexo_no(){swal("您放弃了销毁数据","您的数据是安全的","success")}
 }

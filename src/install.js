@@ -63,50 +63,50 @@ function start() {
         document.getElementById("butttt").innerHTML = "提交配置"
     } else {
         document.getElementById("butttt").innerHTML = "配置上传中"
-		let hpp_domain=document.getElementById("hpp_domain").value==""?window.location.host:document.getElementById("hpp_domain").value;
-		let hpp_username=document.getElementById("hpp_userimage").value==""?"https://cdn.jsdelivr.net/gh/ChenYFan/CDN@master/img/hpp_upload/1612610340000.jpg":document.getElementById("hpp_userimage").value;
-		let hpp_title=document.getElementById("hpp_title").value==""?"HexoPlusPlus小飞机":document.getElementById("hpp_title").value;
-		let hpp_usericon=document.getElementById("hpp_usericon").value==""?"https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@master/doc_img/icon.png":document.getElementById("hpp_usericon").value;
-		let hpp_cors=document.getElementById("hpp_cors").value==""?"*":document.getElementById("hpp_cors").value
-		let hpp_autodate=document.getElementById("hpp_autodate").value==""?"False":document.getElementById("hpp_autodate").value
-		let hpp_OwO=document.getElementById("hpp_OwO").value==""?"https://cdn.jsdelivr.net/gh/2X-ercha/Twikoo-Magic@master/hppowo.json":document.getElementById("hpp_OwO").value
-		let hpp_back=document.getElementById("hpp_back").value==""?"":document.getElementById("hpp_back").value
-		let hpp_lazy_img=document.getElementById("hpp_lazy_img").value==""?"https://cdn.jsdelivr.net/gh/ChenYFan/blog@master/themes/fluid/source/img/loading.gif":document.getElementById("hpp_lazy_img").value
-		let hpp_highlight_style=document.getElementById("hpp_highlight_style").value==""?"github":document.getElementById("hpp_highlight_style").value
-		let hpp_color=document.getElementById("hpp_color").value==""?"azure":document.getElementById("hpp_color").value
-		let hpp_bg_color=document.getElementById("hpp_bg_color").value=="black"?"black":document.getElementById("hpp_bg_color").value
-		let hpp_theme_mode=document.getElementById("hpp_theme_mode").value=="dark"?"dark":"light"
-		let hpp_page_limit=document.getElementById("hpp_page_limit").value==""?"10":document.getElementById("hpp_page_limit").value
+		let zexo_domain=document.getElementById("zexo_domain").value==""?window.location.host:document.getElementById("zexo_domain").value;
+		let zexo_username=document.getElementById("zexo_userimage").value==""?"https://cdn.jsdelivr.net/gh/ChenYFan/CDN@master/img/hpp_upload/1612610340000.jpg":document.getElementById("zexo_userimage").value;
+		let zexo_title=document.getElementById("zexo_title").value==""?"Zexo小飞机":document.getElementById("zexo_title").value;
+		let zexo_usericon=document.getElementById("zexo_usericon").value==""?"https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@master/doc_img/icon.png":document.getElementById("zexo_usericon").value;
+		let zexo_cors=document.getElementById("zexo_cors").value==""?"*":document.getElementById("zexo_cors").value
+		let zexo_autodate=document.getElementById("zexo_autodate").value==""?"False":document.getElementById("zexo_autodate").value
+		let zexo_OwO=document.getElementById("zexo_OwO").value==""?"https://cdn.jsdelivr.net/gh/2X-ercha/Twikoo-Magic@master/hppowo.json":document.getElementById("zexo_OwO").value
+		let zexo_back=document.getElementById("zexo_back").value==""?"":document.getElementById("zexo_back").value
+		let zexo_lazy_img=document.getElementById("zexo_lazy_img").value==""?"https://cdn.jsdelivr.net/gh/ChenYFan/blog@master/themes/fluid/source/img/loading.gif":document.getElementById("zexo_lazy_img").value
+		let zexo_highlight_style=document.getElementById("zexo_highlight_style").value==""?"github":document.getElementById("zexo_highlight_style").value
+		let zexo_color=document.getElementById("zexo_color").value==""?"azure":document.getElementById("zexo_color").value
+		let zexo_bg_color=document.getElementById("zexo_bg_color").value=="black"?"black":document.getElementById("zexo_bg_color").value
+		let zexo_theme_mode=document.getElementById("zexo_theme_mode").value=="dark"?"dark":"light"
+		let zexo_page_limit=document.getElementById("zexo_page_limit").value==""?"10":document.getElementById("zexo_page_limit").value
 		const config={
-			"hpp_domain":hpp_domain,
-			"hpp_userimage":hpp_username,
-			"hpp_title":hpp_title,
-			"hpp_usericon":hpp_usericon,
-			"hpp_cors":hpp_cors,
-			"hpp_githubdoctoken":document.getElementById("hpp_githubdoctoken").value,
-			"hpp_githubimagetoken":document.getElementById("hpp_githubimagetoken").value,
-			"hpp_githubdocusername":document.getElementById("hpp_githubdocusername").value,
-			"hpp_githubdocrepo":document.getElementById("hpp_githubdocrepo").value,
-			"hpp_githubdocroot":document.getElementById("hpp_githubdocroot").value,			
-			"hpp_githubdocbranch":document.getElementById("hpp_githubdocbranch").value,
-			"hpp_githubimageusername":document.getElementById("hpp_githubimageusername").value,
-			"hpp_githubimagerepo":document.getElementById("hpp_githubimagerepo").value,
-			"hpp_githubimagepath":document.getElementById("hpp_githubimagepath").value,			
-			"hpp_githubimagebranch":document.getElementById("hpp_githubimagebranch").value,
-			"hpp_autodate":hpp_autodate,
-			"hpp_account_identifier":document.getElementById("hpp_account_identifier").value,
-			"hpp_script_name":document.getElementById("hpp_script_name").value,			
-			"hpp_CF_Auth_Key":document.getElementById("hpp_CF_Auth_Key").value,
-			"hpp_Auth_Email":document.getElementById("hpp_Auth_Email").value,
-			"hpp_twikoo_envId":document.getElementById("hpp_twikoo_envId").value,
-			"hpp_OwO":hpp_OwO,
-			"hpp_back":hpp_back,
-			"hpp_lazy_img":hpp_lazy_img,
-			"hpp_highlight_style":hpp_highlight_style,
-			"hpp_color":hpp_color,
-			"hpp_bg_color":hpp_bg_color,
-			"hpp_theme_mode":hpp_theme_mode,
-			"hpp_page_limit":hpp_page_limit
+			"zexo_domain":zexo_domain,
+			"zexo_userimage":zexo_username,
+			"zexo_title":zexo_title,
+			"zexo_usericon":zexo_usericon,
+			"zexo_cors":zexo_cors,
+			"zexo_githubdoctoken":document.getElementById("zexo_githubdoctoken").value,
+			"zexo_githubimagetoken":document.getElementById("zexo_githubimagetoken").value,
+			"zexo_githubdocusername":document.getElementById("zexo_githubdocusername").value,
+			"zexo_githubdocrepo":document.getElementById("zexo_githubdocrepo").value,
+			"zexo_githubdocroot":document.getElementById("zexo_githubdocroot").value,			
+			"zexo_githubdocbranch":document.getElementById("zexo_githubdocbranch").value,
+			"zexo_githubimageusername":document.getElementById("zexo_githubimageusername").value,
+			"zexo_githubimagerepo":document.getElementById("zexo_githubimagerepo").value,
+			"zexo_githubimagepath":document.getElementById("zexo_githubimagepath").value,			
+			"zexo_githubimagebranch":document.getElementById("zexo_githubimagebranch").value,
+			"zexo_autodate":zexo_autodate,
+			"zexo_account_identifier":document.getElementById("zexo_account_identifier").value,
+			"zexo_script_name":document.getElementById("zexo_script_name").value,			
+			"zexo_CF_Auth_Key":document.getElementById("zexo_CF_Auth_Key").value,
+			"zexo_Auth_Email":document.getElementById("zexo_Auth_Email").value,
+			"zexo_twikoo_envId":document.getElementById("zexo_twikoo_envId").value,
+			"zexo_OwO":zexo_OwO,
+			"zexo_back":zexo_back,
+			"zexo_lazy_img":zexo_lazy_img,
+			"zexo_highlight_style":zexo_highlight_style,
+			"zexo_color":zexo_color,
+			"zexo_bg_color":zexo_bg_color,
+			"zexo_theme_mode":zexo_theme_mode,
+			"zexo_page_limit":zexo_page_limit
 			};
         var ajax = ajaxObject();
         ajax.open("post", '/zexo/admin/api/upconfig', true);

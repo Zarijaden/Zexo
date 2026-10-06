@@ -32,29 +32,29 @@
     }
 }
 
-.hppt_padder-v {
+.zexot_padder-v {
     padding-top: 15px;
     padding-bottom: 15px;
 }
-.hppt_m-b {
+.zexot_m-b {
     margin-bottom: 15px;
 }
-.hppt_m-l-lg {
+.zexot_m-l-lg {
 border:none;
 }
-.hppt_b-l {
+.zexot_b-l {
     border-left: 1px solid #dee5e7;
 }
-.hppt_streamline {
+.zexot_streamline {
     position: relative;
     border-color: #dee5e7;
 }
 
-.hppt_m-b {
+.zexot_m-b {
     margin-bottom: 15px;
 }
 
-.hppt_m-t-lg {
+.zexot_m-t-lg {
     margin-top: 30px;
 }
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
@@ -82,77 +82,77 @@ h4 {
     margin-inline-end: 0px;
     font-weight: bold;
 }
-.hppt_comment-list {
+.zexot_comment-list {
     margin-bottom: 0!important;
     padding-left: 0;
     list-style: none;
 }
 
-.hppt_comment-list {
+.zexot_comment-list {
     margin-bottom: 0!important;
     padding-left: 0;
     list-style: none;
 }
 
-.hppt_hbox {
+.zexot_hbox {
     display: table;
     width: 100%;
     height: 100%;
     border-spacing: 0;
     table-layout: fixed;
 }
-.hppt_comment-body a {
+.zexot_comment-body a {
     position: relative;
 }
-.hppt_thumb-sm {
+.zexot_thumb-sm {
     display: inline-block;
     width: 40px;
     height: auto;
 }
-.hppt_m-l-n-md {
+.zexot_m-l-n-md {
     margin-left: -20px;
 }
-.hppt_avatar {
+.zexot_avatar {
     position: relative;
     display: block;
     white-space: nowrap;
     border-radius: 500px;
 }
-.hppt_pull-left {
+.zexot_pull-left {
     float: left!important;
 }
-.hppt_avatar {
+.zexot_avatar {
     -webkit-transition: 0.4s;
     -webkit-transition: -webkit-transform 0.4s ease-out;
     transition: transform 0.4s ease-out;
     -moz-transition: -moz-transform 0.4s ease-out;
 }
-.hppt_thumb img, .hppt_thumb-btn img, .hppt_thumb-lg img, .hppt_thumb-md img, .hppt_thumb-sm img, .hppt_thumb-xs img {
+.zexot_thumb img, .zexot_thumb-btn img, .zexot_thumb-lg img, .zexot_thumb-md img, .zexot_thumb-sm img, .zexot_thumb-xs img {
     height: auto;
     max-width: 100%;
     vertical-align: middle;
 }
-.hppt_avatar img {
+.zexot_avatar img {
     width: 100%;
 }
-.hppt_normal-shadow {
+.zexot_normal-shadow {
     box-shadow: 2px 2px 3px #e1e1e1;
 }
-.hppt_img-40px {
+.zexot_img-40px {
     width: 40px!important;
     height: 40px;
 }
-.hppt_img-square {
+.zexot_img-square {
     border-radius: 20%;
 }
-.hppt_box-shadow-wrap-normal {
+.zexot_box-shadow-wrap-normal {
     -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.05);
     box-shadow: 0 1px 3px rgba(0,0,0,.05);
 }
-.hppt_panel {
+.zexot_panel {
     transition: all .2s ease;
 }
-.hppt_panel {
+.zexot_panel {
     margin-bottom: 20px;
     background-color: #fff;
     border: 1px solid transparent;
@@ -160,42 +160,42 @@ h4 {
     -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
 }
-.hppt_panel {
+.zexot_panel {
     -moz-box-shadow: 0 8px 10px rgba(255,112,173,0.35);
 }
-.hppt_panel {
+.zexot_panel {
     transition: all 0.6s;
 }
 
-.hppt_b-light {
+.zexot_b-light {
     border-color: rgba(237,241,242,.6);
 }
-.hppt_b-b {
+.zexot_b-b {
     border-bottom: 1px solid rgba(222,229,231,.45);
 }
-.hppt_pos-rlt {
+.zexot_pos-rlt {
     position: relative;
 }
-.hppt_b-light {
+.zexot_b-light {
     border-color: #edf1f2;
 }
-.hppt_panel-heading {
+.zexot_panel-heading {
     cursor: pointer;
 }
-.hppt_panel-heading {
+.zexot_panel-heading {
     padding: 10px 15px;
     border-bottom: 1px solid transparent;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
 }
-.hppt_arrow.hppt_left {
+.zexot_arrow.zexot_left {
     top: 50%;
     left: -9px;
     margin-top: -9px;
     border-right-color: rgba(255,255,255,.1);
     border-left-width: 0;
 }
-.hppt_arrow, .hppt_arrow:after {
+.zexot_arrow, .zexot_arrow:after {
     position: absolute;
     display: block;
     width: 0;
@@ -203,35 +203,35 @@ h4 {
     border-color: transparent;
     border-style: solid;
 }
-.hppt_arrow {
+.zexot_arrow {
     z-index: 10;
     border-width: 9px;
 }
-.hppt_m-l-sm {
+.zexot_m-l-sm {
     margin-left: 10px;
 }
-.hppt_text-muted {
+.zexot_text-muted {
     color: #a0a0a0;
 }
-.hppt_pull-right {
+.zexot_pull-right {
     float: right!important;
 }
-.hppt_text-muted {
+.zexot_text-muted {
     color: #777;
 }
 
-.hppt_comment-content-true {
+.zexot_comment-content-true {
     display: block;
 }
-.hppt_panel-body {
+.zexot_panel-body {
     padding: 15px;
 }
-.hppt_panel-footer {
+.zexot_panel-footer {
     background-color: #fff;
     border-color: rgba(237,241,242,.6);
     border-radius: 0 0 2px 2px;
 }
-.hppt_panel-footer {
+.zexot_panel-footer {
     padding: 10px 15px;
     background-color: #f5f5f5;
     border-top: 1px solid #ddd;
@@ -239,10 +239,10 @@ h4 {
     border-bottom-left-radius: 3px;
 }
 @media only screen and (max-width: 500px) {
-.hppt_arrow.hppt_left{
+.zexot_arrow.zexot_left{
 	display: none	
 }
-.hpp_talk_img {
+.zexo_talk_img {
     width: auto
 }
 
@@ -251,22 +251,22 @@ h4 {
 }
 }
 
-.hpp_talk_img {
+.zexo_talk_img {
     max-width: 70% !important
 }
-.hppt_panel{
+.zexot_panel{
 background-color: #90939920;
 }
-.hppt_panel-footer{
+.zexot_panel-footer{
 background-color: #90939920;
 border: 1px solid transparent!important;
 }
 
 
-.hppt_streamline{
+.zexot_streamline{
 	border: 0px;
 }
-.hppt_button_nextpage{
+.zexot_button_nextpage{
 	width: 270px;
 	height: 40px;
 	border-width: 0px; 
@@ -282,13 +282,13 @@ border: 1px solid transparent!important;
     line-height: 40px;
 }
 
-.hpp_talk_loading{
+.zexo_talk_loading{
 min-height:200px;
 }
-.hpp_talk_part{
+.zexo_talk_part{
 min-height:100px;
 }
-.hppt_loader {
+.zexot_loader {
   background-color: #90939920;
   position: absolute;
   width: 64px;
@@ -297,7 +297,7 @@ min-height:100px;
   perspective: 800px;
 }
 
-.hppt_inner {
+.zexot_inner {
   position: absolute;
   box-sizing: border-box;
   width: 100%;
@@ -305,7 +305,7 @@ min-height:100px;
   border-radius: 50%;  
 }
 
-.hppt_inner.one {
+.zexot_inner.one {
   left: 0%;
   top: 0%;
   animation: rotate-one 1s linear infinite;
@@ -313,7 +313,7 @@ min-height:100px;
   position: absolute;
 }
 
-.hppt_inner.two {
+.zexot_inner.two {
   right: 0%;
   top: 0%;
   animation: rotate-two 1s linear infinite;
@@ -321,7 +321,7 @@ min-height:100px;
   position: absolute;
 }
 
-.hppt_inner.three {
+.zexot_inner.three {
   right: 0%;
   bottom: 0%;
   animation: rotate-three 1s linear infinite;

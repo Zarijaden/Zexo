@@ -7,6 +7,10 @@ const vm = require('vm')
 global.window = global
 global.localStorage = { getItem: () => null, setItem: () => {} }
 global.document = { getElementById: () => null, querySelector: () => null, addEventListener: () => {} }
+// 浏览器里由页面提供 marked；测试里给一个极简替身，只验证渲染管线本身
+global.marked = function (src) {
+  return String(src == null ? '' : src).replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
+}
 
 const src = fs.readFileSync('E:/Documents/GitHub/Zexo/src/md_editor.js', 'utf8')
 vm.runInThisContext(src, { filename: 'md_editor.js' })
@@ -203,14 +207,46 @@ eq('非视频返回 null', zexoMdParseYoutube('https://example.com/x'), null)
 
 console.log('-- 工具栏 / 命令表接线 --')
 eq('命令表含全部命令', Object.keys(ZEXO_MD_COMMANDS).sort().join(','), 'bold,bullet,code,h1,h2,h3,h4,h5,h6,italic,ordered,quote,spoiler,strikethrough')
+eq('交互表含 5 个弹窗/工具按钮', Object.keys(ZEXO_MD_INTERACTIONS).sort().join(','), 'emoji,image,import,link,video')
+eq('交互表 5 项都是函数', Object.keys(ZEXO_MD_INTERACTIONS).every(k => typeof ZEXO_MD_INTERACTIONS[k] === 'function'), true)
+
 const html = zexoMdToolbarHtml('zexo_doc_editor', 'zexo_docs')
-eq('工具栏含 H1 按钮', html.indexOf('data-zexo-md-cmd="h1"') !== -1, true)
-eq('工具栏含预览按钮 id', html.indexOf('id="zexo_eye_zexo_doc_editor"') !== -1, true)
 // 与 Modrinth 一致：工具栏只露出 H1–H3，H4–H6 仍保留命令供后续扩展
 eq('工具栏露出 H1–H3', ['h1', 'h2', 'h3'].every(k => html.indexOf('data-zexo-md-cmd="' + k + '"') !== -1), true)
-eq('工具栏露出三组样式按钮', ['bold', 'italic', 'strikethrough', 'code', 'spoiler'].every(k => html.indexOf('data-zexo-md-cmd="' + k + '"') !== -1), true)
-eq('工具栏露出三组列表按钮', ['bullet', 'ordered', 'quote'].every(k => html.indexOf('data-zexo-md-cmd="' + k + '"') !== -1), true)
-eq('工具栏保留原有工具按钮', ['zexo_start_or_stop_backup', "\\$\\('#input'\\)", "\\$\\('#upload_md'\\)", "zexo_preview"].every(s => new RegExp(s).test(html)), true)
+eq('工具栏不再露出 H4–H6', ['h4', 'h5', 'h6'].every(k => html.indexOf('data-zexo-md-cmd="' + k + '"') === -1), true)
+eq('工具栏露出样式按钮', ['bold', 'italic', 'strikethrough', 'code', 'spoiler'].every(k => html.indexOf('data-zexo-md-cmd="' + k + '"') !== -1), true)
+eq('工具栏露出列表按钮', ['bullet', 'ordered', 'quote'].every(k => html.indexOf('data-zexo-md-cmd="' + k + '"') !== -1), true)
+eq('工具栏露出组件按钮（链接/图片/视频/表情）', ['link', 'image', 'video', 'emoji'].every(k => html.indexOf('data-zexo-md-cmd="' + k + '"') !== -1), true)
+eq('工具栏露出导入按钮', html.indexOf('data-zexo-md-cmd="import"') !== -1, true)
+eq('工具栏有分组容器', (html.match(/class="zexo_md_group"/g) || []).length, 5)
+eq('工具栏有分隔条', html.indexOf('zexo_md_divider') !== -1, true)
+eq('工具栏保留自动备份按钮', html.indexOf('zexo_start_or_stop_backup()') !== -1, true)
+eq('不再依赖页面 #input（图片按钮改为自带上传）', html.indexOf("$('#input')") === -1, true)
+eq('预览改为开关（含 checkbox）', html.indexOf('zexo_md_switch_zexo_doc_editor') !== -1 && html.indexOf('onchange="zexo_preview(\'zexo_doc_editor\',\'zexo_docs\')"') !== -1, true)
+eq('预览开关有 label', html.indexOf('<label for="zexo_md_switch_zexo_doc_editor">') !== -1, true)
+eq('渲染 textarea', html.indexOf('id="text_zexo_doc_editor"') !== -1, true)
+eq('渲染预览容器', html.indexOf('id="div_zexo_doc_editor"') !== -1, true)
+eq('渲染 OwO 容器', html.indexOf('class="OwO"') !== -1, true)
+eq('渲染字数统计', html.indexOf('zexo_md_length') !== -1, true)
+eq('渲染语法说明', html.indexOf('zexo_md_info_blurb') !== -1, true)
+eq('说明链接指向 Modrinth 文档', html.indexOf('8801962-advanced-markdown-formatting') !== -1, true)
+// 旧的 2 倍大按钮样式已不再使用，改为紧凑图标按钮
+eq('不再使用旧的大号按钮类', html.indexOf('btn-2x') === -1 && html.indexOf('fa-2x') === -1, true)
+
+console.log('-- 弹窗/交互函数已导出到 window --')
+eq('导出 openLinkModal', typeof window.zexoMdOpenLinkModal, 'function')
+eq('导出 openImageModal', typeof window.zexoMdOpenImageModal, 'function')
+eq('导出 openVideoModal', typeof window.zexoMdOpenVideoModal, 'function')
+eq('导出 pickImage', typeof window.zexoMdPickImage, 'function')
+eq('导出 interactions', typeof window.ZEXO_MD_INTERACTIONS, 'object')
+eq('导出 initZexoMarkdownEditor', typeof window.initZexoMarkdownEditor, 'function')
+
+console.log('-- HTML 转义（弹窗输入不得注入标签） --')
+eq('转义尖括号', zexoMdEscapeHtml('<img src=x onerror=alert(1)>'), '&lt;img src=x onerror=alert(1)&gt;')
+eq('转义引号', zexoMdEscapeHtml('"\'&'), '&quot;&#39;&amp;')
+eq('弹窗预览被消毒（去掉 onerror）', zexoMdModalPreview('<img src=x onerror=alert(1)>').indexOf('onerror') === -1, true)
+eq('弹窗预览含图片标签', zexoMdModalPreview('![](https://a.com/b.png)').indexOf('<img') !== -1, true)
+eq('空内容有占位', zexoMdModalPreview('').indexOf('zexo_md_modal_empty') !== -1, true)
 
 console.log('\n通过 ' + pass + ' / 失败 ' + fail)
 process.exit(fail ? 1 : 0)

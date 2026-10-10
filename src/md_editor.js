@@ -211,14 +211,28 @@ var ZEXO_MD_COMMANDS = {
   ordered: zexoMdToggleOrderedList
 };
 
-/** 工具栏布局，与 Modrinth BUTTONS 的分组一一对应 */
+/** 需要弹窗 / 上传交互的按钮（对应 Modrinth 的 link / image / video 模态） */
+var ZEXO_MD_INTERACTIONS = {
+  link: function (editor) { zexoMdOpenLinkModal(editor); },
+  image: function (editor) { zexoMdOpenImageModal(editor); },
+  video: function (editor) { zexoMdOpenVideoModal(editor); },
+  emoji: function (editor) {
+    // 直接触发 OwO 面板的展开/收起（等价于点 OwO 表情图标）
+    var logo = editor.mount ? editor.mount.querySelector('.OwO-logo') : null;
+    if (logo) { logo.click(); return; }
+    if (typeof sweetAlert === 'function') { sweetAlert('表情面板未加载', 'OwO 表情列表可能被拦截或接口不可用', 'warning'); }
+  },
+  import: function (editor) { zexoMdImportFile(editor); }
+};
+
+/** 工具栏布局，分组与 Modrinth 的 BUTTONS（headings / stylizing / lists / components）一一对应 */
 var ZEXO_MD_TOOLBAR = [
   {
     name: '标题',
     buttons: [
-      { cmd: 'h1', icon: 'fa-header', label: '一级标题' },
-      { cmd: 'h2', icon: 'fa-header', label: '二级标题', small: '2' },
-      { cmd: 'h3', icon: 'fa-header', label: '三级标题', small: '3' }
+      { cmd: 'h1', icon: 'fa-header', label: '一级标题', text: 'H1' },
+      { cmd: 'h2', icon: 'fa-header', label: '二级标题', text: 'H2' },
+      { cmd: 'h3', icon: 'fa-header', label: '三级标题', text: 'H3' }
     ]
   },
   {
@@ -235,32 +249,72 @@ var ZEXO_MD_TOOLBAR = [
     name: '列表',
     buttons: [
       { cmd: 'bullet', icon: 'fa-list-ul', label: '无序列表' },
-      { cmd: 'ordered', icon: 'fa-list-ol', label: '有序列表' },
+      { cmd: 'ordered', icon: 'fa-list-ol', label: '有序列表 (Ctrl+Shift+7)' },
       { cmd: 'quote', icon: 'fa-quote-left', label: '引用 (Ctrl+Shift+.)' }
+    ]
+  },
+  {
+    name: '组件',
+    buttons: [
+      { cmd: 'link', icon: 'fa-link', label: '插入链接' },
+      { cmd: 'image', icon: 'fa-image', label: '插入图片（上传 / 外链）' },
+      { cmd: 'video', icon: 'fa-youtube-play', label: '插入 YouTube 视频' },
+      { cmd: 'emoji', icon: 'fa-smile-o', label: '插入表情' }
     ]
   }
 ];
 
-/** 由分组数据生成工具栏 HTML（与老版本 .black2 按钮样式保持一致） */
+/** 由分组数据生成工具栏 HTML（Modrinth 风格图标按钮 + 分组分隔） */
 function zexoMdToolbarHtml(ele, data_name) {
   var html = '<div class="black2 zexo_md_toolbar">';
+
+  // 第一行：命令按钮组 / 工具按钮组 / 预览开关（对应 Modrinth 的 editor-actions + 预览 Toggle）
+  html += '<div class="zexo_md_row zexo_md_row--top">';
+  html += '<div class="zexo_md_actions">';
+  var firstGroup = true;
   for (var g = 0; g < ZEXO_MD_TOOLBAR.length; g++) {
     var group = ZEXO_MD_TOOLBAR[g];
-    html += '<span class="zexo_md_group" title="' + group.name + '">';
+    if (!firstGroup) { html += '<span class="zexo_md_divider" aria-hidden="true"></span>'; }
+    firstGroup = false;
+    html += '<div class="zexo_md_group" role="group" aria-label="' + group.name + '" title="' + group.name + '">';
     for (var b = 0; b < group.buttons.length; b++) {
       var btn = group.buttons[b];
-      html += '<button type="button" class="btn btn-primary zexo_md_btn" title="' + btn.label + '" data-zexo-md-cmd="' + btn.cmd + '">' +
-        '<i class="fa ' + btn.icon + ' fa-2x"></i>' + (btn.small ? '<sub>' + btn.small + '</sub>' : '') + '</button>';
+      html += '<button type="button" class="zexo_md_btn" title="' + btn.label + '" aria-label="' + btn.label +
+        '" data-zexo-md-cmd="' + btn.cmd + '">' +
+        (btn.text ? '<span class="zexo_md_btn_text">' + btn.text + '</span>' : '<i class="fa ' + btn.icon + '"></i>') +
+        '</button>';
     }
-    html += '</span>';
+    html += '</div>';
   }
-  // 原有工具：自动备份 / 上传图片 / 导入 md / 预览
-  html += '<span class="zexo_md_group" title="工具">' +
-    '<button type="button" class="btn btn-primary zexo_md_btn" title="自动备份开关" onclick="zexo_start_or_stop_backup()"><i class="fa fa-clock-o fa-2x"></i></button> ' +
-    '<button type="button" class="btn btn-primary zexo_md_btn" title="上传图片" onclick="$(\'#input\').click();"><i class="fa fa-photo fa-2x"></i></button>' +
-    '<button type="button" class="btn btn-primary zexo_md_btn" title="导入 Markdown 文件" onclick="$(\'#upload_md\').click();"><i class="fa fa-file fa-2x"></i></button>' +
-    '<button type="button" class="btn btn-primary zexo_md_btn" title="预览" onclick="zexo_preview(\'' + ele + '\',\'' + data_name + '\')" id="zexo_eye_' + ele + '"><i class="fa fa-eye fa-2x"></i></button>' +
-    '</span>';
+  // 工具组：自动备份 / 导入 Markdown（对应 Modrinth maxLength 旁的辅助动作）
+  html += '<span class="zexo_md_divider" aria-hidden="true"></span>';
+  html += '<div class="zexo_md_group" role="group" aria-label="工具" title="工具">' +
+    '<button type="button" class="zexo_md_btn" title="自动备份开关" aria-label="自动备份开关" onclick="zexo_start_or_stop_backup()"><i class="fa fa-clock-o"></i></button>' +
+    '<button type="button" class="zexo_md_btn" title="导入 Markdown 文件" aria-label="导入 Markdown 文件" data-zexo-md-cmd="import"><i class="fa fa-file-text-o"></i></button>' +
+    '</div>';
+  html += '</div>';
+
+  // 预览开关，与 Modrinth 的 Toggle + label 结构一致
+  html += '<div class="zexo_md_preview_toggle">' +
+    '<input type="checkbox" class="zexo_md_switch" id="zexo_md_switch_' + ele + '" onchange="zexo_preview(\'' + ele + '\',\'' + data_name + '\')">' +
+    '<label for="zexo_md_switch_' + ele + '"><span class="zexo_md_switch_track" aria-hidden="true"></span>预览</label>' +
+    '</div>';
+  html += '</div>';
+
+  // 第二行：textarea + 预览容器 + OwO 表情面板
+  html += '<textarea class="zexo_md_textarea" id="text_' + ele + '"></textarea>' +
+    '<div class="zexo_pre_div markdown-body" id="div_' + ele + '" style="display:none"></div>' +
+    '<div class="OwO"></div>';
+
+  // 底部：Markdown 语法说明 + 字数统计（对应 Modrinth 的 info-blurb / max-length）
+  html += '<div class="zexo_md_info_blurb">' +
+    '<div class="zexo_md_info">' +
+    '<i class="fa fa-info-circle" aria-hidden="true"></i>' +
+    '<span>支持 <a class="zexo_md_resource_link" href="https://support.modrinth.com/en/articles/8801962-advanced-markdown-formatting" target="_blank" rel="noopener">Markdown 语法</a>：加粗、列表、表格、代码块、剧透、YouTube 内嵌等。</span>' +
+    '</div>' +
+    '<div class="zexo_md_max_length">字数：<span class="zexo_md_length">0</span></div>' +
+    '</div>';
+
   html += '</div>';
   return html;
 }
@@ -436,6 +490,13 @@ var ZEXO_MD_ALLOWED_TAGS = [
  * 关键点：script/style 整段丢弃（含文本），事件属性全部丢弃，href/src 协议校验。
  */
 function zexoMdSanitizeFallback(html) {
+  // 非浏览器环境（如单元测试）没有 DOMParser，此时只做最基本的转义
+  if (typeof DOMParser !== 'function') {
+    return String(html == null ? '' : html)
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[\s\S]*?<\/style>/gi, '')
+      .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+  }
   var doc = new DOMParser().parseFromString('<div id="__zexo_root__">' + html + '</div>', 'text/html');
   var root = doc.getElementById('__zexo_root__');
   if (!root) { return ''; }
@@ -492,29 +553,39 @@ function zexoMdSanitize(html) {
   }
 }
 
-/** 把 <img> 包成 <picture>，交给 wsrv.nl 转 WebP，参考 Modrinth 的图片 CDN 代理策略 */
+/** 把预览里的 <img> 补上懒加载 / 空 alt，参考 Modrinth 的图片处理策略 */
 function zexoMdUpgradeImages(html) {
-  var doc = new DOMParser().parseFromString('<div id="__zexo_root__">' + html + '</div>', 'text/html');
-  var root = doc.getElementById('__zexo_root__');
-  if (!root) { return html; }
-  var imgs = root.getElementsByTagName('img');
-  var i;
-  for (i = 0; i < imgs.length; i++) {
-    var img = imgs[i];
-    img.setAttribute('loading', 'lazy');
-    if (!img.getAttribute('alt')) { img.setAttribute('alt', ''); }
+  if (typeof DOMParser !== 'function') { return html; }
+  try {
+    var doc = new DOMParser().parseFromString('<div id="__zexo_root__">' + html + '</div>', 'text/html');
+    var root = doc.getElementById('__zexo_root__');
+    if (!root) { return html; }
+    var imgs = root.getElementsByTagName('img');
+    var i;
+    for (i = 0; i < imgs.length; i++) {
+      var img = imgs[i];
+      img.setAttribute('loading', 'lazy');
+      if (!img.getAttribute('alt')) { img.setAttribute('alt', ''); }
+    }
+    return root.innerHTML;
+  } catch (e) {
+    return html;
   }
-  return root.innerHTML;
 }
 
 /** 渲染 Markdown → 消毒后的 HTML */
 function zexoRenderMarkdown(markdown) {
   var raw = '';
+  var text = markdown == null ? '' : String(markdown);
   if (typeof marked === 'function') {
-    raw = marked(markdown == null ? '' : String(markdown));
+    try {
+      raw = marked(text);
+    } catch (e) {
+      raw = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, '<br>');
+    }
   } else {
     // 极端兜底：marked 没加载时至少保证换行
-    raw = String(markdown == null ? '' : markdown).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, '<br>');
+    raw = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, '<br>');
   }
   return zexoMdUpgradeImages(zexoMdSanitize(raw));
 }
@@ -576,6 +647,259 @@ function zexoMdUpgradeYoutubeEmbeds(html) {
 }
 
 /* =========================================================================
+ * 5.5 按钮弹窗交互（对应 Modrinth 的 link / image / video 模态）
+ * ========================================================================= */
+
+/** 预览注入：用与预览同一套渲染管线显示即将插入的片段 */
+function zexoMdModalPreview(markdown) {
+  var html = zexoRenderMarkdown(markdown || '');
+  return '<div class="zexo_md_modal_preview markdown-body">' +
+    (html || '<span class="zexo_md_modal_empty">（暂无预览）</span>') + '</div>';
+}
+
+/** 转义后放进 swal 的 html，避免用户输入被当成标签解析 */
+function zexoMdEscapeHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/** 统一的输入对话框：返回 Promise<值|null> */
+function zexoMdPrompt(opts) {
+  if (typeof swal !== 'function') {
+    var v = window.prompt(opts.title);
+    return Promise.resolve(v === null ? null : String(v).trim());
+  }
+  var html = '';
+  for (var i = 0; i < (opts.fields || []).length; i++) {
+    var f = opts.fields[i];
+    html += '<div class="zexo_md_modal_field">' +
+      '<label for="' + f.id + '">' + f.label + (f.required ? '<span class="zexo_md_modal_req">*</span>' : '') + '</label>' +
+      '<input id="' + f.id + '" class="zexo_md_modal_input" type="text" value="' + zexoMdEscapeHtml(f.value || '') + '"' +
+      (f.placeholder ? ' placeholder="' + zexoMdEscapeHtml(f.placeholder) + '"' : '') + '>' +
+      '</div>';
+  }
+  html += '<div class="zexo_md_modal_hint">' + (opts.hint || '') + '</div>';
+  if (opts.preview) { html += zexoMdModalPreview(opts.preview); }
+  if (opts.extra) { html += opts.extra; }
+
+  return swal({
+    title: opts.title,
+    text: opts.text,
+    html: html,
+    icon: opts.icon || 'info',
+    buttons: ['取消', opts.confirmText || '插入']
+  }).then(function (ok) {
+    if (!ok) { return null; }
+    var out = {};
+    for (var j = 0; j < (opts.fields || []).length; j++) {
+      var el = document.getElementById(opts.fields[j].id);
+      out[opts.fields[j].id] = el ? el.value.trim() : '';
+    }
+    return out;
+  });
+}
+
+/**
+ * 插入链接 —— 对应 Modrinth 的 link 模态：
+ * 预填当前选中文字作为文案，URL 经 cleanUrl() 校验，失败时提示原因。
+ */
+function zexoMdOpenLinkModal(editor) {
+  var el = editor.textarea;
+  var selected = el.value.slice(el.selectionStart, el.selectionEnd);
+  zexoMdPrompt({
+    title: '插入链接',
+    text: '链接文案留空时自动使用 URL 作为文案。',
+    confirmText: '插入',
+    fields: [
+      { id: 'zexo_md_link_label', label: '链接文案', value: selected, placeholder: '例如：我的博客' },
+      { id: 'zexo_md_link_url', label: '链接地址 (URL)', required: true, placeholder: 'https://...' }
+    ],
+    hint: '仅支持 http / https；http 会自动升级为 https。'
+  }).then(function (res) {
+    if (!res) { return; }
+    var url = res.zexo_md_link_url;
+    if (!url) { sweetAlert('糟糕', '链接地址不能为空', 'error'); return; }
+    try {
+      url = zexoMdCleanUrl(url);
+    } catch (e) {
+      sweetAlert('链接不可用', e.message, 'error');
+      return;
+    }
+    zexoMdInsertLink(el, url, res.zexo_md_link_label);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.focus();
+  });
+}
+
+/** 上传图片（走 Zexo 后端图床）—— 成功后把 URL 回填到弹窗里 */
+function zexoMdPickImage(editor, onDone) {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/png,image/jpeg,image/gif,image/webp,image/svg+xml';
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  input.onchange = function () {
+    var file = input.files && input.files[0];
+    document.body.removeChild(input);
+    if (!file || typeof editor.options.onFilePaste !== 'function') {
+      if (file) { sweetAlert('糟糕', '当前页面没有配置图片上传处理器', 'error'); }
+      return;
+    }
+    // 借道已有的上传流程：成功后 onFilePaste 会插入 Markdown，
+    // 这里通过临时拦截把 URL 交给弹窗回调。
+    var prev = editor.options.onFilePaste;
+    editor.options.onFilePaste = function () { /* 弹窗模式下不直接插入 */ };
+    zexoMdPickImageUpload(editor, file, prev, onDone);
+  };
+  input.click();
+}
+
+/** 复用 zexo_uploadimage 的上传接口，但把结果交给回调而不是直接插入 */
+function zexoMdPickImageUpload(editor, file, restoreUpload, onDone) {
+  var f_name = file.name.substring(file.name.lastIndexOf('.') + 1);
+  var reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = function () {
+    var base64 = this.result.substring(this.result.indexOf(',') + 1);
+    if (typeof ajaxObject !== 'function') {
+      // 没有后端上传接口时退回本地预览地址
+      if (typeof sweetAlert === 'function') { sweetAlert('糟糕', '当前页面没有可用的上传接口', 'error'); }
+      editor.options.onFilePaste = restoreUpload;
+      return;
+    }
+    if (typeof swal === 'function') {
+      swal({ title: '\n上传中...', icon: 'https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif', text: '\n', button: false, closeModal: false });
+    }
+    var ajax = ajaxObject();
+    ajax.open('post', '/zexo/admin/api/addimage/' + f_name, true);
+    ajax.setRequestHeader('Content-Type', 'text/plain');
+    ajax.onreadystatechange = function () {
+      if (ajax.readyState !== 4) { return; }
+      if (typeof swal === 'function') { swal.close(); }
+      editor.options.onFilePaste = restoreUpload;
+      if (ajax.status === 200 || ajax.status === 201) { onDone(ajax.responseText); }
+      else if (typeof sweetAlert === 'function') { sweetAlert('糟糕', '上传图片失败!', 'error'); }
+    };
+    ajax.send(base64);
+  };
+}
+
+/**
+ * 插入图片 —— 对应 Modrinth 的 image 模态：
+ * 描述（alt）为必填，支持「上传」与「外链」两种来源。
+ */
+function zexoMdOpenImageModal(editor) {
+  var el = editor.textarea;
+  var selected = el.value.slice(el.selectionStart, el.selectionEnd);
+  var canUpload = typeof editor.options.onFilePaste === 'function';
+
+  var uploadRow = canUpload
+    ? '<div class="zexo_md_modal_field"><label>图片文件</label>' +
+      '<button type="button" class="zexo_md_modal_upload" id="zexo_md_image_pick"><i class="fa fa-upload"></i> 选择本地图片上传到图床</button>' +
+      '<div class="zexo_md_modal_picked" id="zexo_md_image_picked"></div></div>'
+    : '';
+
+  zexoMdPrompt({
+    title: '插入图片',
+    text: '描述（alt）会作为图片的替代文本，请尽量写清楚。',
+    confirmText: '插入',
+    extra: uploadRow,
+    fields: [
+      { id: 'zexo_md_image_alt', label: '描述 (alt)', required: true, value: selected, placeholder: '描述这张图片...' },
+      { id: 'zexo_md_image_url', label: '图片地址 (URL)', required: true, placeholder: 'https://...' }
+    ],
+    hint: '可以直接填外链，也可以点上面的按钮上传到 Zexo 图床后自动填入。'
+  }).then(function (res) {
+    if (!res) { return; }
+    var url = res.zexo_md_image_url;
+    var alt = res.zexo_md_image_alt;
+    if (!url) { sweetAlert('糟糕', '图片地址不能为空，可先上传再插入', 'error'); return; }
+    if (!alt) { sweetAlert('糟糕', '描述 (alt) 不能为空', 'error'); return; }
+    try {
+      url = zexoMdCleanUrl(url);
+    } catch (e) {
+      sweetAlert('图片地址不可用', e.message, 'error');
+      return;
+    }
+    zexoMdInsertImage(el, url, alt);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.focus();
+  });
+
+  // 弹窗内部的上传按钮（swal 渲染完成后再绑定）
+  if (canUpload) {
+    var bindTimer = setInterval(function () {
+      var pick = document.getElementById('zexo_md_image_pick');
+      if (!pick) { return; }
+      clearInterval(bindTimer);
+      pick.onclick = function () {
+        zexoMdPickImage(editor, function (url) {
+          var urlInput = document.getElementById('zexo_md_image_url');
+          var picked = document.getElementById('zexo_md_image_picked');
+          if (urlInput) { urlInput.value = url; }
+          if (picked) { picked.innerHTML = '已上传：<a href="' + url + '" target="_blank" rel="noopener">' + url + '</a>'; }
+        });
+      };
+    }, 120);
+    setTimeout(function () { clearInterval(bindTimer); }, 15000);
+  }
+}
+
+/**
+ * 插入 YouTube 视频 —— 对应 Modrinth 的 video 模态：
+ * URL 必须匹配 youtubeRegex，否则提示格式错误。
+ */
+function zexoMdOpenVideoModal(editor) {
+  var el = editor.textarea;
+  zexoMdPrompt({
+    title: '插入 YouTube 视频',
+    text: '粘贴 YouTube 视频链接，将以内嵌播放器插入。',
+    confirmText: '插入',
+    fields: [
+      { id: 'zexo_md_video_url', label: 'YouTube 视频链接', required: true, placeholder: 'https://www.youtube.com/watch?v=...' }
+    ],
+    hint: '支持 youtu.be / youtube.com/watch / youtube.com/embed 三种链接形式。'
+  }).then(function (res) {
+    if (!res) { return; }
+    var url = res.zexo_md_video_url;
+    var id = zexoMdParseYoutube(url);
+    if (!id) { sweetAlert('链接格式不对', '请填写有效的 YouTube 视频链接', 'error'); return; }
+    zexoMdInsertYoutube(el, id);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.focus();
+  });
+}
+
+/**
+ * 导入本地 Markdown 文件 —— 编辑器自带的通用实现
+ * （index.js 生成的隐藏 #upload_md 只在书写页存在，说说页靠这里兜底）
+ */
+function zexoMdImportFile(editor) {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.md,.markdown,.txt,text/markdown,text/plain';
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  input.onchange = function () {
+    var file = input.files && input.files[0];
+    document.body.removeChild(input);
+    if (!file) { return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      editor.textarea.value = String(this.result);
+      editor.textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      editor.textarea.focus();
+      if (typeof notyf !== 'undefined' || typeof Notyf === 'function') {
+        try { new Notyf().success('已导入 ' + file.name); } catch (e) { /* 忽略提示失败 */ }
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  };
+  input.click();
+}
+
+/* =========================================================================
  * 6. 编辑器初始化
  * ========================================================================= */
 
@@ -597,20 +921,28 @@ function initZexoMarkdownEditor(options) {
     return null;
   }
 
-  mount.innerHTML = zexoMdToolbarHtml(ele, data_name) +
-    '<textarea class="zexo_md_textarea" style="border:0;border-radius:5px;background-color:#90939920;width: 100%;min-height: 400px;padding: 10px;resize: none;display:block" id="text_' + ele + '"></textarea>' +
-    '<div style="border:0;border-radius:5px;background-color:#90939920;max-width: 100%;min-height: 70%;padding: 10px;resize: none; display: none;" id="div_' + ele + '" class="zexo_pre_div markdown-body"></div>' +
-    '<div class="OwO"></div>';
+  // 工具栏 / 文本域 / 预览区 / 字数统计全部由 zexoMdToolbarHtml 生成
+  mount.innerHTML = zexoMdToolbarHtml(ele, data_name);
 
   var textarea = document.getElementById('text_' + ele);
   var preview = document.getElementById('div_' + ele);
   var toolbar = mount.querySelector('.zexo_md_toolbar');
+  var lengthLabel = mount.querySelector('.zexo_md_length');
 
   // 恢复本地备份（没有备份时保持空字符串，避免出现字面量 "null"）
   var backup = localStorage.getItem('zexo_' + data_name + '_backup');
   textarea.value = backup === null ? '' : backup;
 
-  /* ---- 3.1 工具栏点击 ---- */
+  /* ---- 3.0 字数统计（对应 Modrinth 的 max-length 信息条） ---- */
+  function refreshLength() {
+    if (!lengthLabel) { return; }
+    lengthLabel.textContent = String(textarea.value.length);
+  }
+  refreshLength();
+  textarea.addEventListener('input', refreshLength);
+  textarea.addEventListener('change', refreshLength);
+
+  /* ---- 3.1 工具栏点击：命令按钮 + 弹窗按钮 ---- */
   if (toolbar) {
     toolbar.addEventListener('click', function (evt) {
       var target = evt.target;
@@ -619,10 +951,17 @@ function initZexoMarkdownEditor(options) {
       }
       if (!target || target === toolbar) { return; }
       var cmd = target.getAttribute('data-zexo-md-cmd');
+      evt.preventDefault();
+
+      var interaction = ZEXO_MD_INTERACTIONS[cmd];
+      if (typeof interaction === 'function') {
+        interaction(instance);
+        return;
+      }
       var fn = ZEXO_MD_COMMANDS[cmd];
       if (typeof fn === 'function') {
-        evt.preventDefault();
         fn(textarea);
+        refreshLength();
         textarea.focus();
       }
     });
@@ -727,6 +1066,8 @@ function initZexoMarkdownEditor(options) {
     data_name: data_name,
     textarea: textarea,
     preview: preview,
+    mount: mount,
+    options: options,
     owo: owoInstance,
     /** 渲染预览（Modrinth 风格的消毒 + 图片/视频增强） */
     render: function () {
@@ -737,6 +1078,10 @@ function initZexoMarkdownEditor(options) {
       var showing = preview.style.display !== 'block';
       preview.style.display = showing ? 'block' : 'none';
       textarea.style.display = showing ? 'none' : 'block';
+      var toggleBox = mount.querySelector('.zexo_md_switch');
+      if (toggleBox) { toggleBox.checked = showing; }
+      var infoBlurb = mount.querySelector('.zexo_md_info_blurb');
+      if (infoBlurb) { infoBlurb.style.display = showing ? 'none' : 'flex'; }
       if (showing) { instance.render(); }
       return showing;
     },
@@ -744,6 +1089,7 @@ function initZexoMarkdownEditor(options) {
     append: function (text) {
       textarea.value += text;
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      refreshLength();
     }
   };
 
@@ -767,7 +1113,12 @@ window.zexoMdParseYoutube = zexoMdParseYoutube;
 window.zexoMdInsertLink = zexoMdInsertLink;
 window.zexoMdInsertImage = zexoMdInsertImage;
 window.zexoMdInsertYoutube = zexoMdInsertYoutube;
+window.zexoMdOpenLinkModal = zexoMdOpenLinkModal;
+window.zexoMdOpenImageModal = zexoMdOpenImageModal;
+window.zexoMdOpenVideoModal = zexoMdOpenVideoModal;
+window.zexoMdPickImage = zexoMdPickImage;
 window.ZEXO_MD_COMMANDS = ZEXO_MD_COMMANDS;
+window.ZEXO_MD_INTERACTIONS = ZEXO_MD_INTERACTIONS;
 
 /** 从 URL 渲染预览的通用包装（给 index.js 的独立渲染场景留口子） */
 function zexoRenderMarkdownWithVideo(html) {

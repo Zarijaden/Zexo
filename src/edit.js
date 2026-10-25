@@ -137,14 +137,14 @@ return;
 if(document.getElementById(`text_${ele}`).style.display != "none"){
 document.getElementById(`div_${ele}`).style.display = "block";
 document.getElementById(`text_${ele}`).style.display = "none";
-document.getElementById(`zexo_eye_${ele}`).innerHTML=`<i class="fa fa-eye-slash fa-2x"><\/i>`
+zexoMdSyncPreviewToggle(ele, true);
 document.getElementById(`div_${ele}`).innerHTML="正在渲染markdown文本中..."
 document.getElementById(`div_${ele}`).innerHTML=zexoRenderMarkdown(document.getElementById(`text_${ele}`).value)
 
 }else{
 document.getElementById(`div_${ele}`).style.display = "none";
 document.getElementById(`text_${ele}`).style.display = "block";
-document.getElementById(`zexo_eye_${ele}`).innerHTML=`<i class="fa fa-eye fa-2x"><\/i>`
+zexoMdSyncPreviewToggle(ele, false);
 }
 }
 
@@ -425,7 +425,7 @@ function copyToClip(content, message) {
     }
 }
 function readFile() {
-	swal({title: "\n上传中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
+	zexoShowLoading('上传中...');
     var file = this.files[0];
     var f_name = file["name"].substring(file["name"].lastIndexOf(".")+1);
     var reader = new FileReader(); 
@@ -447,17 +447,17 @@ function zexo_uploadimage(image,f_name){
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
             if( ajax.status == 200 ) {
-				swal.close()
+				zexoHideLoading()
 				zexo_add_mark(`![](${ajax.responseText})`)
                 sweetAlert("成功",  "图片已更新", "success");
             }
 		else if( ajax.status == 201 ){
-			swal.close()
+			zexoHideLoading()
 			zexo_add_mark(`![](${ajax.responseText})`)
 		    sweetAlert('成功','图片已上传','success')
             }
             else {
-			swal.close()
+			zexoHideLoading()
 			sweetAlert("糟糕", "上传图片失败!", "error")
             }
         }
@@ -465,24 +465,24 @@ function zexo_uploadimage(image,f_name){
     ajax.send(image);
 };
 function zexo_upload_md(){
-	swal({title: "\n上传中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
+	zexoShowLoading('上传中...');
 	var ajax = ajaxObject();
     ajax.open( "post" , '/zexo/admin/api/adddoc/'+choo.value , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
             if( ajax.status == 200 ) {
-				swal.close()
+				zexoHideLoading()
                 sweetAlert("成功",  "文件已上传", "success");
 				localStorage.setItem("zexo_zexo_docs_backup","");
 				localStorage.setItem("zexo_zexo_docs_choo_backup","");
             }
 		else if( ajax.status == 201 ){
-				swal.close()
+				zexoHideLoading()
                 sweetAlert("成功",  "文件已新建", "success");
             }
             else {
-				swal.close()
+				zexoHideLoading()
                 sweetAlert("糟糕", "上传文件失败!", "error");
             }
         }
@@ -490,10 +490,10 @@ function zexo_upload_md(){
     ajax.send(base64Encode(document.getElementById("text_zexo_doc_editor").value));
 }
 function zexo_get_md(){
-	swal({title: "\n加载中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
+	zexoShowLoading('加载中...');
 document.getElementById(`div_zexo_doc_editor`).style.display = "none";
 document.getElementById(`text_zexo_doc_editor`).style.display = "block";
-document.getElementById(`zexo_eye_zexo_doc_editor`).innerHTML=`<i class="fa fa-eye fa-2x"><\/i>`
+zexoMdResetPreview("zexo_doc_editor")
 zexo_replace_mark("# 正在获取"+choo.value+"中")
 var ajax = ajaxObject();
     ajax.open( "post" , '/zexo/admin/api/getdoc/'+choo.value , true );
@@ -501,11 +501,11 @@ var ajax = ajaxObject();
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
             if( ajax.status == 200 ) {
-			swal.close()
+			zexoHideLoading()
             zexo_replace_mark(ajax.responseText)
             }
             else {
-			swal.close()
+			zexoHideLoading()
 			zexo_get_scaffolds();
             }
         }
@@ -513,10 +513,10 @@ var ajax = ajaxObject();
 	ajax.send(new Date().getTime());
 }
 function zexo_get_scaffolds(){
-swal({title: "\n加载模板中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
+zexoShowLoading('加载模板中...');
 document.getElementById(`div_zexo_doc_editor`).style.display = "none";
 document.getElementById(`text_zexo_doc_editor`).style.display = "block";
-document.getElementById(`zexo_eye_zexo_doc_editor`).innerHTML=`<i class="fa fa-eye fa-2x"><\/i>`
+zexoMdResetPreview("zexo_doc_editor")
 zexo_replace_mark("# 正在获取模板文件中")
 var ajax = ajaxObject();
     ajax.open( "post" , '/zexo/admin/api/getscaffolds' , true );
@@ -524,11 +524,11 @@ var ajax = ajaxObject();
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
             if( ajax.status == 200 ) {
-			swal.close()
+			zexoHideLoading()
             zexo_replace_mark(ajax.responseText)
             }
             else {
-			swal.close()
+			zexoHideLoading()
 			sweetAlert("糟糕", "拉取模板文件失败，请检查其是否存在", "error");
 			zexo_replace_mark("# 拉取模板文件失败，请检查其是否存在")
             }
@@ -538,24 +538,24 @@ var ajax = ajaxObject();
 }
 
 function zexo_upload_draft(){
-	swal({title: "\n上传中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
+	zexoShowLoading('上传中...');
 	var ajax = ajaxObject();
     ajax.open( "post" , '/zexo/admin/api/adddraft/'+choo.value , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
             if( ajax.status == 200 ) {
-				swal.close()
+				zexoHideLoading()
                 sweetAlert("成功",  "文件已上传", "success");
 				localStorage.setItem("zexo_zexo_docs_backup","");
 				localStorage.setItem("zexo_zexo_docs_choo_backup","");
             }
 		else if( ajax.status == 201 ){
-			swal.close()
+			zexoHideLoading()
                 sweetAlert("成功",  "文件已新建", "success");
             }
             else {
-				swal.close()
+				zexoHideLoading()
                 sweetAlert("糟糕", "上传文件失败!", "error");
             }
         }
@@ -563,10 +563,10 @@ function zexo_upload_draft(){
     ajax.send(base64Encode(document.getElementById("text_zexo_doc_editor").value));
 }
 function zexo_get_draft(){
-	swal({title: "\n加载中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
+	zexoShowLoading('加载中...');
 document.getElementById(`div_zexo_doc_editor`).style.display = "none";
 document.getElementById(`text_zexo_doc_editor`).style.display = "block";
-document.getElementById(`zexo_eye_zexo_doc_editor`).innerHTML=`<i class="fa fa-eye fa-2x"><\/i>`
+zexoMdResetPreview("zexo_doc_editor")
 zexo_replace_mark("正在获取"+choo.value+"中")
 var ajax = ajaxObject();
     ajax.open( "post" , '/zexo/admin/api/getdraft/'+choo.value , true );
@@ -574,11 +574,11 @@ var ajax = ajaxObject();
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
             if( ajax.status == 200 ) {
-				swal.close()
+				zexoHideLoading()
             zexo_replace_mark(ajax.responseText)
             }
             else {
-			swal.close()
+			zexoHideLoading()
 			zexo_get_scaffolds();
             }
         }
@@ -586,18 +586,18 @@ var ajax = ajaxObject();
 	ajax.send(new Date().getTime());
 }
 function zexo_del_index(){
-	swal({title: "\n加载中...",icon: "https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif",text:"\n",button: false,closeModal: false,});
+	zexoShowLoading('加载中...');
 	var ajax = ajaxObject();
     ajax.open( "post" , '/zexo/admin/api/index_del' , true );
     ajax.setRequestHeader( "Content-Type" , "text/plain" );
     ajax.onreadystatechange = function () {
         if( ajax.readyState == 4 ) {
             if( ajax.status == 200 ) {
-				swal.close()
+				zexoHideLoading()
                 sweetAlert("成功",  "索引已清除！", "success");
             }
             else {
-				swal.close()
+				zexoHideLoading()
                 sweetAlert("糟糕", "索引清除失败！", "error");
             }
         }

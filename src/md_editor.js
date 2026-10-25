@@ -647,6 +647,53 @@ function zexoMdUpgradeYoutubeEmbeds(html) {
 }
 
 /* =========================================================================
+ * 5.4 加载遮罩（替代 sweetAlert 的 loading 弹窗）
+ * 用自建 DOM 而不是 swal({button:false, closeModal:false})：
+ * 后者偶尔会残留、必须点空白处才能关掉，而且会覆盖正在打开的输入弹窗。
+ * ========================================================================= */
+
+var ZEXO_MD_LOADING_ID = 'zexo_md_loading';
+var ZEXO_MD_LOADING_TIMER = null;
+
+/** 显示加载遮罩；重复调用只更新文字，不会叠加多层 */
+function zexoShowLoading(text) {
+  var msg = text == null ? '加载中...' : String(text);
+  if (ZEXO_MD_LOADING_TIMER) { clearTimeout(ZEXO_MD_LOADING_TIMER); ZEXO_MD_LOADING_TIMER = null; }
+  var exists = document.getElementById(ZEXO_MD_LOADING_ID);
+  if (exists) {
+    var label = exists.querySelector('.zexo_md_loading_text');
+    if (label) { label.textContent = msg; }
+  } else {
+    var box = document.createElement('div');
+    box.id = ZEXO_MD_LOADING_ID;
+    box.className = 'zexo_md_loading';
+    box.innerHTML = '<div class="zexo_md_loading_box">' +
+      '<span class="zexo_md_loading_spinner" aria-hidden="true"></span>' +
+      '<span class="zexo_md_loading_text">' + zexoMdEscapeHtml(msg) + '</span>' +
+      '</div>';
+    document.body.appendChild(box);
+  }
+  // 兜底：万一某个请求的回调抛异常没走到 zexoHideLoading，遮罩也不会永久卡住界面
+  ZEXO_MD_LOADING_TIMER = setTimeout(zexoHideLoading, 30000);
+}
+
+/** 关闭加载遮罩（可重复调用），并顺手清理可能残留的 sweetAlert 加载层 */
+function zexoHideLoading() {
+  if (ZEXO_MD_LOADING_TIMER) { clearTimeout(ZEXO_MD_LOADING_TIMER); ZEXO_MD_LOADING_TIMER = null; }
+  var el = document.getElementById(ZEXO_MD_LOADING_ID);
+  if (el && el.parentNode) { el.parentNode.removeChild(el); }
+
+  // 旧代码用 swal + 自定义 gif 图标做加载层，这里兜底收掉：
+  // 只有「自定义图标」的弹窗才是加载层，不会误关成功/错误提示。
+  if (typeof swal === 'function' && typeof swal.close === 'function') {
+    var alertBox = document.querySelector('.sweet-alert');
+    if (alertBox && alertBox.querySelector('.swal-icon--custom')) {
+      try { swal.close(); } catch (e) { /* 忽略 */ }
+    }
+  }
+}
+
+/* =========================================================================
  * 5.5 按钮弹窗交互（对应 Modrinth 的 link / image / video 模态）
  * ========================================================================= */
 
@@ -664,37 +711,71 @@ function zexoMdEscapeHtml(str) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-/** 统一的输入对话框：返回 Promise<值|null> */
+/** 弹窗内输入值的临时存放点（SweetAlert 关闭后 DOM 已销毁，不能依赖 getElementById 取值） */
+var ZEXO_MD_MODAL_STORE = {};
+
+/** 供弹窗内输入框的 oninput 调用，实时记录用户输入 */
+function zexoMdModalUpdate(id, value) {
+  ZEXO_MD_MODAL_STORE[id] = value;
+}
+
+/**
+ * 统一的输入对话框：返回 Promise<{字段id: 值}|null>
+ * 注意：sweetAlert v1 的 `html` 是布尔开关（表示 `text` 里是 HTML），
+ * 所以表单标记必须放进 `text`，并传 `html: true`——之前把字符串传给 `html`
+ * 导致表单根本没渲染，取值全为空、进而报「链接不能为空」。
+ */
 function zexoMdPrompt(opts) {
   if (typeof swal !== 'function') {
     var v = window.prompt(opts.title);
     return Promise.resolve(v === null ? null : String(v).trim());
   }
-  var html = '';
+
+  ZEXO_MD_MODAL_STORE = {};
+
+  var body = '';
+  if (opts.text) {
+    body += '<p class="zexo_md_modal_text">' + opts.text + '</p>';
+  }
   for (var i = 0; i < (opts.fields || []).length; i++) {
     var f = opts.fields[i];
-    html += '<div class="zexo_md_modal_field">' +
+    var initial = f.value == null ? '' : String(f.value);
+    ZEXO_MD_MODAL_STORE[f.id] = initial;
+    body += '<div class="zexo_md_modal_field">' +
       '<label for="' + f.id + '">' + f.label + (f.required ? '<span class="zexo_md_modal_req">*</span>' : '') + '</label>' +
-      '<input id="' + f.id + '" class="zexo_md_modal_input" type="text" value="' + zexoMdEscapeHtml(f.value || '') + '"' +
+      '<input id="' + f.id + '" class="zexo_md_modal_input" type="' + (f.type || 'text') + '"' +
+      ' value="' + zexoMdEscapeHtml(initial) + '"' +
+      ' oninput="zexoMdModalUpdate(\'' + f.id + '\', this.value)"' +
       (f.placeholder ? ' placeholder="' + zexoMdEscapeHtml(f.placeholder) + '"' : '') + '>' +
       '</div>';
   }
-  html += '<div class="zexo_md_modal_hint">' + (opts.hint || '') + '</div>';
-  if (opts.preview) { html += zexoMdModalPreview(opts.preview); }
-  if (opts.extra) { html += opts.extra; }
+  if (opts.hint) {
+    body += '<div class="zexo_md_modal_hint">' + opts.hint + '</div>';
+  }
+  if (opts.preview) { body += zexoMdModalPreview(opts.preview); }
+  if (opts.extra) { body += opts.extra; }
 
-  return swal({
+  var promise = swal({
     title: opts.title,
-    text: opts.text,
-    html: html,
+    text: body,
+    html: true,
     icon: opts.icon || 'info',
     buttons: ['取消', opts.confirmText || '插入']
-  }).then(function (ok) {
+  });
+
+  // 打开后把焦点放到第一个输入框，省一次点击
+  setTimeout(function () {
+    var first = document.querySelector('.sweet-alert .zexo_md_modal_input');
+    if (first) { try { first.focus(); } catch (e) { /* 忽略 */ } }
+  }, 50);
+
+  return promise.then(function (ok) {
     if (!ok) { return null; }
     var out = {};
     for (var j = 0; j < (opts.fields || []).length; j++) {
-      var el = document.getElementById(opts.fields[j].id);
-      out[opts.fields[j].id] = el ? el.value.trim() : '';
+      var id = opts.fields[j].id;
+      var val = ZEXO_MD_MODAL_STORE[id];
+      out[id] = String(val == null ? '' : val).trim();
     }
     return out;
   });
@@ -768,15 +849,13 @@ function zexoMdPickImageUpload(editor, file, restoreUpload, onDone) {
       editor.options.onFilePaste = restoreUpload;
       return;
     }
-    if (typeof swal === 'function') {
-      swal({ title: '\n上传中...', icon: 'https://cdn.jsdelivr.net/gh/HexoPlusPlus/CDN@db63c79/loading.gif', text: '\n', button: false, closeModal: false });
-    }
+    zexoShowLoading('上传图片中...');
     var ajax = ajaxObject();
     ajax.open('post', '/zexo/admin/api/addimage/' + f_name, true);
     ajax.setRequestHeader('Content-Type', 'text/plain');
     ajax.onreadystatechange = function () {
       if (ajax.readyState !== 4) { return; }
-      if (typeof swal === 'function') { swal.close(); }
+      zexoHideLoading();
       editor.options.onFilePaste = restoreUpload;
       if (ajax.status === 200 || ajax.status === 201) { onDone(ajax.responseText); }
       else if (typeof sweetAlert === 'function') { sweetAlert('糟糕', '上传图片失败!', 'error'); }
@@ -835,6 +914,8 @@ function zexoMdOpenImageModal(editor) {
       clearInterval(bindTimer);
       pick.onclick = function () {
         zexoMdPickImage(editor, function (url) {
+          // 同步写入取值暂存点，否则点「插入」时读到的还是空值
+          zexoMdModalUpdate('zexo_md_image_url', url);
           var urlInput = document.getElementById('zexo_md_image_url');
           var picked = document.getElementById('zexo_md_image_picked');
           if (urlInput) { urlInput.value = url; }
@@ -1103,10 +1184,32 @@ function zexoMdEditorOf(ele) {
   return mount ? mount.zexoEditor : null;
 }
 
+/** 同步工具栏上「预览」开关的勾选状态（老代码里对应的 zexo_eye_* 眼睛按钮已废弃） */
+function zexoMdSyncPreviewToggle(ele, showing) {
+  var editor = zexoMdEditorOf(ele);
+  var mount = editor ? editor.mount : document.getElementById(ele);
+  if (!mount) { return; }
+  var box = mount.querySelector('.zexo_md_switch');
+  if (box) { box.checked = !!showing; }
+  var info = mount.querySelector('.zexo_md_info_blurb');
+  if (info) { info.style.display = showing ? 'none' : 'flex'; }
+}
+
+/** 强制切回编辑态（加载新文档前调用，避免停在预览层看不到内容） */
+function zexoMdResetPreview(ele) {
+  var div = document.getElementById('div_' + ele);
+  var text = document.getElementById('text_' + ele);
+  if (div) { div.style.display = 'none'; }
+  if (text) { text.style.display = 'block'; }
+  zexoMdSyncPreviewToggle(ele, false);
+}
+
 // 显式挂到 window 上，避免压缩器改写外部引用的名字
 window.zexoMdEditorToolbarHtml = zexoMdToolbarHtml;
 window.initZexoMarkdownEditor = initZexoMarkdownEditor;
 window.zexoMdEditorOf = zexoMdEditorOf;
+window.zexoMdSyncPreviewToggle = zexoMdSyncPreviewToggle;
+window.zexoMdResetPreview = zexoMdResetPreview;
 window.zexoRenderMarkdown = zexoRenderMarkdown;
 window.zexoMdCleanUrl = zexoMdCleanUrl;
 window.zexoMdParseYoutube = zexoMdParseYoutube;
@@ -1117,6 +1220,9 @@ window.zexoMdOpenLinkModal = zexoMdOpenLinkModal;
 window.zexoMdOpenImageModal = zexoMdOpenImageModal;
 window.zexoMdOpenVideoModal = zexoMdOpenVideoModal;
 window.zexoMdPickImage = zexoMdPickImage;
+window.zexoShowLoading = zexoShowLoading;
+window.zexoHideLoading = zexoHideLoading;
+window.zexoMdModalUpdate = zexoMdModalUpdate;
 window.ZEXO_MD_COMMANDS = ZEXO_MD_COMMANDS;
 window.ZEXO_MD_INTERACTIONS = ZEXO_MD_INTERACTIONS;
 

@@ -266,6 +266,106 @@
   color: #fff;
 }
 
+/* ---------------- 加载遮罩（zexoShowLoading / zexoHideLoading） ---------------- */
+
+.zexo_md_loading {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, .32);
+}
+
+.zexo_md_loading_box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+  padding: 18px 22px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+  color: #333;
+  font-size: 14px;
+}
+
+.zexo_md_loading_spinner {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(156, 39, 176, .25);
+  border-top-color: #9c27b0;
+  border-radius: 50%;
+  animation: zexoMdSpin .7s linear infinite;
+}
+
+@keyframes zexoMdSpin {
+  to { transform: rotate(360deg); }
+}
+
+.dark-edition .zexo_md_loading_box {
+  background-color: #2b2b36;
+  color: #eee;
+}
+
+/* ---------------- sweetAlert v1 弹窗统一：文字一律白字，差异用按钮底色表达 ---------------- */
+
+.sweet-alert .zexo_md_modal_text {
+  margin: 0 0 12px;
+  text-align: left;
+  font-size: 13px;
+  color: #7a7a8c;
+}
+
+/* sweetAlert 自身样式是运行时注入的，优先级需要压过它 */
+.sweet-alert button.swal-button,
+.sweet-alert .swal-button {
+  color: #fff !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.sweet-alert button.swal-button--cancel,
+.sweet-alert .swal-button--cancel {
+  background-color: #8e8e93 !important;
+  color: #fff !important;
+}
+
+.sweet-alert button.swal-button--cancel:hover,
+.sweet-alert .swal-button--cancel:hover {
+  background-color: #76767b !important;
+}
+
+.sweet-alert button.swal-button--cancel:focus,
+.sweet-alert .swal-button--cancel:focus {
+  box-shadow: 0 0 0 2px #8e8e9366 !important;
+}
+
+.sweet-alert button.swal-button--confirm,
+.sweet-alert .swal-button--confirm {
+  background-color: #9c27b0 !important;
+  color: #fff !important;
+}
+
+.sweet-alert button.swal-button--confirm:hover,
+.sweet-alert .swal-button--confirm:hover {
+  background-color: #8e24aa !important;
+}
+
+.sweet-alert button.swal-button--danger,
+.sweet-alert .swal-button--danger {
+  background-color: #e53935 !important;
+  color: #fff !important;
+}
+
+/* 弹窗内容较高时允许内部滚动，避免表单被裁掉 */
+.sweet-alert {
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
 .zexo_md_textarea {
   box-sizing: border-box;
   display: block;

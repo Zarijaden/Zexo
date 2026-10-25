@@ -3,6 +3,10 @@
 //记得更新时要更新zexo_ver, package-lock.json, package.json, update.js
 
 const zexo_ver = "Zexo@1.5"
+// 前端资产 CDN 基址：Worker 不托管静态资源，全部 CSS/JS 均此外链加载。
+// 更换 CDN 只需改这一处（如迁移到 Cloudflare Pages / Workers Assets 自托管时）。
+// 注意：talk_user.js 会被读者嵌入博客，换基址后需同步公告旧地址废弃。
+const zexo_cdn_base = "https://zexo-src.pages.dev/"
 let zexo_logstatus = 0
 
 
@@ -103,8 +107,8 @@ async function handleRequest(request) {
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<title>${zexo_ver}安装</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/install.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css">
+	<link rel="stylesheet" href="${zexo_cdn_base}install.css">
+	<link rel="stylesheet" href="${zexo_cdn_base}zexo_theme.css">
 </head>
 <body>
 		<div class="cont_principal">
@@ -202,7 +206,7 @@ async function handleRequest(request) {
 		</div>
 	</div>
 	
-	<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/install.js"></script>
+	<script src="${zexo_cdn_base}install.js"></script>
 </body>
 </html>`
             return new Response(zexo_installhtml, {
@@ -375,7 +379,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              zexo_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/home.js'></script>`
+              zexo_js = `<script src='${zexo_cdn_base}home.js'></script>`
             }
             if (path == "/zexo/admin/dash/edit") {
               zexo_edit_act = " active"
@@ -425,7 +429,7 @@ async function handleRequest(request) {
         </div>
       </div>`
               zexo_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' />
-<script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/md_editor.js"></script><script src="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.js"></script><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/edit.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/OwO.min.css">
+<script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><script src="${zexo_cdn_base}md_editor.js"></script><script src="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.js"></script><script src='${zexo_cdn_base}edit.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="${zexo_cdn_base}OwO.min.css">
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/highlight.min.js"></script>
 <link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.5.0/build/styles/${zexo_highlight_style}.min.css' />
 
@@ -469,7 +473,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              zexo_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' /> <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/md_editor.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.css" /><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/OwO.min.css">`
+              zexo_js = `<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/notyf/notyf.min.css' /> <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script><script src="${zexo_cdn_base}md_editor.js"></script><link rel="stylesheet" href="${zexo_cdn_base}talk.css" /><script src='${zexo_cdn_base}talk.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><link rel="stylesheet" href="${zexo_cdn_base}OwO.min.css">`
             }
             if (path == "/zexo/admin/dash/docs_man") {
               zexo_docs_man_act = " active"
@@ -508,7 +512,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              zexo_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/doc_man.js'></script>`
+              zexo_js = `<script src='${zexo_cdn_base}doc_man.js'></script>`
 
             }
             if (path == "/zexo/admin/dash/img_man") {
@@ -547,7 +551,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              zexo_js = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/css/swipebox.css"><script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/img_man.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script>
+              zexo_js = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/css/swipebox.css"><script src='${zexo_cdn_base}img_man.js'></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-lazy@1.7.11/jquery.lazy.plugins.min.js"></script><script src="https://cdn.jsdelivr.net/gh/brutaldesign/swipebox/src/js/jquery.swipebox.min.js"></script>`
 
             }
@@ -614,7 +618,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              zexo_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/tool.js'></script>`
+              zexo_js = `<script src='${zexo_cdn_base}tool.js'></script>`
             }
             if (path == "/zexo/admin/dash/set") {
               zexo_set_act = " active"
@@ -650,7 +654,7 @@ async function handleRequest(request) {
           </div>
         </div>
       </div>`
-              zexo_js = `<script src='https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/config.js'></script>`
+              zexo_js = `<script src='${zexo_cdn_base}config.js'></script>`
             }
             let zexo_plugin = ""
             if (zexo_plugin_css != undefined) { zexo_plugin += `<link rel="stylesheet" type="text/css" href="${zexo_plugin_css}" />` }
@@ -665,12 +669,12 @@ async function handleRequest(request) {
   <title>${zexo_title}</title>
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
   ${zexo_plugin}
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/font.css" />
-  <link href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/admin_all_${zexo_theme_mode}.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
+  <link rel="stylesheet" type="text/css" href="${zexo_cdn_base}font.css" />
+  <link href="${zexo_cdn_base}admin_all_${zexo_theme_mode}.css" rel="stylesheet" />
+  <link rel="stylesheet" href="${zexo_cdn_base}zexo_theme.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/indrimuska/jquery-editable-select/dist/jquery-editable-select.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/md_editor.css">
+  <link rel="stylesheet" href="${zexo_cdn_base}md_editor.css">
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
   <script>
   //这个脚本的用途是前端变量传递
@@ -792,7 +796,7 @@ async function handleRequest(request) {
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert/dist/sweetalert.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/admin_all.js"></script>
+<script src="${zexo_cdn_base}admin_all.js"></script>
 ${zexo_js}
 
 </body>
@@ -1248,8 +1252,8 @@ if (path == "/zexo/admin/api/trigger-deploy") {
 　　 a:hover { text-decoration:underline;color: white}
 　　 a:visited { text-decoration: none;color: white}
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/login.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
+  <link rel="stylesheet" href="${zexo_cdn_base}login.css" />
+  <link rel="stylesheet" href="${zexo_cdn_base}zexo_theme.css" />
  </head>
  <body>
   <div id="all">
@@ -1281,7 +1285,7 @@ if (path == "/zexo/admin/api/trigger-deploy") {
     </ul>
    </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/md5.js"></script>
+  <script src="${zexo_cdn_base}md5.js"></script>
   ${zexo_captcha_no_1}<script src="https://cdn.jsdelivr.net/gh/zpfz/RVerify.js/dist/RVerify.min.js"></script>${zexo_captcha_no_2}
 	  ${zexo_captcha_no_1}<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zpfz/RVerify.js/dist/RVerify.min.css"/>${zexo_captcha_no_2}
   <script>
@@ -1481,9 +1485,9 @@ login();
 <title>ZexoTalk预览页面</title>
 </head>
 <body>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk.css" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
-<script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/talk_user.js"></script>
+	<link rel="stylesheet" href="${zexo_cdn_base}talk.css" />
+	<link rel="stylesheet" href="${zexo_cdn_base}zexo_theme.css" />
+<script src="${zexo_cdn_base}talk_user.js"></script>
 <div id="zexo_talk"></div>
 <script>
 new zexo_talk({
@@ -1507,8 +1511,8 @@ start: 0
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
         <title>ZexoError</title>
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/error.css" />
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
+        <link rel="stylesheet" type="text/css" href="${zexo_cdn_base}error.css" />
+        <link rel="stylesheet" type="text/css" href="${zexo_cdn_base}zexo_theme.css" />
 	</head>
 	<body>
 		<div class="container demo-2">
@@ -1526,7 +1530,7 @@ start: 0
                 </div>
             </div>
 		</div>
-        <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/error.js"></script>
+        <script src="${zexo_cdn_base}error.js"></script>
 	</body>
 </html>
 `
@@ -1543,8 +1547,8 @@ start: 0
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
         <title>ZexoError</title>
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/error.css" />
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/zexo_theme.css" />
+        <link rel="stylesheet" type="text/css" href="${zexo_cdn_base}error.css" />
+        <link rel="stylesheet" type="text/css" href="${zexo_cdn_base}zexo_theme.css" />
 	</head>
 	<body>
 		<div class="container demo-2">
@@ -1563,7 +1567,7 @@ start: 0
                 </div>
             </div>
 		</div>
-        <script src="https://cdn.jsdelivr.net/gh/Zarijaden/Zexo/src/error.js"></script>
+        <script src="${zexo_cdn_base}error.js"></script>
 	</body>
 </html>
 `

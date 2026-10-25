@@ -69,7 +69,7 @@ npm run deploy
 
 ### 5. 访问面板
 
-部署成功后，访问 `https://<你的 worker 域名>/zexo/admin/login`。由于 KV 中还没有配置，页面会自动跳转到[安装向导](installation.html)，按引导填写即可。
+部署成功后，访问 `https://<你的 worker 域名>/zexo/admin/login`。由于 KV 中还没有配置，页面会自动跳转到[安装向导](/guide/installation)，按引导填写即可。
 
 ## 方式二：Cloudflare Dashboard 粘贴（无本地环境）
 
@@ -87,10 +87,10 @@ Dashboard 粘贴方式无法使用面板内一键更新（该功能依赖 CF Glo
 
 ## 部署完成后做什么
 
-1. **完成安装向导**：填写域名、GitHub 仓库信息等，详见 [安装向导](installation.html)
+1. **完成安装向导**：填写域名、GitHub 仓库信息等，详见 [安装向导](/guide/installation)
 2. **检查配置**：进入「设置」页，逐项确认 GitHub 仓库路径、分支等配置
 3. **发布第一篇文章**：进入「书写」页，写点内容，点击「发布文件」
-4. **配置博客自动构建**：让博客平台监听文章仓库的更新（GitHub Actions / Pages 部署钩子均可，见 [后台功能用法](dashboard.html#触发-pages-部署)）
+4. **配置博客自动构建**：让博客平台监听文章仓库的更新（GitHub Actions / Pages 部署钩子均可，见 [后台功能用法](/guide/dashboard#触发-pages-部署)）
 
 ## 本地预览（可选）
 
@@ -99,9 +99,9 @@ Dashboard 粘贴方式无法使用面板内一键更新（该功能依赖 CF Glo
 npm run dev
 ```
 
-详见 [本地开发与构建](development.html)。
+详见 [本地开发与构建](/guide/development)。
 
 ## 遇到问题？
 
-- 登录后反复跳转登录页、图片上传失败等常见问题，见 [常见问题](faq.html)
-- 原理解与架构说明，见 [项目介绍](introduction.html)
+- 登录后反复跳转登录页、图片上传失败等常见问题，见 [常见问题](/guide/faq)
+- 原理解与架构说明，见 [项目介绍](/guide/introduction)

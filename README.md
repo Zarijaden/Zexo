@@ -10,11 +10,12 @@ Zexo 是一个基于 CloudFlare Workers 和 CloudFlare KV 构建的静态博客�
 
 # 📚 使用文档
 
-本项目附带一份 VitePress 风格的文档站（位于 `docs/` 目录），涵盖项目介绍、部署、安装向导、配置详解、后台功能、博客集成、迁移指南、本地开发、常见问题与 API 参考。
+本项目附带一份基于 [VitePress](https://vitepress.dev/) 构建的文档站（位于 `docs/` 目录），涵盖项目介绍、部署、安装向导、配置详解、后台功能、博客集成、迁移指南、本地开发、常见问题与 API 参考。
 
-- 直接阅读：用浏览器打开 `docs/index.html`
-- 本地预览：`cd docs && python -m http.server 8931` 后访问 `http://localhost:8931`
-- 修改文档：编辑 `docs/src/pages/` 下的 Markdown 源文件，运行 `python docs/build.py` 重新生成
+- 本地开发：`cd docs && npm install && npm run dev`
+- 构建产物：`npm run build`，输出位于 `docs/.vitepress/dist`，可托管到任意静态平台（GitHub Pages / Cloudflare Pages 等）
+- 预览构建：`npm run preview`
+- 修改文档：编辑 `docs/` 下的 Markdown 源文件（`index.md` 为介绍页，`guide/` 与 `reference/` 为内容页），保存后开发服务器自动热更新
 
 # 🚀 核心特性
 

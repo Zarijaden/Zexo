@@ -68,7 +68,7 @@
 
 | 字段 | 说明 |
 | --- | --- |
-| Twikoo 环境 ID | 腾讯云开发环境 ID，启用评论增强代理，见 [博客集成](blog-integration.html) |
+| Twikoo 环境 ID | 腾讯云开发环境 ID，启用评论增强代理，见 [博客集成](/guide/blog-integration) |
 
 ## 提交之后
 

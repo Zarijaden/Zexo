@@ -49,7 +49,7 @@ Zexo 把这些事情收进一个网页后台。文章通过 GitHub Contents API 
 | 设置 | 全部配置项的可视化增删改 |
 | 博客集成 | 说说组件嵌入、博主活跃状态、Twikoo 评论增强 |
 
-各模块的详细用法见 [后台功能用法](dashboard.html)。
+各模块的详细用法见 [后台功能用法](/guide/dashboard)。
 
 ## 技术栈
 
@@ -64,7 +64,7 @@ Zexo 把这些事情收进一个网页后台。文章通过 GitHub Contents API 
 
 ## 与 HexoPlusPlus 的关系
 
-Zexo 基于已归档的 HexoPlusPlus（GPL-3.0）重构与延续，感谢原作者的杰出贡献。Zexo 已完成从 `hpp` 到 `zexo` 的全量改名，并对旧部署做了自动兼容。如果你此前部署过 HexoPlusPlus，请阅读 [从 HexoPlusPlus 迁移](migration.html)。
+Zexo 基于已归档的 HexoPlusPlus（GPL-3.0）重构与延续，感谢原作者的杰出贡献。Zexo 已完成从 `hpp` 到 `zexo` 的全量改名，并对旧部署做了自动兼容。如果你此前部署过 HexoPlusPlus，请阅读 [从 HexoPlusPlus 迁移](/guide/migration)。
 
 ::: tip 关于品牌命名
 后台路由、KV 键、配置项、环境变量、前端函数名与 CSS 类名均已使用 `zexo_` / `zexot_` 前缀；部分第三方静态资源（OwO 列表、字体等）仍引用上游 CDN 地址，这与 Zexo 的品牌命名无关。

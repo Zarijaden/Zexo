@@ -1,0 +1,129 @@
+/**
+ * 自定义主题样式：在 VitePress 默认主题之上补充
+ * 1. 中文字体栈
+ * 2. 首页「工作原理」流程图
+ * 3. 首页底部行动区
+ */
+
+:root {
+  --vp-font-family-base: 'Inter', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Noto Sans SC', Ubuntu, system-ui, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code',
+    Consolas, 'Courier New', monospace;
+}
+
+/* ---------- 首页流程图 ---------- */
+.home-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.home-flow .flow-node {
+  flex: 1 1 150px;
+  max-width: 190px;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  background-color: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+}
+
+.home-flow .flow-ico {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.home-flow .flow-node h4 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-top: none;
+  padding-top: 0;
+}
+
+.home-flow .flow-node p {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--vp-c-text-2);
+}
+
+.home-flow .flow-arrow {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--vp-c-brand-1);
+}
+
+@media (max-width: 640px) {
+  .home-flow .flow-arrow {
+    transform: rotate(90deg);
+  }
+}
+
+/* ---------- 首页底部行动区 ---------- */
+.home-cta {
+  margin-top: 3rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background-color: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+}
+
+.home-cta h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-top: none;
+  padding-top: 0;
+}
+
+.home-cta p {
+  margin: 0 0 1.5rem;
+  color: var(--vp-c-text-2);
+}
+
+.home-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.home-cta-btn {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.home-cta-btn.brand {
+  background-color: var(--vp-c-brand-1);
+  color: #fff;
+}
+
+.home-cta-btn.brand:hover {
+  background-color: var(--vp-c-brand-2);
+}
+
+.home-cta-btn.ghost {
+  border: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-1);
+}
+
+.home-cta-btn.ghost:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}

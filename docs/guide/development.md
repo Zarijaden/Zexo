@@ -34,7 +34,6 @@ Zexo/
     ├── admin_all.js        # 面板核心脚本（ajaxObject 等）
     ├── admin_all_light.css # 浅色主题样式
     ├── admin_all_dark.css  # 深色主题样式
-    ├── zexo_theme.css      # 主题变量
     ├── home.js             # 主页统计与更新检测
     ├── edit.js             # 书写页逻辑
     ├── md_editor.js        # Markdown 编辑器（移植 Modrinth）

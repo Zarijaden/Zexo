@@ -472,3 +472,77 @@ min-height:28px;
 ::-webkit-scrollbar-thumb:hover {
 background-color:#bbb;
 }
+
+/* =========================================================================
+ * Zexo 界面主题（原 zexo_theme.css，已合并进本文件）
+ * 视觉参照 Redefine v2.9.0。设计 token：:root（亮色）、body.dark-edition（暗色）
+ * ========================================================================= */
+/* =========================================================================
+ * 1. 设计 token（亮色）
+ * ========================================================================= */
+:root {
+  --zexo-bg: #fff;
+  --zexo-bg-trans: rgba(255, 255, 255, 0.6);
+  --zexo-bg-2: #fafafa;
+  --zexo-bg-3: #f7f7f7;
+  --zexo-primary: #a31f34;
+  --zexo-primary-dark: #8a1a2c;
+  --zexo-primary-light: #c62a41;
+
+  --zexo-text-1: #323739;
+  --zexo-text-2: #343a3c;
+  --zexo-text-3: #5c6669;
+  --zexo-text-4: #eaeced;
+  --zexo-text: #373d3f;
+
+  --zexo-border: rgba(0, 0, 0, 0.08);
+  --zexo-selection: #be243c;
+
+  --zexo-shadow-1: rgba(0, 0, 0, 0.08);
+  --zexo-shadow-2: rgba(0, 0, 0, 0.05);
+  --zexo-shadow: var(--zexo-shadow-2) 0px 6px 24px 0px, var(--zexo-shadow-1) 0px 0px 0px 1px;
+  --zexo-shadow-hover: var(--zexo-shadow-2) 0px 6px 24px 0px, var(--zexo-shadow-1) 0px 0px 0px 1px,
+    var(--zexo-shadow-1) 0px 0px 0px 1px inset;
+  --zexo-shadow-flat: var(--zexo-shadow-2) 0px 1px 4px 0px, var(--zexo-shadow-1) 0px 0px 0px 1px;
+
+  /* 圆角（Redefine: 卡片 18px / 按钮等 14px / 小徽标 9px） */
+  --zexo-radius: 18px;
+  --zexo-radius-sm: 14px;
+  --zexo-radius-xs: 9px;
+
+  --zexo-scrollbar: #c1c1c1;
+  --zexo-scrollbar-hover: #a1a1a1;
+  --zexo-scrollbar-bg: #fafafa;
+
+  /* Redefine 字体栈 */
+  --zexo-font: "Geist Variable", "Noto Sans SC", -apple-system, system-ui, "Segoe UI", Roboto,
+    Ubuntu, Cantarell, "Noto Sans", sans-serif, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Arial;
+}
+
+/* =========================================================================
+ * 10. 错误页（bing 背景 + canvas 动画保留，只换主色与按钮语言）
+ * ========================================================================= */
+.main-title {
+  color: #f9f1e9 !important;
+}
+.demo-2 .main-title::before {
+  opacity: 0.55;
+}
+.codrops-demos a {
+  border-radius: var(--zexo-radius-sm) !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  padding: 10px 22px !important;
+  transition: all 0.2s ease !important;
+}
+.codrops-demos a:hover,
+.codrops-demos a.current-demo {
+  background-color: var(--zexo-primary) !important;
+  border-color: var(--zexo-primary) !important;
+  color: #fff !important;
+}
+.codrops-header h1,
+.codrops-header h1 span {
+  font-weight: 400 !important;
+}

@@ -7,6 +7,15 @@
 Zexo 是一个基于 CloudFlare Workers 和 CloudFlare KV 构建的静态博客后端管理面板。它延续了 HexoPlusPlus 的核心理念，旨在为 Hexo 等静态博客系统提供强大、易用且免费的后端支持，解决静态博客在内容管理、媒体处理和自动化部署中的痛点。
 
 重要提示：本项目基于已归档的 HexoPlusPlus (GPL-3.0) 开发。感谢原作者的杰出贡献。Zexo 作为一个独立的重构版本，将继续在 GPL-3.0 协议下进行开发与维护。
+
+# 📚 使用文档
+
+本项目附带一份 VitePress 风格的文档站（位于 `docs/` 目录），涵盖项目介绍、部署、安装向导、配置详解、后台功能、博客集成、迁移指南、本地开发、常见问题与 API 参考。
+
+- 直接阅读：用浏览器打开 `docs/index.html`
+- 本地预览：`cd docs && python -m http.server 8931` 后访问 `http://localhost:8931`
+- 修改文档：编辑 `docs/src/pages/` 下的 Markdown 源文件，运行 `python docs/build.py` 重新生成
+
 # 🚀 核心特性
 
 * 🚀 开箱即用：基于 CloudFlare 免费套餐，几分钟即可部署完毕。
